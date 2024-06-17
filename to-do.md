@@ -1,3 +1,3 @@
-# A to do list
+# To do list
 
-Hello this is just a test.
+- [ ] Try / catch to podcast rss fetcher
