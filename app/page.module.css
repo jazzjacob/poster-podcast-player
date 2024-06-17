@@ -8,3 +8,30 @@
 .greetingText {
 	color: dogerblue;
 }
+
+.exampleImageContainer {
+	padding: 1rem 0;
+}
+
+.exampleImageContainer p {
+	margin-bottom: 8px;
+	width: 400px;
+}
+
+.exampleImage {
+	height: 100px;
+	width: 100px;
+	background-color: lightgray;
+}
+
+.blueExampleImage {
+	height: 200px;
+	width: 100px;
+	background-color: dodgerblue;
+}
+
+.goldExampleImage {
+	height: 120px;
+	width: 200px;
+	background-color: gold;
+}
