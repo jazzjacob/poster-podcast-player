@@ -29,6 +29,7 @@ export default function Home() {
 
       const items = parsedData.rss.channel[0].item;
       setRssFeed(items);
+      console.log(items)
     }
 
     fetchData();
@@ -99,7 +100,16 @@ export default function Home() {
   return (
     <main className={styles.main}>
       <p className={styles.greetingText}>Hello, this is <b>Poster Podcast Player</b>.</p>
-      {rssFeed && (
+      <audio ref={audioRef} controls src="/podcasts/posterboys-059-2019inreview.mp3" type="audio/mpeg"></audio>
+      <div>
+				<button onClick={handlePlayFromSpecificTime}>Play from 1:02</button>
+				<div className={styles.exampleImageContainer}>
+					<p>The image will be blue for the first five seconds, gold for the next five, and then be gray again.</p>
+					<div ref={imageRef} className={styles.exampleImage}></div>
+				</div>
+			</div>
+      
+      {false && rssFeed && (
         <div>
           <p>{rssFeed[0].title}</p>
           <audio ref={audioRef} controls src={rssFeed[0].enclosure[0].$.url}></audio>
