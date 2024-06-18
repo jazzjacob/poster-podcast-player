@@ -1,0 +1,22 @@
+{
+  "episodes": [
+    {
+      "episodeNumber": 59,
+      "url": "https://traffic.libsyn.com/secure/theposterboys/posterboys-059-2019inreview.mp3",
+      "localPath": "../podcasts/posterboys-059-2019inreview.mp3",
+      "title": "59: 2019 In Review",
+      "timestamps": [
+      	{
+      		"start": 5,
+      		"end": 10,
+      		"image": "last-black-man-1.jpg"
+      	},
+      	{
+      		"start": 20,
+      		"end": 30,
+      		"image": "last-black-man-2.jpg"
+      	}
+      ]
+    }
+  ]
+}

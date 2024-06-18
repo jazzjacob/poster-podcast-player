@@ -8,6 +8,8 @@ export default function Home() {
   const [rssFeed, setRssFeed] = useState(null);
   const [displayImage, setDisplayImage] = useState(null);
   const [currentTime, setCurrentTime] = useState(-1);
+  const [currentImage, setCurrentImage] = useState(null);
+  const [episodeData, setEpisodeData] = useState(null);
   const audioRef = useRef(null);
   const imageRef = useRef(null);
 
@@ -96,6 +98,27 @@ export default function Home() {
       audioRef.current.play();
     }
   };
+  
+	useEffect(() => {
+		// Fetch the JSON file from the public directory
+		fetch('/episodes.json')
+			.then(response => response.json())
+			.then(data => {
+				console.log(data); // Log the contents of the JSON file
+				setEpisodeData(data.episodes);
+				setCurrentImage(`/images/episode-59/${data.episodes[0].timestamps[1].image}`);
+			})
+			.catch(error => {
+				console.error('Error fetching the JSON file:', error);
+		});
+	}, []);
+	
+	useEffect(() => {
+		if (episodeData) {
+			console.log("Episode data:");
+			console.log(episodeData)
+		} 
+	}, [episodeData]);
 
   return (
     <main className={styles.main}>
@@ -106,6 +129,10 @@ export default function Home() {
 				<div className={styles.exampleImageContainer}>
 					<p>The image will be blue for the first five seconds, gold for the next five, and then be gray again.</p>
 					<div ref={imageRef} className={styles.exampleImage}></div>
+					<img className={styles.imageStyle} src="/images/episode-59/last-black-man-1.jpg" />
+					{currentImage && (
+						<img className={styles.imageStyle} src={currentImage} />
+					)}
 				</div>
 			</div>
       
