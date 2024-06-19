@@ -8,12 +8,12 @@
       "timestamps": [
       	{
       		"start": 5,
-      		"end": 10,
+      		"end": 2000,
       		"image": "last-black-man-1.jpg"
       	},
       	{
-      		"start": 15,
-      		"end": 20,
+      		"start": 2500,
+      		"end": 4000,
       		"image": "last-black-man-2.jpg"
       	}
       ]
