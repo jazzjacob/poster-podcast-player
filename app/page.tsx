@@ -45,6 +45,8 @@ export default function Home() {
   
   	if (-1 < currentTime) {
   		console.log(`Current time in state: ${currentTime}`);
+  		console.log(`Current endTime in state: ${currentEndTime}`);
+  		console.log(`Current image in state: ${currentImage}`);
   		
   		if (imageElement) {
   			// console.log(imageElement);
@@ -64,9 +66,12 @@ export default function Home() {
 									setCurrentEndTime(timestamp.end);
 								} else if (timestamp.end == currentTime) {
 									setCurrentImage(null);
+									setCurrentEndTime(-1);
 								}
 							});
   					}	
+  				} else {
+  					setCurrentEndTime(-1);
   				}
   				
   			} else {
