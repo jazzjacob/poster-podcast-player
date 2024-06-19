@@ -39,3 +39,9 @@
 .imageStyle {
 	height: 200px;
 }
+
+.posterPlaceholder {
+	height: 200px;
+	width: 120px;
+	background-color: gray;
+}

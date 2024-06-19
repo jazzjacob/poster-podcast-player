@@ -8,6 +8,9 @@ export default function Home() {
   const [rssFeed, setRssFeed] = useState(null);
   const [displayImage, setDisplayImage] = useState(null);
   const [currentTime, setCurrentTime] = useState(-1);
+  const [currentEndTime, setCurrentEndTime] = useState(-1);
+  const [lowestTime, setLowestTime] = useState(-1);
+  const [highestTime, setHighestTime] = useState(-1);
   const [currentImage, setCurrentImage] = useState(null);
   const [episodeData, setEpisodeData] = useState(null);
   const audioRef = useRef(null);
@@ -46,6 +49,31 @@ export default function Home() {
   		if (imageElement) {
   			// console.log(imageElement);
   			//imageElement.className = "blueExampleImage"
+
+  			if (episodeData) {
+  				console.log(`Lowest: ${lowestTime}`);
+  				console.log(`Highest: ${highestTime}`);
+  				
+  				if (lowestTime <= currentTime && currentTime <= highestTime) {
+  					if (currentTime >= currentEndTime) {
+							episodeData.timestamps.forEach((timestamp, index) => {
+								console.log(timestamp);
+								if (timestamp.start == currentTime) {
+									console.log(`timestamp start: ${timestamp.start} = current time: ${currentTime}`);
+									setCurrentImage(`/images/episode-59/${timestamp.image}`);
+									setCurrentEndTime(timestamp.end);
+								} else if (timestamp.end == currentTime) {
+									setCurrentImage(null);
+								}
+							});
+  					}	
+  				}
+  				
+  			} else {
+  				console.error("No episode data saved.");
+  			}
+  			
+  			
   			if (currentTime <= 5) {
   				imageElement.classList.add(styles.blueExampleImage);
   			} else if (currentTime <= 10) {
@@ -75,6 +103,7 @@ export default function Home() {
         if (currentTime !== audioElementTime) {
         	// console.log("SETTING CURRENT TIME TO STATE...")
         	setCurrentTime(audioElementTime);
+        	
 
         	// setCurrentTime(audioElementTime => audioElementTime);
         }
@@ -105,8 +134,12 @@ export default function Home() {
 			.then(response => response.json())
 			.then(data => {
 				console.log(data); // Log the contents of the JSON file
-				setEpisodeData(data.episodes);
-				setCurrentImage(`/images/episode-59/${data.episodes[0].timestamps[1].image}`);
+				setEpisodeData(data.episodes[0]);
+				// setCurrentImage(`/images/episode-59/${data.episodes[0].timestamps[1].image}`);
+				console.log("Hello")
+				const timestamps = data.episodes[0].timestamps;
+				setLowestTime(data.episodes[0].timestamps[0].start);
+				setHighestTime(timestamps[Object.keys(timestamps)[Object.keys(timestamps).length - 1]].end);
 			})
 			.catch(error => {
 				console.error('Error fetching the JSON file:', error);
@@ -130,9 +163,13 @@ export default function Home() {
 					<p>The image will be blue for the first five seconds, gold for the next five, and then be gray again.</p>
 					<div ref={imageRef} className={styles.exampleImage}></div>
 					<img className={styles.imageStyle} src="/images/episode-59/last-black-man-1.jpg" />
-					{currentImage && (
-						<img className={styles.imageStyle} src={currentImage} />
-					)}
+					<div>
+						{currentImage ? (
+							<img className={styles.imageStyle} src={currentImage} />
+						) : (
+							<div className={styles.posterPlaceholder}></div>
+						)}
+					</div>
 				</div>
 			</div>
       
@@ -150,3 +187,9 @@ export default function Home() {
     </main>
   );
 }
+
+
+
+
+
+

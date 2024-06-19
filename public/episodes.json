@@ -12,9 +12,27 @@
       		"image": "last-black-man-1.jpg"
       	},
       	{
+      		"start": 15,
+      		"end": 20,
+      		"image": "last-black-man-2.jpg"
+      	}
+      ]
+    },
+    {
+      "episodeNumber": 99,
+      "url": "https://traffic.libsyn.com/secure/theposterboys/posterboys-059-2019inreview.mp3",
+      "localPath": "../podcasts/posterboys-059-2019inreview.mp3",
+      "title": "Example episode",
+      "timestamps": [
+      	{
+      		"start": 5,
+      		"end": 10,
+      		"image": "example.jpg"
+      	},
+      	{
       		"start": 20,
       		"end": 30,
-      		"image": "last-black-man-2.jpg"
+      		"image": "example.jpg"
       	}
       ]
     }
