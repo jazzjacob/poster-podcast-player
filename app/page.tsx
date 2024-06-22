@@ -3,6 +3,7 @@
 import styles from "./page.module.css";
 import { useEffect, useState, useRef } from "react";
 import xml2js from "xml2js";
+import Image from "next/image";
 
 export default function Home() {
   const [rssFeed, setRssFeed] = useState(null);
@@ -14,10 +15,10 @@ export default function Home() {
   const [currentEndTime, setCurrentEndTime] = useState(-1);
   const [lowestTime, setLowestTime] = useState(-1);
   const [highestTime, setHighestTime] = useState(-1);
-  const [currentImage, setCurrentImage] = useState(null);
-  const [episodeData, setEpisodeData] = useState(null);
-  const audioRef = useRef(null);
-  const imageRef = useRef(null);
+  const [currentImage, setCurrentImage] = useState<string>("");
+  const [episodeData, setEpisodeData] = useState<any>(null);
+  const audioRef = useRef<HTMLAudioElement>(null);
+  const imageRef = useRef<HTMLImageElement>(null);
 
   useEffect(() => {
     async function fetchData() {
@@ -25,7 +26,7 @@ export default function Home() {
       const response = await fetch(url);
       const xml = await response.text();
 
-      const parsedData = await new Promise((resolve, reject) => {
+      const parsedData: any = await new Promise((resolve, reject) => {
         xml2js.parseString(xml, { trim: true }, (err, result) => {
           if (err) {
             reject(err);
@@ -67,10 +68,15 @@ export default function Home() {
             );
 
             // Iterate timestamp list on every second
-            episodeData.timestamps.every((timestamp) => {
-              if (timestamp.start <= currentTime && currentTime <= timestamp.end) {
+            episodeData.timestamps.every((timestamp: { start: number; end: number; image: string }) => {
+              if (
+                timestamp.start <= currentTime &&
+                currentTime <= timestamp.end
+              ) {
                 console.log("We have a match!");
-                console.log(`Timestamp start: ${timestamp.start} = current time: ${currentTime}`);
+                console.log(
+                  `Timestamp start: ${timestamp.start} = current time: ${currentTime}`,
+                );
                 setCurrentImage(`/images/episode-59/${timestamp.image}`);
                 setCurrentStartTime(timestamp.start);
                 setCurrentEndTime(timestamp.end);
@@ -78,7 +84,7 @@ export default function Home() {
                 return false;
               } else {
                 console.log("We do not have a match...");
-                setCurrentImage(null);
+                setCurrentImage("");
                 setCurrentEndTime(-1);
                 setCurrentStartTime(-1);
                 // Return true to make every-loop keep iterating
@@ -177,8 +183,12 @@ export default function Home() {
         console.log("Hello");
         const timestamps = data.episodes[0].timestamps;
         setLowestTime(data.episodes[0].timestamps[0].start);
-        setHighestTime(timestamps[Object.keys(timestamps)[Object.keys(timestamps).length - 1]].end);
-        setCurrentStartTime();
+        setHighestTime(
+          timestamps[
+            Object.keys(timestamps)[Object.keys(timestamps).length - 1]
+          ].end,
+        );
+        //setCurrentStartTime();
       })
       .catch((error) => {
         console.error("Error fetching the JSON file:", error);
@@ -201,7 +211,6 @@ export default function Home() {
         ref={audioRef}
         controls
         src="/podcasts/posterboys-059-2019inreview.mp3"
-        type="audio/mpeg"
       ></audio>
       <div>
         <button onClick={handlePlayFromSpecificTime}>Play from 1:02</button>
@@ -226,7 +235,7 @@ export default function Home() {
         </div>
       </div>
 
-      {false && rssFeed && (
+      {/*rssFeed && (
         <div>
           <p>{rssFeed[0].title}</p>
           <audio
@@ -243,7 +252,7 @@ export default function Home() {
             <div ref={imageRef} className={styles.exampleImage}></div>
           </div>
         </div>
-      )}
+      )*/}
     </main>
   );
 }
