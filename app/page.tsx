@@ -5,6 +5,7 @@ import usePreload from "./hooks/usePreload";
 import { useEffect, useState, useRef } from "react";
 import xml2js from "xml2js";
 import Image from "next/image";
+import PosterGallery from "./components/PosterGallery";
 
 export default function Home() {
   const [rssFeed, setRssFeed] = useState(null);
@@ -18,6 +19,7 @@ export default function Home() {
   const [highestTime, setHighestTime] = useState(-1);
   const [currentImage, setCurrentImage] = useState<string>("");
   const [episodeData, setEpisodeData] = useState<any>(null);
+  const [images, setImages] = useState(null);
   // const loaded = usePreload(episodeData);
   // const loaded = usePreload(episodeData ? episodeData : []);
   const loaded = true;
@@ -198,6 +200,7 @@ export default function Home() {
         const timestamps = data.episodes[0].timestamps;
         setLowestTime(data.episodes[0].timestamps[0].start);
         setHighestTime(timestamps[Object.keys(timestamps)[Object.keys(timestamps).length - 1]].end);
+
       } catch (error) {
         console.error("Failed to fetch episode data:", error);
       }
@@ -232,7 +235,7 @@ export default function Home() {
             src="/images/episode-59/last-black-man-1.jpg"
           />
           {episodeData ? (
-            <div>
+            <section>
               <audio
                 ref={audioRef}
                 controls
@@ -246,7 +249,8 @@ export default function Home() {
                   <div className={styles.posterPlaceholder}></div>
                 )}
               </div>
-            </div>
+              <PosterGallery episodeData={episodeData} />
+            </section>
           ) : (
             <p>Loading...</p>
           )}
