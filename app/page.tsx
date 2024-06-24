@@ -231,12 +231,12 @@ export default function Home() {
             className={styles.imageStyle}
             src="/images/episode-59/last-black-man-1.jpg"
           />
-          {loaded ? (
+          {episodeData ? (
             <div>
               <audio
                 ref={audioRef}
                 controls
-                src="/podcasts/posterboys-059-2019inreview.mp3"
+                src={episodeData.url}
                 preload="auto"
               ></audio>
               <div>
