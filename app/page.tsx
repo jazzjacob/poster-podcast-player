@@ -19,7 +19,8 @@ export default function Home() {
   const [currentImage, setCurrentImage] = useState<string>("");
   const [episodeData, setEpisodeData] = useState<any>(null);
   // const loaded = usePreload(episodeData);
-  const loaded = usePreload(episodeData ? episodeData : []);
+  // const loaded = usePreload(episodeData ? episodeData : []);
+  const loaded = true;
 
   const audioRef = useRef<HTMLAudioElement>(null);
   const imageRef = useRef<HTMLImageElement>(null);
