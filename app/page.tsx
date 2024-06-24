@@ -1,6 +1,7 @@
 "use client"; // This is a client component 👈🏽
 
 import styles from "./page.module.css";
+import usePreload from './hooks/usePreload';
 import { useEffect, useState, useRef } from "react";
 import xml2js from "xml2js";
 import Image from "next/image";
@@ -17,8 +18,17 @@ export default function Home() {
   const [highestTime, setHighestTime] = useState(-1);
   const [currentImage, setCurrentImage] = useState<string>("");
   const [episodeData, setEpisodeData] = useState<any>(null);
+  const [imagePaths, setImagePaths] = useState([]);
+  
   const audioRef = useRef<HTMLAudioElement>(null);
   const imageRef = useRef<HTMLImageElement>(null);
+  
+  const assets = [
+    '/images/image1.jpg',
+    '/images/image2.jpg',
+    '/images/image3.jpg',
+    '/audio/sample.mp3',
+  ];
 
   useEffect(() => {
     async function fetchData() {
@@ -173,26 +183,23 @@ export default function Home() {
   };
 
   useEffect(() => {
-    // Fetch the JSON file from the public directory
-    fetch("/episodes.json")
-      .then((response) => response.json())
-      .then((data) => {
-        console.log(data); // Log the contents of the JSON file
-        setEpisodeData(data.episodes[0]);
-        // setCurrentImage(`/images/episode-59/${data.episodes[0].timestamps[1].image}`);
-        console.log("Hello");
-        const timestamps = data.episodes[0].timestamps;
-        setLowestTime(data.episodes[0].timestamps[0].start);
-        setHighestTime(
-          timestamps[
-            Object.keys(timestamps)[Object.keys(timestamps).length - 1]
-          ].end,
-        );
-        //setCurrentStartTime();
-      })
-      .catch((error) => {
-        console.error("Error fetching the JSON file:", error);
-      });
+  	async function fetchEpisodeData() {
+  		try {
+  			const response = await fetch('/episodes.json');
+        const data = await response.json();
+        console.log("Data from the new fetch:")
+				console.log(data);
+				setEpisodeData(data.episodes[0]);
+				
+				const timestamps = data.episodes[0].timestamps;
+				setLowestTime(data.episodes[0].timestamps[0].start);
+        setHighestTime(timestamps[Object.keys(timestamps)[Object.keys(timestamps).length - 1]].end);
+  		} catch (error) {
+  			 console.error('Failed to fetch episode data:', error);
+  		}
+  	}
+  	
+  	fetchEpisodeData();
   }, []);
 
   useEffect(() => {
