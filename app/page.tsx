@@ -236,6 +236,7 @@ export default function Home() {
                 ref={audioRef}
                 controls
                 src="/podcasts/posterboys-059-2019inreview.mp3"
+                preload="auto"
               ></audio>
               <div>
                 {currentImage ? (
