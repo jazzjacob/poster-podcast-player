@@ -18,7 +18,7 @@ export default function Home() {
   const [highestTime, setHighestTime] = useState(-1);
   const [currentImage, setCurrentImage] = useState<string>("");
   const [episodeData, setEpisodeData] = useState<any>(null);
-  const [imagePaths, setImagePaths] = useState([]);
+	const loaded = usePreload(episodeData);
   
   const audioRef = useRef<HTMLAudioElement>(null);
   const imageRef = useRef<HTMLImageElement>(null);
@@ -232,13 +232,18 @@ export default function Home() {
             className={styles.imageStyle}
             src="/images/episode-59/last-black-man-1.jpg"
           />
-          <div>
-            {currentImage ? (
-              <img className={styles.imageStyle} src={currentImage} />
-            ) : (
-              <div className={styles.posterPlaceholder}></div>
-            )}
-          </div>
+          {loaded ? (
+				  	<div>
+							{currentImage ? (
+								<img className={styles.imageStyle} src={currentImage} />
+							) : (
+								<div className={styles.posterPlaceholder}></div>
+							)}
+          	</div>          	
+          ) : (
+          	<p>Loading...</p>
+          )
+          }
         </div>
       </div>
 
