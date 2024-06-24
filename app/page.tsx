@@ -181,9 +181,9 @@ export default function Home() {
     };
   }, [audioRef.current, currentTime]);
 
-  const handlePlayFromSpecificTime = () => {
+  const playFromSpecificTime = (time: number) => {
     if (audioRef.current) {
-      audioRef.current.currentTime = 62; // 1 minute and 2 seconds
+      audioRef.current.currentTime = time;
       audioRef.current.play();
     }
   };
@@ -222,7 +222,7 @@ export default function Home() {
         Hello, this is <b>Poster Podcast Player</b>.
       </p>
       <div>
-        <button onClick={handlePlayFromSpecificTime}>Play from 1:02</button>
+        <button onClick={() => playFromSpecificTime(62)}>Play from 1:02</button>
         <div className={styles.exampleImageContainer}>
           <p hidden>
             The image will be blue for the first five seconds, gold for the next
@@ -249,7 +249,7 @@ export default function Home() {
                   <div className={styles.posterPlaceholder}></div>
                 )}
               </div>
-              <PosterGallery episodeData={episodeData} />
+              <PosterGallery episodeData={episodeData} playFromSpecificTime={playFromSpecificTime} />
             </section>
           ) : (
             <p>Loading...</p>
