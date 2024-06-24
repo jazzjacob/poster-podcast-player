@@ -1,7 +1,7 @@
 "use client"; // This is a client component 👈🏽
 
 import styles from "./page.module.css";
-import usePreload from './hooks/usePreload';
+import usePreload from "./hooks/usePreload";
 import { useEffect, useState, useRef } from "react";
 import xml2js from "xml2js";
 import Image from "next/image";
@@ -18,16 +18,17 @@ export default function Home() {
   const [highestTime, setHighestTime] = useState(-1);
   const [currentImage, setCurrentImage] = useState<string>("");
   const [episodeData, setEpisodeData] = useState<any>(null);
-	const loaded = usePreload(episodeData);
-  
+  // const loaded = usePreload(episodeData);
+  const loaded = usePreload(episodeData ? episodeData : []);
+
   const audioRef = useRef<HTMLAudioElement>(null);
   const imageRef = useRef<HTMLImageElement>(null);
-  
+
   const assets = [
-    '/images/image1.jpg',
-    '/images/image2.jpg',
-    '/images/image3.jpg',
-    '/audio/sample.mp3',
+    "/images/image1.jpg",
+    "/images/image2.jpg",
+    "/images/image3.jpg",
+    "/audio/sample.mp3",
   ];
 
   useEffect(() => {
@@ -78,29 +79,31 @@ export default function Home() {
             );
 
             // Iterate timestamp list on every second
-            episodeData.timestamps.every((timestamp: { start: number; end: number; image: string }) => {
-              if (
-                timestamp.start <= currentTime &&
-                currentTime <= timestamp.end
-              ) {
-                console.log("We have a match!");
-                console.log(
-                  `Timestamp start: ${timestamp.start} = current time: ${currentTime}`,
-                );
-                setCurrentImage(`/images/episode-59/${timestamp.image}`);
-                setCurrentStartTime(timestamp.start);
-                setCurrentEndTime(timestamp.end);
-                // Return false to end every-loop
-                return false;
-              } else {
-                console.log("We do not have a match...");
-                setCurrentImage("");
-                setCurrentEndTime(-1);
-                setCurrentStartTime(-1);
-                // Return true to make every-loop keep iterating
-                return true;
-              }
-            });
+            episodeData.timestamps.every(
+              (timestamp: { start: number; end: number; image: string }) => {
+                if (
+                  timestamp.start <= currentTime &&
+                  currentTime <= timestamp.end
+                ) {
+                  console.log("We have a match!");
+                  console.log(
+                    `Timestamp start: ${timestamp.start} = current time: ${currentTime}`,
+                  );
+                  setCurrentImage(`/images/episode-59/${timestamp.image}`);
+                  setCurrentStartTime(timestamp.start);
+                  setCurrentEndTime(timestamp.end);
+                  // Return false to end every-loop
+                  return false;
+                } else {
+                  console.log("We do not have a match...");
+                  setCurrentImage("");
+                  setCurrentEndTime(-1);
+                  setCurrentStartTime(-1);
+                  // Return true to make every-loop keep iterating
+                  return true;
+                }
+              },
+            );
 
             /*
 							episodeData.timestamps.forEach((timestamp, index) => {
@@ -183,23 +186,23 @@ export default function Home() {
   };
 
   useEffect(() => {
-  	async function fetchEpisodeData() {
-  		try {
-  			const response = await fetch('/episodes.json');
+    async function fetchEpisodeData() {
+      try {
+        const response = await fetch("/episodes.json");
         const data = await response.json();
-        console.log("Data from the new fetch:")
-				console.log(data);
-				setEpisodeData(data.episodes[0]);
-				
-				const timestamps = data.episodes[0].timestamps;
-				setLowestTime(data.episodes[0].timestamps[0].start);
+        console.log("Data from the new fetch:");
+        console.log(data);
+        setEpisodeData(data.episodes[0]);
+
+        const timestamps = data.episodes[0].timestamps;
+        setLowestTime(data.episodes[0].timestamps[0].start);
         setHighestTime(timestamps[Object.keys(timestamps)[Object.keys(timestamps).length - 1]].end);
-  		} catch (error) {
-  			 console.error('Failed to fetch episode data:', error);
-  		}
-  	}
-  	
-  	fetchEpisodeData();
+      } catch (error) {
+        console.error("Failed to fetch episode data:", error);
+      }
+    }
+
+    fetchEpisodeData();
   }, []);
 
   useEffect(() => {
@@ -214,11 +217,6 @@ export default function Home() {
       <p className={styles.greetingText}>
         Hello, this is <b>Poster Podcast Player</b>.
       </p>
-      <audio
-        ref={audioRef}
-        controls
-        src="/podcasts/posterboys-059-2019inreview.mp3"
-      ></audio>
       <div>
         <button onClick={handlePlayFromSpecificTime}>Play from 1:02</button>
         <div className={styles.exampleImageContainer}>
@@ -233,17 +231,23 @@ export default function Home() {
             src="/images/episode-59/last-black-man-1.jpg"
           />
           {loaded ? (
-				  	<div>
-							{currentImage ? (
-								<img className={styles.imageStyle} src={currentImage} />
-							) : (
-								<div className={styles.posterPlaceholder}></div>
-							)}
-          	</div>          	
+            <div>
+              <audio
+                ref={audioRef}
+                controls
+                src="/podcasts/posterboys-059-2019inreview.mp3"
+              ></audio>
+              <div>
+                {currentImage ? (
+                  <img className={styles.imageStyle} src={currentImage} />
+                ) : (
+                  <div className={styles.posterPlaceholder}></div>
+                )}
+              </div>
+            </div>
           ) : (
-          	<p>Loading...</p>
-          )
-          }
+            <p>Loading...</p>
+          )}
         </div>
       </div>
 
