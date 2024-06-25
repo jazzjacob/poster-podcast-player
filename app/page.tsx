@@ -19,6 +19,7 @@ interface EpisodeData {
   url: string;
   localPath: string;
   title: string;
+  episodeImage: string;
   timestamps: Timestamp[];
 };
 
@@ -27,6 +28,7 @@ const nullEpisode: EpisodeData = {
   url: "",
   localPath: "",
   title: "",
+  episodeImage: "",
   timestamps: [],
 };
 
@@ -240,6 +242,19 @@ export default function Home() {
     }
   }, [episodeData]);
 
+  function timelineJump(addedTime: number) {
+    console.log("Added time");
+    if (addedTime < 0) {
+      console.log("LESS THAN ZERO")
+    }
+    console.log(addedTime)
+    if (audioRef.current) {
+      //audioRef.current.currentTime = addedTime < 0 ? (currentTime - addedTime) : (currentTime + addedTime);
+      audioRef.current.currentTime = currentTime + addedTime;
+      audioRef.current.play();
+    }
+  }
+
   return (
     <main className={styles.main}>
       <p className={styles.greetingText}>
@@ -266,11 +281,17 @@ export default function Home() {
                 src={episodeData.url}
                 preload="auto"
               ></audio>
+              <button onClick={() => timelineJump(-5)}>Back 5 seconds</button>
+              <button onClick={() => timelineJump(5)}>Skip 5 seconds</button>
               <div>
                 {currentImage ? (
                   <img className={styles.imageStyle} src={currentImage} />
                 ) : (
-                  <div className={styles.posterPlaceholder}></div>
+                  episodeData.episodeImage != "" ? (
+                      <img className={styles.imageStyle} src={episodeData.episodeImage} />
+                    ) : (
+                      <div className={styles.posterPlaceholder}></div>
+                    )
                 )}
               </div>
               <PosterGallery episodeData={episodeData} playFromSpecificTime={playFromSpecificTime} />

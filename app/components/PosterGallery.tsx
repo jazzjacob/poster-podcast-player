@@ -12,6 +12,7 @@ interface EpisodeData {
   url: string;
   localPath: string;
   title: string;
+  episodeImage: string;
   timestamps: Timestamp[];
 };
 
@@ -26,8 +27,8 @@ interface PosterGalleryProps {
 const PosterGallery: React.FC<PosterGalleryProps> = ({ episodeData, playFromSpecificTime }) => {
 
   //const PosterGallery = ({episodeData, playFromSpecificTime}) => {
-  console.log("episode data from within PosterGallery");
-  console.log(episodeData);
+  //console.log("episode data from within PosterGallery");
+  //console.log(episodeData);
 
   function handleImageClick(timestamp: Timestamp) {
     console.log("Image is clicked");

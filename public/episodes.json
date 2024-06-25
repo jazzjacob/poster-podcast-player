@@ -5,19 +5,30 @@
       "url": "https://traffic.libsyn.com/secure/theposterboys/posterboys-059-2019inreview.mp3",
       "localPath": "../podcasts/posterboys-059-2019inreview.mp3",
       "title": "59: 2019 In Review",
+      "episodeImage": "https://static.libsyn.com/p/assets/e/2/4/9/e249a269bb9e191c/Poster-Boys-logo.jpg",
       "timestamps": [
       	{
-      		"start": 0,
-      		"end": 1000,
-      		"image": "last-black-man-1.jpg"
-      	},
-      	{
-      		"start": 1000,
-      		"end": 2000,
+      		"start": 1794,
+      		"end": 1912,
       		"image": "last-black-man-2.jpg"
       	},
       	{
-      		"start": 2000,
+      		"start": 1912,
+      		"end": 1965,
+      		"image": "last-black-man-1.jpg"
+      	},
+       {
+       		"start": 1965,
+       		"end": 2049,
+       		"image": "serendipity.jpg"
+       },
+       {
+       		"start": 2049,
+       		"end": 2100,
+       		"image": "the-boy-who.jpg"
+       },
+      	{
+      		"start": 3000,
       		"end": 3000,
       		"image": "honey-boy-1.jpg"
       	},
@@ -33,6 +44,7 @@
       "url": "https://traffic.libsyn.com/secure/theposterboys/posterboys-059-2019inreview.mp3",
       "localPath": "../podcasts/posterboys-059-2019inreview.mp3",
       "title": "Example episode",
+      "episodeImage": "https://static.libsyn.com/p/assets/e/2/4/9/e249a269bb9e191c/Poster-Boys-logo.jpg",
       "timestamps": [
       	{
       		"start": 5,
