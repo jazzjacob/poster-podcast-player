@@ -1,31 +1,35 @@
 import React from 'react';
 
-/*
-interface EpisodeData {
-  episodeData: {
-    episodeData: {
-      timestamps: {
-        start: number;
-        end: number;// Assuming 'start' is a number
-        image: string;
-        // Add more properties as needed
-      }[];
-    }
-  }
-}
 
-interface PosterGalleryProps extends EpisodeData {
+interface Timestamp {
+  start: number;
+  end: number;
+  image: string;
+};
+
+interface EpisodeData {
+  episodeNumber: number;
+  url: string;
+  localPath: string;
+  title: string;
+  timestamps: Timestamp[];
+};
+
+
+interface PosterGalleryProps {
+  episodeData: EpisodeData;
   playFromSpecificTime: (start: number) => void;
 }
-*/
 
-//const PosterGallery: React.FC<PosterGalleryProps> = ({ episodeData, playFromSpecificTime }) => {
 
-const PosterGallery = ({ episodeData, playFromSpecificTime }) => {
+
+const PosterGallery: React.FC<PosterGalleryProps> = ({ episodeData, playFromSpecificTime }) => {
+
+  //const PosterGallery = ({episodeData, playFromSpecificTime}) => {
   console.log("episode data from within PosterGallery");
   console.log(episodeData);
 
-  function handleImageClick(timestamp) {
+  function handleImageClick(timestamp: Timestamp) {
     console.log("Image is clicked");
     console.log(timestamp)
     playFromSpecificTime(timestamp.start);
@@ -40,7 +44,7 @@ const PosterGallery = ({ episodeData, playFromSpecificTime }) => {
           <p>Images should be displayed here.</p>
           {
             episodeData.timestamps.map(
-              (timestamp: any, index: number) => {
+              (timestamp, index) => {
                 return (
                   <img key={index} onClick={() => handleImageClick(timestamp)} style={{height: "100px"}} src={`/images/episode-59/${timestamp.image}`} />
                 )

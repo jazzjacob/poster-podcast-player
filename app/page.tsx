@@ -7,6 +7,30 @@ import xml2js from "xml2js";
 import Image from "next/image";
 import PosterGallery from "./components/PosterGallery";
 
+interface Timestamp {
+  start: number;
+  end: number;
+  image: string;
+};
+
+
+interface EpisodeData {
+  episodeNumber: number;
+  url: string;
+  localPath: string;
+  title: string;
+  timestamps: Timestamp[];
+};
+
+const nullEpisode: EpisodeData = {
+  episodeNumber: 0,
+  url: "",
+  localPath: "",
+  title: "",
+  timestamps: [],
+};
+
+
 export default function Home() {
   const [rssFeed, setRssFeed] = useState(null);
   const [displayImage, setDisplayImage] = useState(null);
@@ -18,7 +42,7 @@ export default function Home() {
   const [lowestTime, setLowestTime] = useState(-1);
   const [highestTime, setHighestTime] = useState(-1);
   const [currentImage, setCurrentImage] = useState<string>("");
-  const [episodeData, setEpisodeData] = useState<any>(null);
+  const [episodeData, setEpisodeData] = useState<EpisodeData>(nullEpisode);
   const [images, setImages] = useState(null);
   // const loaded = usePreload(episodeData);
   // const loaded = usePreload(episodeData ? episodeData : []);
@@ -234,7 +258,7 @@ export default function Home() {
             className={styles.imageStyle}
             src="/images/episode-59/last-black-man-1.jpg"
           />
-          {episodeData ? (
+          {episodeData.timestamps.length > 0 ? (
             <section>
               <audio
                 ref={audioRef}
