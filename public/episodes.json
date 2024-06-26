@@ -9,12 +9,12 @@
       "timestamps": [
       	{
       		"start": 1794,
-      		"end": 1912,
+      		"end": 1911,
       		"image": "last-black-man-2.jpg"
       	},
       	{
       		"start": 1912,
-      		"end": 1965,
+      		"end": 1964,
       		"image": "last-black-man-1.jpg"
       	},
        {
@@ -23,7 +23,7 @@
        		"image": "serendipity.jpg"
        },
        {
-       		"start": 2049,
+       		"start": 2050,
        		"end": 2100,
        		"image": "the-boy-who.jpg"
        },
