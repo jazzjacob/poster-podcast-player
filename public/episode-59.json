@@ -1,0 +1,79 @@
+{
+  "episodeNumber": 59,
+  "url": "https://traffic.libsyn.com/secure/theposterboys/posterboys-059-2019inreview.mp3",
+  "localPath": "../podcasts/posterboys-059-2019inreview.mp3",
+  "title": "59: 2019 In Review",
+  "episodeImage": "https://static.libsyn.com/p/assets/e/2/4/9/e249a269bb9e191c/Poster-Boys-logo.jpg",
+  "timestamps": [
+    {
+      "start": 1794,
+      "end": 1911,
+      "images": [
+        {
+          "name": "last-black-man-1.jpg",
+          "description": ""
+        },
+        {
+          "name": "last-black-man-2.jpg",
+          "description": ""
+        }
+      ],
+      "groupDescription": ""
+    },
+
+    // JENNYS FÖRSLAG TILL DATAFÄLT
+    {
+      "id": "unique-id-12345",
+      "title": "Sample Group of Images",
+      "start": 1794,
+      "end": 1911,
+      "duration": 117,  // Optional field for easier calculation
+      "createdAt": "2024-06-26T12:00:00Z",
+      "updatedAt": "2024-06-26T12:00:00Z",
+      "tags": ["tag1", "tag2"],
+      "images": [
+        {
+          "name": "last-black-man-1.jpg",
+          "url": "https://example.com/images/last-black-man-1.jpg",
+          "thumbnailUrl": "https://example.com/images/thumbnails/last-black-man-1.jpg",
+          "description": "Description of the first image",
+          "altText": "Alternative text for the first image"
+        },
+        {
+          "name": "last-black-man-2.jpg",
+          "url": "https://example.com/images/last-black-man-2.jpg",
+          "thumbnailUrl": "https://example.com/images/thumbnails/last-black-man-2.jpg",
+          "description": "Description of the second image",
+          "altText": "Alternative text for the second image"
+        }
+      ],
+      "groupDescription": "A description for the group of images."
+    },
+
+   	{
+  		"start": 1912,
+  		"end": 1964,
+  		"image": "last-black-man-1.jpg"
+   	},
+    {
+    		"start": 1965,
+    		"end": 2049,
+    		"image": "serendipity.jpg"
+    },
+    {
+    		"start": 2050,
+    		"end": 2100,
+    		"image": "the-boy-who.jpg"
+    },
+   	{
+  		"start": 3000,
+  		"end": 3000,
+  		"image": "honey-boy-1.jpg"
+   	},
+   	{
+  		"start": 4000,
+  		"end": 5000,
+  		"image": "in-fabric-1.jpg"
+   	}
+  ]
+}
