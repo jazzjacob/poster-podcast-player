@@ -75,5 +75,31 @@
   		"end": 5000,
   		"image": "in-fabric-1.jpg"
    	}
+  ],
+  "uploadedImages": [
+    {
+      "id": "unique-id-1",
+      "image": "portrait-1.jpg",
+      "used": false,
+      "timestampIds": []
+    },
+    {
+      "id": "unique-id-2",
+      "image": "booksmart-1.jpg",
+      "used": false,
+      "timestampIds": []
+    },
+    {
+      "id": "unique-id-3",
+      "image": "the-dead-1.jpg",
+      "used": false,
+      "timestampIds": []
+    },
+    {
+      "id": "unique-id-4",
+      "image": "once-upn-1.jpg",
+      "used": false,
+      "timestampIds": []
+    },
   ]
 }

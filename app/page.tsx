@@ -6,6 +6,8 @@ import { useEffect, useState, useRef } from "react";
 import xml2js from "xml2js";
 import Image from "next/image";
 import PosterGallery from "./components/PosterGallery";
+import EditModePosterGallery from "./components/edit-mode/EditModePosterGallery";
+import EditModePosterView from "./components/edit-mode/EditModePosterView";
 
 interface Timestamp {
   start: number;
@@ -13,52 +15,54 @@ interface Timestamp {
   image: string;
 };
 
+interface UploadedImage {
+  id: string;
+  image: string;
+  used: boolean;
+  timestampIds: string[];
+};
+
 
 interface EpisodeData {
   episodeNumber: number;
   url: string;
   localPath: string;
+  podcastName: string,
   title: string;
   episodeImage: string;
   timestamps: Timestamp[];
+  uploadedImages: UploadedImage[];
 };
 
 const nullEpisode: EpisodeData = {
   episodeNumber: 0,
   url: "",
   localPath: "",
+  podcastName: "",
   title: "",
   episodeImage: "",
   timestamps: [],
+  uploadedImages: []
 };
 
 
 export default function Home() {
   const [rssFeed, setRssFeed] = useState(null);
-  const [displayImage, setDisplayImage] = useState(null);
   const [currentTime, setCurrentTime] = useState(-1);
-  const [previousStartTime, setPreviousStartTime] = useState(-1);
-  const [previousEndTime, setPreviousEndTime] = useState(-1);
   const [currentStartTime, setCurrentStartTime] = useState(-1);
   const [currentEndTime, setCurrentEndTime] = useState(-1);
   const [lowestTime, setLowestTime] = useState(-1);
   const [highestTime, setHighestTime] = useState(-1);
   const [currentImage, setCurrentImage] = useState<string>("");
   const [episodeData, setEpisodeData] = useState<EpisodeData>(nullEpisode);
-  const [images, setImages] = useState(null);
+  const [editMode, setEditMode] = useState(false);
+  const [currentImagesInEditMode, setCurrentImagesInEditMode] = useState<string[]>([]);
   // const loaded = usePreload(episodeData);
   // const loaded = usePreload(episodeData ? episodeData : []);
-  const loaded = true;
+  // const loaded = true;
 
   const audioRef = useRef<HTMLAudioElement>(null);
   const imageRef = useRef<HTMLImageElement>(null);
-
-  const assets = [
-    "/images/image1.jpg",
-    "/images/image2.jpg",
-    "/images/image3.jpg",
-    "/audio/sample.mp3",
-  ];
 
   useEffect(() => {
     async function fetchData() {
@@ -103,9 +107,6 @@ export default function Home() {
 
           // Check if currentTime is outside the currentStart and currentEnd times
           if (currentTime < currentStartTime || currentEndTime < currentTime) {
-            console.log(
-              "This should be logged every second that an image is not viewed",
-            );
 
             // Iterate timestamp list on every second
             episodeData.timestamps.every(
@@ -133,32 +134,7 @@ export default function Home() {
                 }
               },
             );
-
-            /*
-							episodeData.timestamps.forEach((timestamp, index) => {
-								console.log(timestamp);
-
-								// Check if there is a match in list
-								if (timestamp.start <= currentTime && currentTime <= timestamp.end) {
-									console.log("We have a match!");
-									console.log(`Timestamp start: ${timestamp.start} = current time: ${currentTime}`);
-									setCurrentImage(`/images/episode-59/${timestamp.image}`);
-									setCurrentStartTime(timestamp.start);
-									setCurrentEndTime(timestamp.end);
-								} else {
-									console.log("We do not have a match...");
-									setCurrentImage(null);
-									setCurrentEndTime(-1);
-									setCurrentStartTime(-1);
-								}
-							});
-							*/
           }
-          /*} else {
-  					setCurrentEndTime(-1);
-  					setCurrentStartTime(-1);
-  					setCurrentImage(null);
-  				}*/
         } else {
           console.error("No episode data saved.");
         }
@@ -183,15 +159,9 @@ export default function Home() {
 
     const handleTimeUpdate = () => {
       if (audioElement) {
-        // console.log(`Current time: ${Math.floor(audioElement.currentTime)}`);
         const audioElementTime = Math.floor(audioElement.currentTime);
-        // console.log(`AudioElementTime: ${audioElementTime}`);
-        // console.log(`State currentTime: ${currentTime}`)
         if (currentTime !== audioElementTime) {
-          // console.log("SETTING CURRENT TIME TO STATE...")
           setCurrentTime(audioElementTime);
-
-          // setCurrentTime(audioElementTime => audioElementTime);
         }
       }
     };
@@ -242,17 +212,24 @@ export default function Home() {
     }
   }, [episodeData]);
 
+  useEffect(() => {
+    console.log("Current images in edit mode")
+    console.log(currentImagesInEditMode)
+  }, [currentImagesInEditMode]);
+
   function timelineJump(addedTime: number) {
-    console.log("Added time");
-    if (addedTime < 0) {
-      console.log("LESS THAN ZERO")
-    }
-    console.log(addedTime)
     if (audioRef.current) {
-      //audioRef.current.currentTime = addedTime < 0 ? (currentTime - addedTime) : (currentTime + addedTime);
       audioRef.current.currentTime = currentTime + addedTime;
       audioRef.current.play();
     }
+  }
+
+  function addEditModeImage(image: string) {
+    setCurrentImagesInEditMode(prevItems => [...prevItems, image]);
+  }
+
+  function removeEditModeImage(image: string) {
+    setCurrentImagesInEditMode(currentImagesInEditMode.filter(img => img !== image)); // will return ['A', 'C']);
   }
 
   return (
@@ -260,47 +237,83 @@ export default function Home() {
       <p className={styles.greetingText}>
         Hello, this is <b>Poster Podcast Player</b>.
       </p>
-      <div>
-        <button onClick={() => playFromSpecificTime(62)}>Play from 1:02</button>
-        <div className={styles.exampleImageContainer}>
-          <p hidden>
-            The image will be blue for the first five seconds, gold for the next
-            five, and then be gray again.
-          </p>
-          <div hidden ref={imageRef} className={styles.exampleImage}></div>
-          <img
-            hidden
-            className={styles.imageStyle}
-            src="/images/episode-59/last-black-man-1.jpg"
-          />
-          {episodeData.timestamps.length > 0 ? (
-            <section>
-              <audio
-                ref={audioRef}
-                controls
-                src={episodeData.url}
-                preload="auto"
-              ></audio>
-              <button onClick={() => timelineJump(-5)}>Back 5 seconds</button>
-              <button onClick={() => timelineJump(5)}>Skip 5 seconds</button>
-              <div>
-                {currentImage ? (
-                  <img className={styles.imageStyle} src={currentImage} />
-                ) : (
-                  episodeData.episodeImage != "" ? (
-                      <img className={styles.imageStyle} src={episodeData.episodeImage} />
-                    ) : (
-                      <div className={styles.posterPlaceholder}></div>
-                    )
-                )}
-              </div>
-              <PosterGallery episodeData={episodeData} playFromSpecificTime={playFromSpecificTime} />
-            </section>
-          ) : (
-            <p>Loading...</p>
-          )}
-        </div>
+      <button onClick={() => setEditMode(!editMode)}>
+        {editMode ? "Turn off edit mode" : "Turn on edit mode"}
+      </button>
+      {episodeData.timestamps.length > 0 && (
+        <section className={styles.titleSection}>
+          <h2>{episodeData.title}</h2>
+          <p>{episodeData.podcastName}</p>
+        </section>
+      )}
+      <audio
+        ref={audioRef}
+        controls
+        src={episodeData.url}
+        preload="auto"
+      ></audio>
+      <div className={styles.audioButtonContainer}>
+        <button className={styles.skipButton} onClick={() => timelineJump(-5)}>Back 5 seconds</button>
+        <button className={styles.skipButton} onClick={() => timelineJump(5)}>Skip 5 seconds</button>
       </div>
+
+      {!editMode ? (
+        <div>
+          {/*<button onClick={() => playFromSpecificTime(62)}>Play from 1:02</button>*/}
+          <div className={styles.exampleImageContainer}>
+            <p hidden>
+              The image will be blue for the first five seconds, gold for the next
+              five, and then be gray again.
+            </p>
+            <div hidden ref={imageRef} className={styles.exampleImage}></div>
+            <img
+              hidden
+              className={styles.imageStyle}
+              src="/images/episode-59/last-black-man-1.jpg"
+            />
+            {episodeData.timestamps.length > 0 ? (
+              <section>
+                <div>
+                  {currentImage ? (
+                    <img className={styles.imageStyle} src={currentImage} />
+                  ) : (
+                    episodeData.episodeImage != "" ? (
+                        <img className={styles.imageStyle} src={episodeData.episodeImage} />
+                      ) : (
+                        <div className={styles.posterPlaceholder}></div>
+                      )
+                  )}
+                </div>
+                <PosterGallery episodeData={episodeData} playFromSpecificTime={playFromSpecificTime} />
+              </section>
+            ) : (
+              <p>Loading...</p>
+            )}
+          </div>
+        </div>
+      ) : (
+        <div className={styles.editModeContainer}>
+          <h2>EDIT MODE</h2>
+          <div>
+            <h3>Poster view</h3>
+            <EditModePosterView episodeData={episodeData} currentImages={currentImagesInEditMode} />
+          </div>
+          <div>
+            <h3>Timestamps</h3>
+          </div>
+          <div>
+            <h3>Gallery</h3>
+            <EditModePosterGallery
+              episodeData={episodeData}
+              setCurrentImagesInEditMode={setCurrentImagesInEditMode}
+              currentImages={currentImagesInEditMode}
+              addImage={addEditModeImage}
+              removeImage={removeEditModeImage}
+            />
+          </div>
+        </div>
+      )}
+
 
       {/*rssFeed && (
         <div>

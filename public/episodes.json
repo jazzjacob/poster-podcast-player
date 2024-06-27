@@ -4,6 +4,7 @@
       "episodeNumber": 59,
       "url": "https://traffic.libsyn.com/secure/theposterboys/posterboys-059-2019inreview.mp3",
       "localPath": "../podcasts/posterboys-059-2019inreview.mp3",
+      "podcastName": "The Poster Boys",
       "title": "59: 2019 In Review",
       "episodeImage": "https://static.libsyn.com/p/assets/e/2/4/9/e249a269bb9e191c/Poster-Boys-logo.jpg",
       "timestamps": [
@@ -37,6 +38,32 @@
       		"end": 5000,
       		"image": "in-fabric-1.jpg"
       	}
+      ],
+      "uploadedImages": [
+        {
+          "id": "unique-id-1",
+          "image": "portrait-1.jpg",
+          "used": false,
+          "timestampIds": []
+        },
+        {
+          "id": "unique-id-2",
+          "image": "booksmart-1.jpg",
+          "used": false,
+          "timestampIds": []
+        },
+        {
+          "id": "unique-id-3",
+          "image": "the-dead-1.jpg",
+          "used": false,
+          "timestampIds": []
+        },
+        {
+          "id": "unique-id-4",
+          "image": "once-upon-1.jpg",
+          "used": false,
+          "timestampIds": []
+        }
       ]
     },
     {

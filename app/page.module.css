@@ -45,3 +45,20 @@
 	width: 120px;
 	background-color: gray;
 }
+
+.titleSection {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+}
+
+.editModeContainer {
+    outline: 2px solid dodgerblue;
+}
+
+.skipButton {
+    width: fit-content;
+}
+
+.audioButtonContainer {
+    margin-bottom: 2rem;
+}
