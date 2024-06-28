@@ -1,9 +1,17 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+
+interface TimestampImage {
+  id: string;
+  image: string;
+  description: string;
+}
 
 interface Timestamp {
+  id: string;
   start: number;
   end: number;
   image: string;
+  images: TimestampImage[];
 };
 
 interface UploadedImage {
@@ -30,13 +38,18 @@ interface PosterGalleryProps {
   addImage: (image: string) => void;
   removeImage: (image: string) => void;
   currentImages: string[];
+  currentTime: number;
 }
 
 
 
 const EditModePosterGallery: React.FC<PosterGalleryProps> = (
-  { episodeData, setCurrentImagesInEditMode, addImage, removeImage, currentImages }
+  { episodeData, setCurrentImagesInEditMode, addImage, removeImage, currentImages, currentTime }
 ) => {
+  useEffect(() => {
+    console.log("current time inside edit mode gallery:");
+    console.log(currentTime);
+  }, [currentTime]);
 
   //const PosterGallery = ({episodeData, playFromSpecificTime}) => {
   //console.log("episode data from within PosterGallery");

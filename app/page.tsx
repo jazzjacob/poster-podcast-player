@@ -9,31 +9,16 @@ import PosterGallery from "./components/PosterGallery";
 import EditModePosterGallery from "./components/edit-mode/EditModePosterGallery";
 import EditModePosterView from "./components/edit-mode/EditModePosterView";
 
-interface Timestamp {
-  start: number;
-  end: number;
-  image: string;
+import { Timestamp,TimestampImage, EpisodeData, EditModeData } from "@/app/helpers/customTypes";
+
+// Default value for editModeData
+const defaultEditModeData: EditModeData = {
+  startTime: -1,
+  endTime: -1,
+  images: [],
 };
 
-interface UploadedImage {
-  id: string;
-  image: string;
-  used: boolean;
-  timestampIds: string[];
-};
-
-
-interface EpisodeData {
-  episodeNumber: number;
-  url: string;
-  localPath: string;
-  podcastName: string,
-  title: string;
-  episodeImage: string;
-  timestamps: Timestamp[];
-  uploadedImages: UploadedImage[];
-};
-
+// Default value for episodeData
 const nullEpisode: EpisodeData = {
   episodeNumber: 0,
   url: "",
@@ -44,7 +29,6 @@ const nullEpisode: EpisodeData = {
   timestamps: [],
   uploadedImages: []
 };
-
 
 export default function Home() {
   const [rssFeed, setRssFeed] = useState(null);
@@ -57,6 +41,8 @@ export default function Home() {
   const [episodeData, setEpisodeData] = useState<EpisodeData>(nullEpisode);
   const [editMode, setEditMode] = useState(false);
   const [currentImagesInEditMode, setCurrentImagesInEditMode] = useState<string[]>([]);
+  const [currentEditModeData, setCurrentEditModeData] = useState<EditModeData>(defaultEditModeData);
+  const [isUserEditing, setIsUserEditing] = useState(false);
   // const loaded = usePreload(episodeData);
   // const loaded = usePreload(episodeData ? episodeData : []);
   // const loaded = true;
@@ -125,7 +111,6 @@ export default function Home() {
                   // Return false to end every-loop
                   return false;
                 } else {
-                  console.log("We do not have a match...");
                   setCurrentImage("");
                   setCurrentEndTime(-1);
                   setCurrentStartTime(-1);
@@ -217,6 +202,11 @@ export default function Home() {
     console.log(currentImagesInEditMode)
   }, [currentImagesInEditMode]);
 
+  useEffect(() => {
+    console.log("Current edit mode data:");
+    console.log(currentEditModeData);
+  }, [currentEditModeData]);
+
   function timelineJump(addedTime: number) {
     if (audioRef.current) {
       audioRef.current.currentTime = currentTime + addedTime;
@@ -225,12 +215,82 @@ export default function Home() {
   }
 
   function addEditModeImage(image: string) {
+    if (currentEditModeData.images.length == 0) {
+      updateEditModeData('startTime', currentTime);
+    }
+    updateEditModeData('images', {
+      id: "123",
+      image: image,
+      description: ""
+    });
     setCurrentImagesInEditMode(prevItems => [...prevItems, image]);
   }
 
   function removeEditModeImage(image: string) {
     setCurrentImagesInEditMode(currentImagesInEditMode.filter(img => img !== image)); // will return ['A', 'C']);
+    removeEditModeData(image);
   }
+
+  // Saving new timestamp in Edit Mode
+  function handleSave() {
+    console.log("Gonna try and save new timestamp...");
+    if (currentEditModeData.startTime == currentTime) {
+      console.log("Did not save! Start time and end time can't be the same.");
+    } else if (currentTime < currentEditModeData.startTime) {
+      console.log("End time can't be less than start time");
+    } else if (currentEditModeData.startTime < currentTime) {
+      const newTimestamp: Timestamp = {
+        id: "123",
+        start: currentEditModeData.startTime,
+        end: currentTime,
+        images: [...currentEditModeData.images]
+      };
+      console.log(newTimestamp);
+      setCurrentEditModeData(defaultEditModeData);
+    } else {
+      console.error("Something went wrong with saving!");
+    }
+  }
+
+  // Function to update a specific field in the currentEditModeData object
+  const updateEditModeData = (field: keyof EditModeData, value: string | number | TimestampImage) => {
+    if (field == "images") {
+      // Type assertion to ensure value is of type TimestampImage
+      const newImage = value as TimestampImage;
+
+      setCurrentEditModeData(prevData => ({
+        ...prevData,
+        images: [...prevData.images, newImage],
+      }));
+    } else {
+      setCurrentEditModeData(prevData => ({ ...prevData, [field]: value }));
+    }
+  };
+
+  // Function to remove a tag from the tags array
+  const removeEditModeData = (image: string) => {
+    setCurrentEditModeData(prevData => ({
+      ...prevData,
+      images: prevData.images.filter(img => img.image !== image),
+    }));
+  };
+
+  const formatTime = (seconds: number): string => {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    return `${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
+  };
+
+  const handleInputChange = (field: 'hours' | 'minutes' | 'seconds', value: string) => {
+    setIsUserEditing(true);
+    const intValue = parseInt(value, 10);
+    if (!isNaN(intValue)) {
+      setTime(prevTime => ({
+        ...prevTime,
+        [field]: intValue
+      }));
+    }
+  };
 
   return (
     <main className={styles.main}>
@@ -261,16 +321,6 @@ export default function Home() {
         <div>
           {/*<button onClick={() => playFromSpecificTime(62)}>Play from 1:02</button>*/}
           <div className={styles.exampleImageContainer}>
-            <p hidden>
-              The image will be blue for the first five seconds, gold for the next
-              five, and then be gray again.
-            </p>
-            <div hidden ref={imageRef} className={styles.exampleImage}></div>
-            <img
-              hidden
-              className={styles.imageStyle}
-              src="/images/episode-59/last-black-man-1.jpg"
-            />
             {episodeData.timestamps.length > 0 ? (
               <section>
                 <div>
@@ -296,7 +346,61 @@ export default function Home() {
           <h2>EDIT MODE</h2>
           <div>
             <h3>Poster view</h3>
-            <EditModePosterView episodeData={episodeData} currentImages={currentImagesInEditMode} />
+            <EditModePosterView episodeData={episodeData} currentImages={currentEditModeData.images} />
+            <div>
+              <p>start time {currentEditModeData.images.length > 0 && "✅"}</p>
+              <label>
+                Hours:
+                <input
+                  className={styles.timeInput}
+                  type="number"
+                  value={currentEditModeData.images.length > 0 ? (
+                     Math.floor(currentEditModeData.startTime / 60 / 60) % 24
+                    ) : (
+                      Math.floor(currentTime / 60 / 60) % 24
+                    )
+                  }
+                  min="0"
+                  max="59"
+                />
+              </label>
+              <label>
+                Minutes:
+                <input
+                  className={styles.timeInput}
+                  type="number"
+                  value={currentEditModeData.images.length > 0 ? (
+                      Math.floor(currentEditModeData.startTime / 60) % 60
+                    ) : (
+                      Math.floor(currentTime / 60) % 60
+                    )
+                  }
+                  min="0"
+                  max="59"
+                />
+              </label>
+              <label>
+                Seconds:
+                <input
+                  className={styles.timeInput}
+                  type="number"
+                  value={currentEditModeData.images.length > 0 ? (
+                      currentEditModeData.startTime % 60
+                    ) : (
+                      currentTime % 60
+                    )
+                  }
+                  min="0"
+                  max="59"
+                />
+              </label>
+            </div>
+            <button
+              disabled={!(currentEditModeData.images.length > 0)}
+              onClick={handleSave}
+            >
+              Save
+            </button>
           </div>
           <div>
             <h3>Timestamps</h3>
@@ -309,6 +413,7 @@ export default function Home() {
               currentImages={currentImagesInEditMode}
               addImage={addEditModeImage}
               removeImage={removeEditModeImage}
+              currentTime={currentTime}
             />
           </div>
         </div>

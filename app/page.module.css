@@ -62,3 +62,21 @@
 .audioButtonContainer {
     margin-bottom: 2rem;
 }
+
+
+.timeInput {
+    height: 25px;
+    width: 50px;
+}
+
+/* Chrome, Safari, Edge, Opera */
+.timeInput::-webkit-outer-spin-button,
+.timeInput::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* Firefox */
+.timeInput[type=number] {
+    -moz-appearance: textfield;
+}
