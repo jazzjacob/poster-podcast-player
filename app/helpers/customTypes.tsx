@@ -33,3 +33,16 @@ export interface EditModeData {
   endTime: number,
   images: TimestampImage[],
 }
+
+export interface EditModeTime {
+  startTime: {
+    hours: number,
+    minutes: number,
+    seconds: number
+  },
+  endTime: {
+    hours: number,
+    minutes: number,
+    seconds: number
+  }
+}

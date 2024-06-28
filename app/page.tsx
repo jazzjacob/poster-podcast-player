@@ -5,11 +5,13 @@ import usePreload from "./hooks/usePreload";
 import { useEffect, useState, useRef } from "react";
 import xml2js from "xml2js";
 import Image from "next/image";
+
 import PosterGallery from "./components/PosterGallery";
 import EditModePosterGallery from "./components/edit-mode/EditModePosterGallery";
 import EditModePosterView from "./components/edit-mode/EditModePosterView";
+import EditModeTimeForm from "./components/edit-mode/EditModeTimeForm";
 
-import { Timestamp,TimestampImage, EpisodeData, EditModeData } from "@/app/helpers/customTypes";
+import { Timestamp, TimestampImage, EpisodeData, EditModeData, EditModeTime } from "@/app/helpers/customTypes";
 
 // Default value for editModeData
 const defaultEditModeData: EditModeData = {
@@ -30,6 +32,19 @@ const nullEpisode: EpisodeData = {
   uploadedImages: []
 };
 
+const defaultEditModeTime: EditModeTime = {
+  startTime: {
+    hours: -1,
+    minutes: -1,
+    seconds: -1
+  },
+  endTime: {
+    hours: -1,
+    minutes: -1,
+    seconds: -1
+  }
+};
+
 export default function Home() {
   const [rssFeed, setRssFeed] = useState(null);
   const [currentTime, setCurrentTime] = useState(-1);
@@ -42,7 +57,8 @@ export default function Home() {
   const [editMode, setEditMode] = useState(false);
   const [currentImagesInEditMode, setCurrentImagesInEditMode] = useState<string[]>([]);
   const [currentEditModeData, setCurrentEditModeData] = useState<EditModeData>(defaultEditModeData);
-  const [isUserEditing, setIsUserEditing] = useState(false);
+  const [userIsEditing, setUserIsEditing] = useState(false);
+  const [editModeTime, setEditModeTime] = useState(defaultEditModeTime);
   // const loaded = usePreload(episodeData);
   // const loaded = usePreload(episodeData ? episodeData : []);
   // const loaded = true;
@@ -82,6 +98,10 @@ export default function Home() {
       console.log(`Current startTime in state: ${currentStartTime}`);
       console.log(`Current endTime in state: ${currentEndTime}`);
       console.log(`Current image in state: ${currentImage}`);
+
+      if (!userIsEditing) {
+        updateEditModeTime(currentTime);
+      }
 
       if (imageElement) {
         if (episodeData) {
@@ -181,7 +201,6 @@ export default function Home() {
         const timestamps = data.episodes[0].timestamps;
         setLowestTime(data.episodes[0].timestamps[0].start);
         setHighestTime(timestamps[Object.keys(timestamps)[Object.keys(timestamps).length - 1]].end);
-
       } catch (error) {
         console.error("Failed to fetch episode data:", error);
       }
@@ -275,22 +294,20 @@ export default function Home() {
     }));
   };
 
-  const formatTime = (seconds: number): string => {
-    const minutes = Math.floor(seconds / 60);
-    const remainingSeconds = seconds % 60;
-    return `${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
-  };
-
-  const handleInputChange = (field: 'hours' | 'minutes' | 'seconds', value: string) => {
-    setIsUserEditing(true);
-    const intValue = parseInt(value, 10);
-    if (!isNaN(intValue)) {
-      setTime(prevTime => ({
-        ...prevTime,
-        [field]: intValue
-      }));
-    }
-  };
+  function updateEditModeTime(timeInSeconds: number) {
+    setEditModeTime({
+      startTime: {
+        hours: Math.floor(timeInSeconds / 60 / 60) % 24,
+        minutes: Math.floor(timeInSeconds / 60) % 60,
+        seconds: timeInSeconds % 60
+      },
+      endTime: {
+        hours: 0,
+        minutes: 0,
+        seconds: 0
+      }
+    });
+  }
 
   return (
     <main className={styles.main}>
@@ -349,51 +366,12 @@ export default function Home() {
             <EditModePosterView episodeData={episodeData} currentImages={currentEditModeData.images} />
             <div>
               <p>start time {currentEditModeData.images.length > 0 && "✅"}</p>
-              <label>
-                Hours:
-                <input
-                  className={styles.timeInput}
-                  type="number"
-                  value={currentEditModeData.images.length > 0 ? (
-                     Math.floor(currentEditModeData.startTime / 60 / 60) % 24
-                    ) : (
-                      Math.floor(currentTime / 60 / 60) % 24
-                    )
-                  }
-                  min="0"
-                  max="59"
-                />
-              </label>
-              <label>
-                Minutes:
-                <input
-                  className={styles.timeInput}
-                  type="number"
-                  value={currentEditModeData.images.length > 0 ? (
-                      Math.floor(currentEditModeData.startTime / 60) % 60
-                    ) : (
-                      Math.floor(currentTime / 60) % 60
-                    )
-                  }
-                  min="0"
-                  max="59"
-                />
-              </label>
-              <label>
-                Seconds:
-                <input
-                  className={styles.timeInput}
-                  type="number"
-                  value={currentEditModeData.images.length > 0 ? (
-                      currentEditModeData.startTime % 60
-                    ) : (
-                      currentTime % 60
-                    )
-                  }
-                  min="0"
-                  max="59"
-                />
-              </label>
+              <EditModeTimeForm
+                editModeTime={editModeTime}
+                currentTime={currentTime}
+                setEditModeTime={setEditModeTime}
+                setUserIsEditing={setUserIsEditing}
+              />
             </div>
             <button
               disabled={!(currentEditModeData.images.length > 0)}
