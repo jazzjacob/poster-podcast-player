@@ -53,6 +53,7 @@ export default function Home() {
   const [lowestTime, setLowestTime] = useState(-1);
   const [highestTime, setHighestTime] = useState(-1);
   const [currentImage, setCurrentImage] = useState<string>("");
+  const [currentImages, setCurrentImages] = useState<TimestampImage[]>([]);
   const [episodeData, setEpisodeData] = useState<EpisodeData>(nullEpisode);
   const [editMode, setEditMode] = useState(false);
   const [currentImagesInEditMode, setCurrentImagesInEditMode] = useState<string[]>([]);
@@ -90,6 +91,7 @@ export default function Home() {
     fetchData();
   }, []);
 
+  // EVERY SECOND AUDIO IS PLAYING
   useEffect(() => {
     const imageElement = imageRef.current;
 
@@ -103,7 +105,7 @@ export default function Home() {
         updateEditModeTime(currentTime);
       }
 
-      if (imageElement) {
+      if (true || imageElement) {
         if (episodeData) {
           console.log(`Lowest: ${lowestTime}`);
           console.log(`Highest: ${highestTime}`);
@@ -125,7 +127,10 @@ export default function Home() {
                   console.log(
                     `Timestamp start: ${timestamp.start} = current time: ${currentTime}`,
                   );
-                  setCurrentImage(`/images/episode-59/${timestamp.images[0].image}`);
+                  setCurrentImage(`/images/episode-59/${timestamp.images[0]}`);
+                  console.log("Images: ");
+                  console.log(timestamp.images);
+                  setCurrentImages(timestamp.images);
                   setCurrentStartTime(timestamp.start);
                   setCurrentEndTime(timestamp.end);
                   // Return false to end every-loop
@@ -134,6 +139,9 @@ export default function Home() {
                   setCurrentImage("");
                   setCurrentEndTime(-1);
                   setCurrentStartTime(-1);
+                  if (currentImages.length > 0) {
+                    setCurrentImages([]);
+                  }
                   // Return true to make every-loop keep iterating
                   return true;
                 }
@@ -142,17 +150,6 @@ export default function Home() {
           }
         } else {
           console.error("No episode data saved.");
-        }
-
-        if (currentTime <= 5) {
-          imageElement.classList.add(styles.blueExampleImage);
-        } else if (currentTime <= 10) {
-          console.log("Hello");
-          imageElement.className = "";
-          imageElement.classList.add(styles.goldExampleImage);
-        } else {
-          imageElement.className = "";
-          imageElement.classList.add(styles.exampleImage);
         }
       }
     }
@@ -341,7 +338,14 @@ export default function Home() {
             {episodeData.timestamps.length > 0 ? (
               <section>
                 <div>
-                  {currentImage ? (
+                  {
+                    currentImages.length > 0 ? (
+                      currentImages.map((image) => <img key={image.id} className={styles.imageStyle} src={`/images/episode-59/${image.image}`} />)
+                      ) : (
+                        <img className={styles.imageStyle} src={episodeData.episodeImage} />
+                      )
+                  }
+                  {/*currentImage ? (
                     <img className={styles.imageStyle} src={currentImage} />
                   ) : (
                     episodeData.episodeImage != "" ? (
@@ -349,7 +353,7 @@ export default function Home() {
                       ) : (
                         <div className={styles.posterPlaceholder}></div>
                       )
-                  )}
+                  )*/}
                 </div>
                 <PosterGallery episodeData={episodeData} playFromSpecificTime={playFromSpecificTime} />
               </section>

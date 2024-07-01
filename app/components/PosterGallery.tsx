@@ -32,8 +32,8 @@
                      key={`${timestampIndex}-${imageIndex}`}
                      onClick={() => handleImageClick(timestamp)}
                      style={{ height: '100px' }}
-                     src={`/images/episode-59/${image}`}
-                     alt={`Episode image ${image}`}
+                     src={`/images/episode-59/${image.image}`}
+                     alt={`Episode image ${image.image}`}
                    />
                  ))}
                </div>

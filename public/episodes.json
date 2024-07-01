@@ -12,33 +12,72 @@
       		"start": 1794,
       		"end": 1911,
       		"images": [
-            "last-black-man-2.jpg"
+            {
+              "id": "0",
+              "image": "last-black-man-2.jpg",
+              "description": ""
+            }
         ]
       	},
       	{
       		"start": 1912,
       		"end": 1964,
-      		"images": ["last-black-man-1.jpg"]
+      		"images": [
+            {
+              "id": "1",
+              "image": "last-black-man-1.jpg",
+              "description": ""
+            }
+        ]
       	},
        {
        		"start": 1965,
        		"end": 2049,
-       		"images": ["serendipity.jpg"]
+       		"images": [
+           {
+             "id": "2",
+             "image": "serendipity.jpg",
+             "description": ""
+           }
+         ]
        },
        {
        		"start": 2050,
        		"end": 2100,
-       		"images": ["the-boy-who.jpg"]
+       		"images": [
+           {
+             "id": "2",
+             "image": "the-boy-who.jpg",
+             "description": ""
+           },
+           {
+             "id": "3",
+             "image": "the-dead-1.jpg",
+             "description": ""
+           }
+         ]
        },
       	{
       		"start": 3000,
       		"end": 3000,
-      		"images": ["honey-boy-1.jpg"]
+      		"images": [
+            {
+              "id": "2",
+              "image": "honey-boy-1.jpg",
+              "description": ""
+            }
+          ]
       	},
       	{
       		"start": 4000,
       		"end": 5000,
-      		"images": ["in-fabric-1.jpg"]
+      		"images": [
+            {
+              "id": "2",
+              "image": "in-fabric-1.jpg",
+              "description": ""
+            }
+          ]
       	}
       ],
       "uploadedImages": [
