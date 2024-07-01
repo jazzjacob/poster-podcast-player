@@ -19,6 +19,7 @@ export interface UploadedImage {
 };
 
 export interface EpisodeData {
+  podcastName: string,
   episodeNumber: number;
   url: string;
   localPath: string;

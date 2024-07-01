@@ -11,32 +11,34 @@
       	{
       		"start": 1794,
       		"end": 1911,
-      		"image": "last-black-man-2.jpg"
+      		"images": [
+            "last-black-man-2.jpg"
+        ]
       	},
       	{
       		"start": 1912,
       		"end": 1964,
-      		"image": "last-black-man-1.jpg"
+      		"images": ["last-black-man-1.jpg"]
       	},
        {
        		"start": 1965,
        		"end": 2049,
-       		"image": "serendipity.jpg"
+       		"images": ["serendipity.jpg"]
        },
        {
        		"start": 2050,
        		"end": 2100,
-       		"image": "the-boy-who.jpg"
+       		"images": ["the-boy-who.jpg"]
        },
       	{
       		"start": 3000,
       		"end": 3000,
-      		"image": "honey-boy-1.jpg"
+      		"images": ["honey-boy-1.jpg"]
       	},
       	{
       		"start": 4000,
       		"end": 5000,
-      		"image": "in-fabric-1.jpg"
+      		"images": ["in-fabric-1.jpg"]
       	}
       ],
       "uploadedImages": [

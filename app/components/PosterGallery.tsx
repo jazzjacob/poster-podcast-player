@@ -1,20 +1,74 @@
-import React from 'react';
+ import React, {useEffect} from 'react';
+ import { EpisodeData, Timestamp } from '../helpers/customTypes';
+ import styles from "./PosterGallery.module.css"
+
+ interface PosterGalleryProps {
+   episodeData: EpisodeData;
+   playFromSpecificTime: (start: number) => void;
+ }
+
+ const PosterGallery: React.FC<PosterGalleryProps> = ({ episodeData, playFromSpecificTime }) => {
+   const handleImageClick = (timestamp: Timestamp) => {
+     console.log("Image is clicked");
+     console.log(timestamp);
+     playFromSpecificTime(timestamp.start);
+   };
+
+   useEffect(() => {
+     console.log("Episode data inside poster gallery");
+     console.log(episodeData);
+   }, []);
+
+   return (
+     <div>
+       <h2>This is the poster gallery</h2>
+       {episodeData && episodeData.timestamps && episodeData.timestamps.length > 0 ? (
+         <div className={styles.imagesContainer}>
+           {episodeData.timestamps.map((timestamp, timestampIndex) => (
+             timestamp.images && timestamp.images.length > 0 && (
+               <div key={timestampIndex}>
+                 {timestamp.images.map((image, imageIndex) => (
+                   <img
+                     key={`${timestampIndex}-${imageIndex}`}
+                     onClick={() => handleImageClick(timestamp)}
+                     style={{ height: '100px' }}
+                     src={`/images/episode-59/${image}`}
+                     alt={`Episode image ${image}`}
+                   />
+                 ))}
+               </div>
+             )
+           ))}
+         </div>
+       ) : (
+         <p>No images</p>
+       )}
+     </div>
+   );
+ };
+
+ export default PosterGallery;
 
 
-interface Timestamp {
-  start: number;
-  end: number;
-  image: string;
-};
 
-interface EpisodeData {
-  episodeNumber: number;
-  url: string;
-  localPath: string;
-  title: string;
-  episodeImage: string;
-  timestamps: Timestamp[];
-};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*import React from 'react';
+import { EpisodeData, Timestamp } from '../helpers/customTypes';
 
 
 interface PosterGalleryProps {
@@ -46,9 +100,9 @@ const PosterGallery: React.FC<PosterGalleryProps> = ({ episodeData, playFromSpec
           {
             episodeData.timestamps.map(
               (timestamp, index) => {
-                return (
-                  <img key={index} onClick={() => handleImageClick(timestamp)} style={{height: "100px"}} src={`/images/episode-59/${timestamp.image}`} />
-                )
+                return timestamp.images.map((image) => {
+                  return  <img key={index} onClick={() => handleImageClick(timestamp)} style={{height: "100px"}} src={`/images/episode-59/${image}`} />
+                })
               }
             )
           }
@@ -60,4 +114,4 @@ const PosterGallery: React.FC<PosterGalleryProps> = ({ episodeData, playFromSpec
   );
 }
 
-export default PosterGallery;
+export default PosterGallery;*/

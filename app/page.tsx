@@ -116,7 +116,7 @@ export default function Home() {
 
             // Iterate timestamp list on every second
             episodeData.timestamps.every(
-              (timestamp: { start: number; end: number; image: string }) => {
+              (timestamp: Timestamp) => {
                 if (
                   timestamp.start <= currentTime &&
                   currentTime <= timestamp.end
@@ -125,7 +125,7 @@ export default function Home() {
                   console.log(
                     `Timestamp start: ${timestamp.start} = current time: ${currentTime}`,
                   );
-                  setCurrentImage(`/images/episode-59/${timestamp.image}`);
+                  setCurrentImage(`/images/episode-59/${timestamp.images[0].image}`);
                   setCurrentStartTime(timestamp.start);
                   setCurrentEndTime(timestamp.end);
                   // Return false to end every-loop

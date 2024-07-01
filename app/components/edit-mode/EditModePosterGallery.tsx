@@ -1,38 +1,8 @@
 import React, { useEffect } from 'react';
-
-interface TimestampImage {
-  id: string;
-  image: string;
-  description: string;
-}
-
-interface Timestamp {
-  id: string;
-  start: number;
-  end: number;
-  image: string;
-  images: TimestampImage[];
-};
-
-interface UploadedImage {
-  id: string;
-  image: string;
-  used: boolean;
-  timestampIds: string[];
-};
-
-interface EpisodeData {
-  episodeNumber: number;
-  url: string;
-  localPath: string;
-  title: string;
-  episodeImage: string;
-  timestamps: Timestamp[];
-  uploadedImages: UploadedImage[];
-};
+import { TimestampImage, Timestamp, UploadedImage, EpisodeData } from '@/app/helpers/customTypes';
 
 
-interface PosterGalleryProps {
+interface EditModePosterGalleryProps {
   episodeData: EpisodeData;
   setCurrentImagesInEditMode: (image: string[]) => void;
   addImage: (image: string) => void;
@@ -43,7 +13,7 @@ interface PosterGalleryProps {
 
 
 
-const EditModePosterGallery: React.FC<PosterGalleryProps> = (
+const EditModePosterGallery: React.FC<EditModePosterGalleryProps> = (
   { episodeData, setCurrentImagesInEditMode, addImage, removeImage, currentImages, currentTime }
 ) => {
   useEffect(() => {
