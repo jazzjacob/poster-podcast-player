@@ -22,7 +22,7 @@ const EditModePosterView: React.FC<PosterGalleryProps> = (
       {currentImages && currentImages.length > 0 && (
         currentImages.map((image) => {
           return (
-            <img style={{height: "300px"}} key={image.image} src={`/images/episode-59/${image.image}`} />
+            <img alt="" style={{height: "300px"}} key={image.image} src={`/images/episode-59/${image.image}`} />
           )
         })
       )}

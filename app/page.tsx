@@ -117,7 +117,7 @@ export default function Home() {
         console.error("No episode data saved.");
       }
     }
-  }, [currentTime]);
+  }, [currentTime, currentEndTime, currentImages.length, currentStartTime, episodeData, highestTime, lowestTime, userIsEditing]);
 
   useEffect(() => {
     const audioElement = audioRef.current;
@@ -140,7 +140,7 @@ export default function Home() {
         audioElement.removeEventListener("timeupdate", handleTimeUpdate);
       }
     };
-  }, [audioRef.current, currentTime]);
+  }, [currentTime]);
 
   const playFromSpecificTime = (time: number) => {
     if (audioRef.current) {
@@ -314,9 +314,9 @@ export default function Home() {
               <section>
                 <div>
                   {currentImages.length > 0 ? (
-                    currentImages.map((image) => <img key={image.id} className={styles.imageStyle} src={`/images/episode-59/${image.image}`} />)
+                    currentImages.map((image) => <img alt={`${image.image}`} key={image.id} className={styles.imageStyle} src={`/images/episode-59/${image.image}`} />)
                   ) : (
-                    <img className={styles.imageStyle} src={episodeData.episodeImage} />
+                    <img alt={`${episodeData.episodeImage}`} className={styles.imageStyle} src={episodeData.episodeImage} />
                   )}
                 </div>
                 <PosterGallery episodeData={episodeData} playFromSpecificTime={playFromSpecificTime} />

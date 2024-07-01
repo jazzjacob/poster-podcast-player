@@ -1,4 +1,5 @@
  import React, {useEffect} from 'react';
+ import Image from 'next/image';
  import { EpisodeData, Timestamp } from '../helpers/customTypes';
  import styles from "./PosterGallery.module.css"
 
@@ -17,7 +18,7 @@
    useEffect(() => {
      console.log("Episode data inside poster gallery");
      console.log(episodeData);
-   }, []);
+   }, [episodeData]);
 
    return (
      <div>
@@ -29,9 +30,9 @@
                <div key={timestampIndex}>
                  {timestamp.images.map((image, imageIndex) => (
                    <img
-                     key={`${timestampIndex}-${imageIndex}`}
+                    key={`${timestampIndex}-${imageIndex}`}
+                    style={{ width: "100px" }}
                      onClick={() => handleImageClick(timestamp)}
-                     style={{ height: '100px' }}
                      src={`/images/episode-59/${image.image}`}
                      alt={`Episode image ${image.image}`}
                    />
