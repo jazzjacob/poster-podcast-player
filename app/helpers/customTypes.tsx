@@ -47,3 +47,39 @@ export interface EditModeTime {
     seconds: number
   }
 }
+
+
+
+
+// DEFAULT VALUES
+export const defaultEditModeTime: EditModeTime = {
+  startTime: {
+    hours: -1,
+    minutes: -1,
+    seconds: -1
+  },
+  endTime: {
+    hours: -1,
+    minutes: -1,
+    seconds: -1
+  }
+};
+
+// Default value for editModeData
+export const defaultEditModeData: EditModeData = {
+  startTime: -1,
+  endTime: -1,
+  images: [],
+};
+
+// Default value for episodeData
+export const nullEpisode: EpisodeData = {
+  episodeNumber: 0,
+  url: "",
+  localPath: "",
+  podcastName: "",
+  title: "",
+  episodeImage: "",
+  timestamps: [],
+  uploadedImages: []
+};

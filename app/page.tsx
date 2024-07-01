@@ -11,48 +11,15 @@ import EditModePosterGallery from "./components/edit-mode/EditModePosterGallery"
 import EditModePosterView from "./components/edit-mode/EditModePosterView";
 import EditModeTimeForm from "./components/edit-mode/EditModeTimeForm";
 
-import { Timestamp, TimestampImage, EpisodeData, EditModeData, EditModeTime } from "@/app/helpers/customTypes";
-
-// Default value for editModeData
-const defaultEditModeData: EditModeData = {
-  startTime: -1,
-  endTime: -1,
-  images: [],
-};
-
-// Default value for episodeData
-const nullEpisode: EpisodeData = {
-  episodeNumber: 0,
-  url: "",
-  localPath: "",
-  podcastName: "",
-  title: "",
-  episodeImage: "",
-  timestamps: [],
-  uploadedImages: []
-};
-
-const defaultEditModeTime: EditModeTime = {
-  startTime: {
-    hours: -1,
-    minutes: -1,
-    seconds: -1
-  },
-  endTime: {
-    hours: -1,
-    minutes: -1,
-    seconds: -1
-  }
-};
+import { Timestamp, TimestampImage, EpisodeData, EditModeData, EditModeTime, defaultEditModeTime, defaultEditModeData, nullEpisode } from "@/app/helpers/customTypes";
 
 export default function Home() {
-  const [rssFeed, setRssFeed] = useState(null);
+  // const [rssFeed, setRssFeed] = useState(null); Save for possible future use
   const [currentTime, setCurrentTime] = useState(-1);
   const [currentStartTime, setCurrentStartTime] = useState(-1);
   const [currentEndTime, setCurrentEndTime] = useState(-1);
   const [lowestTime, setLowestTime] = useState(-1);
   const [highestTime, setHighestTime] = useState(-1);
-  const [currentImage, setCurrentImage] = useState<string>("");
   const [currentImages, setCurrentImages] = useState<TimestampImage[]>([]);
   const [episodeData, setEpisodeData] = useState<EpisodeData>(nullEpisode);
   const [editMode, setEditMode] = useState(false);
@@ -65,8 +32,10 @@ export default function Home() {
   // const loaded = true;
 
   const audioRef = useRef<HTMLAudioElement>(null);
-  const imageRef = useRef<HTMLImageElement>(null);
 
+  // FETCH DATA FROM POSTER BOYS RSS FEED
+  // Save for possible future use
+  /*
   useEffect(() => {
     async function fetchData() {
       const url = "https://feeds.libsyn.com/61238/rss";
@@ -84,80 +53,74 @@ export default function Home() {
       });
 
       const items = parsedData.rss.channel[0].item;
-      setRssFeed(items);
-      console.log(items);
+      //setRssFeed(items);
+      //console.log(items);
     }
 
     fetchData();
   }, []);
+  */
 
-  // EVERY SECOND AUDIO IS PLAYING
+  // ON CURRENT TIME UPDATE - EVERY SECOND AUDIO IS PLAYING
   useEffect(() => {
-    const imageElement = imageRef.current;
 
     if (-1 < currentTime) {
       console.log(`Current time in state: ${currentTime}`);
       console.log(`Current startTime in state: ${currentStartTime}`);
       console.log(`Current endTime in state: ${currentEndTime}`);
-      console.log(`Current image in state: ${currentImage}`);
 
       if (!userIsEditing) {
         updateEditModeTime(currentTime);
       }
 
-      if (true || imageElement) {
-        if (episodeData) {
-          console.log(`Lowest: ${lowestTime}`);
-          console.log(`Highest: ${highestTime}`);
+      if (episodeData) {
+        console.log(`Lowest: ${lowestTime}`);
+        console.log(`Highest: ${highestTime}`);
 
-          // Don't iterate before the first or after the last image
-          //if (lowestTime <= currentTime && currentTime <= highestTime) {
+        // Don't iterate before the first or after the last image
+        //if (lowestTime <= currentTime && currentTime <= highestTime) {
 
-          // Check if currentTime is outside the currentStart and currentEnd times
-          if (currentTime < currentStartTime || currentEndTime < currentTime) {
+        // Check if currentTime is outside the currentStart and currentEnd times
+        if (currentTime < currentStartTime || currentEndTime < currentTime) {
 
-            // Iterate timestamp list on every second
-            episodeData.timestamps.every(
-              (timestamp: Timestamp) => {
-                if (
-                  timestamp.start <= currentTime &&
-                  currentTime <= timestamp.end
-                ) {
-                  console.log("We have a match!");
-                  console.log(
-                    `Timestamp start: ${timestamp.start} = current time: ${currentTime}`,
-                  );
-                  setCurrentImage(`/images/episode-59/${timestamp.images[0]}`);
-                  console.log("Images: ");
-                  console.log(timestamp.images);
-                  setCurrentImages(timestamp.images);
-                  setCurrentStartTime(timestamp.start);
-                  setCurrentEndTime(timestamp.end);
-                  // Return false to end every-loop
-                  return false;
-                } else {
-                  setCurrentImage("");
+          // Iterate timestamps on every second
+          episodeData.timestamps.every((timestamp: Timestamp) => {
+
+              // Check if currentTime matches timestamp in iteration
+              if (timestamp.start <= currentTime && currentTime <= timestamp.end) {
+                console.log(`Timestamp start: ${timestamp.start} = current time: ${currentTime}`);
+                setCurrentImages(timestamp.images);
+                setCurrentStartTime(timestamp.start);
+                setCurrentEndTime(timestamp.end);
+
+                // Return false to end every-loop
+                return false;
+
+              } else {
+                // CurrentTime does not match any timestamps
+                // SET CURRENT DATA TO DEFAULT VALUES
+                if (currentEndTime != -1 || currentStartTime != -1) {
                   setCurrentEndTime(-1);
                   setCurrentStartTime(-1);
-                  if (currentImages.length > 0) {
-                    setCurrentImages([]);
-                  }
-                  // Return true to make every-loop keep iterating
-                  return true;
                 }
-              },
-            );
-          }
-        } else {
-          console.error("No episode data saved.");
+                if (currentImages.length > 0) {
+                  setCurrentImages([]);
+                }
+
+                // Return true to make every-loop keep iterating
+                return true;
+              }
+            },
+          );
         }
+      } else {
+        console.error("No episode data saved.");
       }
     }
   }, [currentTime]);
 
   useEffect(() => {
     const audioElement = audioRef.current;
-    const imageElement = imageRef.current;
 
     const handleTimeUpdate = () => {
       if (audioElement) {
@@ -206,6 +169,11 @@ export default function Home() {
     fetchEpisodeData();
   }, []);
 
+
+
+
+  // USE EFFECTS FOR HELP IN DEVELOPMENT
+
   useEffect(() => {
     if (episodeData) {
       console.log("Episode data:");
@@ -222,6 +190,11 @@ export default function Home() {
     console.log("Current edit mode data:");
     console.log(currentEditModeData);
   }, [currentEditModeData]);
+
+
+
+
+  // FUNCTIONS
 
   function timelineJump(addedTime: number) {
     if (audioRef.current) {
@@ -247,7 +220,7 @@ export default function Home() {
     removeEditModeData(image);
   }
 
-  // Saving new timestamp in Edit Mode
+  // Save new timestamp in Edit Mode
   function handleSave() {
     console.log("Gonna try and save new timestamp...");
     if (currentEditModeData.startTime == currentTime) {
@@ -320,6 +293,7 @@ export default function Home() {
           <p>{episodeData.podcastName}</p>
         </section>
       )}
+
       <audio
         ref={audioRef}
         controls
@@ -331,6 +305,7 @@ export default function Home() {
         <button className={styles.skipButton} onClick={() => timelineJump(5)}>Skip 5 seconds</button>
       </div>
 
+      {/* NORMAL MODE */}
       {!editMode ? (
         <div>
           {/*<button onClick={() => playFromSpecificTime(62)}>Play from 1:02</button>*/}
@@ -338,22 +313,11 @@ export default function Home() {
             {episodeData.timestamps.length > 0 ? (
               <section>
                 <div>
-                  {
-                    currentImages.length > 0 ? (
-                      currentImages.map((image) => <img key={image.id} className={styles.imageStyle} src={`/images/episode-59/${image.image}`} />)
-                      ) : (
-                        <img className={styles.imageStyle} src={episodeData.episodeImage} />
-                      )
-                  }
-                  {/*currentImage ? (
-                    <img className={styles.imageStyle} src={currentImage} />
+                  {currentImages.length > 0 ? (
+                    currentImages.map((image) => <img key={image.id} className={styles.imageStyle} src={`/images/episode-59/${image.image}`} />)
                   ) : (
-                    episodeData.episodeImage != "" ? (
-                        <img className={styles.imageStyle} src={episodeData.episodeImage} />
-                      ) : (
-                        <div className={styles.posterPlaceholder}></div>
-                      )
-                  )*/}
+                    <img className={styles.imageStyle} src={episodeData.episodeImage} />
+                  )}
                 </div>
                 <PosterGallery episodeData={episodeData} playFromSpecificTime={playFromSpecificTime} />
               </section>
@@ -363,24 +327,18 @@ export default function Home() {
           </div>
         </div>
       ) : (
+
         <div className={styles.editModeContainer}>
+          {/* EDIT MODE */}
           <h2>EDIT MODE</h2>
           <div>
             <h3>Poster view</h3>
             <EditModePosterView episodeData={episodeData} currentImages={currentEditModeData.images} />
             <div>
-              <p>start time {currentEditModeData.images.length > 0 && "✅"}</p>
-              <EditModeTimeForm
-                editModeTime={editModeTime}
-                currentTime={currentTime}
-                setEditModeTime={setEditModeTime}
-                setUserIsEditing={setUserIsEditing}
-              />
+              <p>Start time {currentEditModeData.images.length > 0 && "✅"}</p>
+              <EditModeTimeForm editModeTime={editModeTime} currentTime={currentTime} setEditModeTime={setEditModeTime} setUserIsEditing={setUserIsEditing} />
             </div>
-            <button
-              disabled={!(currentEditModeData.images.length > 0)}
-              onClick={handleSave}
-            >
+            <button disabled={!(currentEditModeData.images.length > 0)} onClick={handleSave}>
               Save
             </button>
           </div>
@@ -389,37 +347,10 @@ export default function Home() {
           </div>
           <div>
             <h3>Gallery</h3>
-            <EditModePosterGallery
-              episodeData={episodeData}
-              setCurrentImagesInEditMode={setCurrentImagesInEditMode}
-              currentImages={currentImagesInEditMode}
-              addImage={addEditModeImage}
-              removeImage={removeEditModeImage}
-              currentTime={currentTime}
-            />
+            <EditModePosterGallery episodeData={episodeData} setCurrentImagesInEditMode={setCurrentImagesInEditMode} currentImages={currentImagesInEditMode} addImage={addEditModeImage} removeImage={removeEditModeImage} currentTime={currentTime} />
           </div>
         </div>
       )}
-
-
-      {/*rssFeed && (
-        <div>
-          <p>{rssFeed[0].title}</p>
-          <audio
-            ref={audioRef}
-            controls
-            src={rssFeed[0].enclosure[0].$.url}
-          ></audio>
-          <button onClick={handlePlayFromSpecificTime}>Play from 1:02</button>
-          <div className={styles.exampleImageContainer}>
-            <p>
-              The image will be blue for the first five seconds, gold for the
-              next five, and then be gray again.
-            </p>
-            <div ref={imageRef} className={styles.exampleImage}></div>
-          </div>
-        </div>
-      )*/}
     </main>
   );
 }
