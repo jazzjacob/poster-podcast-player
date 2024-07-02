@@ -1,0 +1,21 @@
+.timestampBox {
+    background-color: lightgray;
+    width: fit-content;
+    height: fit-content;
+    margin: 1rem;
+    padding: 10px;
+    cursor: pointer;
+}
+
+.image {
+    height: 50px;
+    width: 50px;
+    object-fit: contain;
+}
+
+.startEndContainer {
+    display: flex;
+    font-size: 10px;
+    width: 100%;
+    justify-content: space-around;
+}

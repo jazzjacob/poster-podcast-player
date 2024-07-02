@@ -10,6 +10,7 @@ import PosterGallery from "./components/PosterGallery";
 import EditModePosterGallery from "./components/edit-mode/EditModePosterGallery";
 import EditModePosterView from "./components/edit-mode/EditModePosterView";
 import EditModeTimeForm from "./components/edit-mode/EditModeTimeForm";
+import EditModeTimestamps from "./components/edit-mode/EditModeTimestamps";
 
 import { Timestamp, TimestampImage, EpisodeData, EditModeData, EditModeTime, defaultEditModeTime, defaultEditModeData, nullEpisode } from "@/app/helpers/customTypes";
 
@@ -383,6 +384,7 @@ export default function Home() {
           </div>
           <div>
             <h3>Timestamps</h3>
+            <EditModeTimestamps />
           </div>
           <div>
             <h3>Gallery</h3>
