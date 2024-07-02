@@ -18,8 +18,6 @@ export default function Home() {
   const [currentTime, setCurrentTime] = useState(-1);
   const [currentStartTime, setCurrentStartTime] = useState(-1);
   const [currentEndTime, setCurrentEndTime] = useState(-1);
-  const [lowestTime, setLowestTime] = useState(-1);
-  const [highestTime, setHighestTime] = useState(-1);
   const [currentImages, setCurrentImages] = useState<TimestampImage[]>([]);
   const [episodeData, setEpisodeData] = useState<EpisodeData>(nullEpisode);
   const [editMode, setEditMode] = useState(false);
@@ -74,17 +72,12 @@ export default function Home() {
       }
 
       if (episodeData) {
-        console.log(`Lowest: ${lowestTime}`);
-        console.log(`Highest: ${highestTime}`);
-
-        // Don't iterate before the first or after the last image
-        //if (lowestTime <= currentTime && currentTime <= highestTime) {
-
         // Check if currentTime is outside the currentStart and currentEnd times
         if (currentTime < currentStartTime || currentEndTime < currentTime) {
 
           // Iterate timestamps on every second
           episodeData.timestamps.every((timestamp: Timestamp) => {
+            console.log("Iterating timestamps every second");
 
               // Check if currentTime matches timestamp in iteration
               if (timestamp.start <= currentTime && currentTime <= timestamp.end) {
@@ -99,12 +92,12 @@ export default function Home() {
               } else {
                 // CurrentTime does not match any timestamps
                 // SET CURRENT DATA TO DEFAULT VALUES
-                if (currentEndTime != -1 || currentStartTime != -1) {
+                if (currentEndTime != -1 || currentStartTime != -1 || currentImages.length > 0) {
+                  console.log("ReSetting end and start times")
                   setCurrentEndTime(-1);
                   setCurrentStartTime(-1);
-                }
-                if (currentImages.length > 0) {
                   setCurrentImages([]);
+                  return false;
                 }
 
                 // Return true to make every-loop keep iterating
@@ -117,7 +110,7 @@ export default function Home() {
         console.error("No episode data saved.");
       }
     }
-  }, [currentTime, currentEndTime, currentImages.length, currentStartTime, episodeData, highestTime, lowestTime, userIsEditing]);
+  }, [currentTime, currentEndTime, currentImages.length, currentStartTime, episodeData, userIsEditing]);
 
   useEffect(() => {
     const audioElement = audioRef.current;
@@ -158,9 +151,6 @@ export default function Home() {
         console.log(data);
         setEpisodeData(data.episodes[0]);
 
-        const timestamps = data.episodes[0].timestamps;
-        setLowestTime(data.episodes[0].timestamps[0].start);
-        setHighestTime(timestamps[Object.keys(timestamps)[Object.keys(timestamps).length - 1]].end);
       } catch (error) {
         console.error("Failed to fetch episode data:", error);
       }
