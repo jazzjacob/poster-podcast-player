@@ -1,10 +1,10 @@
 "use client"; // This is a client component 👈🏽
 
 import styles from "./page.module.css";
-import usePreload from "./hooks/usePreload";
+// import usePreload from "./hooks/usePreload";
 import { useEffect, useState, useRef } from "react";
-import xml2js from "xml2js";
-import Image from "next/image";
+//import xml2js from "xml2js";
+//import Image from "next/image";
 
 import PosterGallery from "./components/PosterGallery";
 import EditModePosterGallery from "./components/edit-mode/EditModePosterGallery";
@@ -24,7 +24,6 @@ export default function Home() {
   const [currentEditModeData, setCurrentEditModeData] = useState<EditModeData>(defaultEditModeData);
   const [userIsEditing, setUserIsEditing] = useState(false);
   const [editModeTime, setEditModeTime] = useState(defaultEditModeTime);
-  const [editModeStartTimeSaved, setEditModeStartTimeSaved] = useState(false);
   // const loaded = usePreload(episodeData);
   // const loaded = usePreload(episodeData ? episodeData : []);
   // const loaded = true;
@@ -176,18 +175,18 @@ export default function Home() {
     console.log(currentEditModeData.images)
 
     if (currentEditModeData.images.length > 0) {
-      if (!editModeStartTimeSaved) {
+      if (!currentEditModeData.startTimeSaved) {
         console.log("EDIT MODE START TIME SHOULD BE SAVED NOW");
-        setEditModeStartTimeSaved(true);
+        updateEditModeData("startTimeSaved", true);
       }
     } else {
-      if (editModeStartTimeSaved) {
+      if (currentEditModeData.startTimeSaved) {
         console.log("EDIT MODE START TIME SHOULD BE RESETTED NOW (STARTS TICKING AGAIN)");
-        setEditModeStartTimeSaved(false);
+        updateEditModeData("startTimeSaved", false);
       }
     }
 
-  }, [currentEditModeData.images]);
+  }, [currentEditModeData.images, currentEditModeData.startTimeSaved]);
 
   useEffect(() => {
     console.log("Current edit mode data:");
@@ -249,7 +248,7 @@ export default function Home() {
   }
 
   // Function to update a specific field in the currentEditModeData object
-  const updateEditModeData = (field: keyof EditModeData, value: string | number | TimestampImage) => {
+  const updateEditModeData = (field: keyof EditModeData, value: string | number | TimestampImage | boolean) => {
     if (field == "images") {
       // Type assertion to ensure value is of type TimestampImage
       const newImage = value as TimestampImage;

@@ -25,14 +25,15 @@ export interface EpisodeData {
   localPath: string;
   title: string;
   episodeImage: string;
-  timestamps: Timestamp[];
-  uploadedImages: UploadedImage[];
+  timestamps: Timestamp[],
+  uploadedImages: UploadedImage[],
 };
 
 export interface EditModeData {
   startTime: number,
   endTime: number,
   images: TimestampImage[],
+  startTimeSaved: boolean
 }
 
 export interface EditModeTime {
@@ -70,6 +71,7 @@ export const defaultEditModeData: EditModeData = {
   startTime: -1,
   endTime: -1,
   images: [],
+  startTimeSaved: false
 };
 
 // Default value for episodeData
