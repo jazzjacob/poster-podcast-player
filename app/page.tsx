@@ -248,17 +248,11 @@ export default function Home() {
     const startTime = convertEditModeTimeToSeconds(editModeTime.startTime);
     const endTime = convertEditModeTimeToSeconds(editModeTime.endTime);
 
-    console.log("Gonna try and save new timestamp...");
-    console.log("Starttime: ");
-    console.log(startTime);
-    console.log("EndTime: ");
-    console.log(endTime);
     if (startTime == endTime) {
       console.log("Did not save! Start time and end time can't be the same.");
     } else if (startTime > endTime) {
       console.log("End time can't be less than start time");
     } else if (startTime < endTime) {
-
 
       // SAVE NEW TIMESTAMP
       const newTimestamp: Timestamp = {
@@ -375,8 +369,8 @@ export default function Home() {
             <h3>Poster view</h3>
             <EditModePosterView episodeData={episodeData} currentImages={currentEditModeData.images} />
             <div>
-              <EditModeTimeForm formType='startTime' currentEditModeData={currentEditModeData} editModeTime={editModeTime} currentTime={currentTime} setEditModeTime={setEditModeTime} setUserIsEditing={setUserIsEditing} />
-              <EditModeTimeForm formType='endTime' currentEditModeData={currentEditModeData} editModeTime={editModeTime} currentTime={currentTime} setEditModeTime={setEditModeTime} setUserIsEditing={setUserIsEditing} />
+              <EditModeTimeForm timeType='startTime' currentEditModeData={currentEditModeData} editModeTime={editModeTime} currentTime={currentTime} setEditModeTime={setEditModeTime} setUserIsEditing={setUserIsEditing} />
+              <EditModeTimeForm timeType='endTime' currentEditModeData={currentEditModeData} editModeTime={editModeTime} currentTime={currentTime} setEditModeTime={setEditModeTime} setUserIsEditing={setUserIsEditing} />
             </div>
             <div className={styles.editModeButtonContainer}>
               <button disabled={!(currentEditModeData.images.length > 0)} onClick={handleSave}>
