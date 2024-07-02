@@ -68,6 +68,8 @@ export default function Home() {
 
       if (!currentEditModeData.startTimeSaved) {
         updateEditModeTime('startTime', currentTime);
+      } else {
+        updateEditModeTime('endTime', currentTime);
       }
 
       if (episodeData) {
@@ -134,13 +136,6 @@ export default function Home() {
     };
   }, [currentTime]);
 
-  const playFromSpecificTime = (time: number) => {
-    if (audioRef.current) {
-      audioRef.current.currentTime = time;
-      audioRef.current.play();
-    }
-  };
-
   useEffect(() => {
     async function fetchEpisodeData() {
       try {
@@ -178,12 +173,14 @@ export default function Home() {
       if (!currentEditModeData.startTimeSaved) {
         console.log("EDIT MODE START TIME SHOULD BE SAVED NOW");
         updateEditModeData("startTimeSaved", true);
+        updateEditModeTime('endTime', currentTime);
       }
     } else {
       if (currentEditModeData.startTimeSaved) {
         console.log("EDIT MODE START TIME SHOULD BE RESETTED NOW (STARTS TICKING AGAIN)");
         updateEditModeData("startTimeSaved", false);
         updateEditModeTime('startTime', currentTime);
+        updateEditModeTime('endTime', -1);
       }
     }
 
@@ -204,6 +201,21 @@ export default function Home() {
 
 
   // FUNCTIONS
+
+  const playFromSpecificTime = (time: number) => {
+    if (audioRef.current) {
+      audioRef.current.currentTime = time;
+      audioRef.current.play();
+    }
+  };
+
+  function pauseAudio() {
+    if (audioRef.current) {
+      audioRef.current.pause();
+    } else {
+      console.error("Can not pause audio: Audioref not found!");
+    }
+  }
 
   function convertEditModeTimeToSeconds(time: {hours: number, minutes: number, seconds: number}) {
     return (time.hours * 60 * 60) + (time.minutes * 60) + (time.seconds);
@@ -250,6 +262,7 @@ export default function Home() {
         images: [...currentEditModeData.images]
       };
       console.log(newTimestamp);
+      pauseAudio();
       // Real save should happen here... only logging for now...
 
 
@@ -258,6 +271,7 @@ export default function Home() {
       // Reset relevant states
       setCurrentEditModeData(defaultEditModeData);
       updateEditModeTime('startTime', currentTime);
+      updateEditModeTime('endTime', -1);
       /*setCurrentImagesInEditMode([]);*/
     } else {
       console.error("Something went wrong with saving!");
@@ -354,8 +368,8 @@ export default function Home() {
             <h3>Poster view</h3>
             <EditModePosterView episodeData={episodeData} currentImages={currentEditModeData.images} />
             <div>
-              <p>Start time {currentEditModeData.images.length > 0 && "✅"}</p>
-              <EditModeTimeForm editModeTime={editModeTime} currentTime={currentTime} setEditModeTime={setEditModeTime} setUserIsEditing={setUserIsEditing} />
+              <EditModeTimeForm formType='startTime' currentEditModeData={currentEditModeData} editModeTime={editModeTime} currentTime={currentTime} setEditModeTime={setEditModeTime} setUserIsEditing={setUserIsEditing} />
+              <EditModeTimeForm formType='endTime' currentEditModeData={currentEditModeData} editModeTime={editModeTime} currentTime={currentTime} setEditModeTime={setEditModeTime} setUserIsEditing={setUserIsEditing} />
             </div>
             <div className={styles.editModeButtonContainer}>
               <button disabled={!(currentEditModeData.images.length > 0)} onClick={handleSave}>

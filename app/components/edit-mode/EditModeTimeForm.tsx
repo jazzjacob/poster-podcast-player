@@ -1,16 +1,19 @@
 import React from 'react';
-import { TimestampImage, EpisodeData, EditModeTime } from '@/app/helpers/customTypes';
+import { TimestampImage, EpisodeData, EditModeTime, EditModeData } from '@/app/helpers/customTypes';
 import styles from "./EditModeTimeForm.module.css";
 
+type FormType = 'startTime' | 'endTime';
 
 interface EditModeTimeFormProps {
   editModeTime: EditModeTime,
   setEditModeTime: React.Dispatch<React.SetStateAction<EditModeTime>>,
   currentTime: number,
   setUserIsEditing: (userIsEditing: boolean) => void,
+  formType: FormType,
+  currentEditModeData: EditModeData
 }
 
-const EditModeTimeForm: React.FC<EditModeTimeFormProps> = ({ editModeTime, setEditModeTime, currentTime, setUserIsEditing }) => {
+const EditModeTimeForm: React.FC<EditModeTimeFormProps> = ({ formType, editModeTime, setEditModeTime, currentTime, setUserIsEditing, currentEditModeData }) => {
 
   const handleInputChange = (
       timeType: 'startTime' | 'endTime',
@@ -32,41 +35,49 @@ const EditModeTimeForm: React.FC<EditModeTimeFormProps> = ({ editModeTime, setEd
       }
     };
 
+  const hoursValue = formType === 'startTime' ? editModeTime.startTime.hours : editModeTime.endTime.hours;
+  const minutesValue = formType === 'startTime' ? editModeTime.startTime.minutes : editModeTime.endTime.minutes;
+  const secondsValue = formType === 'startTime' ? editModeTime.startTime.seconds : editModeTime.endTime.seconds;
+
   return (
-    <div>
-      <label>
-        Hours:
-        <input
-          className={styles.timeInput}
-          type="number"
-          value={editModeTime.startTime.hours}
-          onChange={(e) => handleInputChange('startTime', 'hours', e.target.value)}
-          min={0}
-          max={99}
-        />
-      </label>
-      <label>
-        Minutes:
-        <input
-          className={styles.timeInput}
-          type="number"
-          value={editModeTime.startTime.minutes}
-          onChange={(e) => handleInputChange('startTime', 'minutes', e.target.value)}
-          min={0}
-          max={59}
-        />
-      </label>
-      <label>
-        Seconds:
-        <input
-          className={styles.timeInput}
-          type="number"
-          value={editModeTime.startTime.seconds}
-          onChange={(e) => handleInputChange('startTime', 'seconds', e.target.value)}
-          min={0}
-          max={59}
-        />
-      </label>
+    <div className={styles.container}>
+        <p>{formType == 'startTime'?  "Start time" : "End time" }:</p>
+        <label>
+          Hours:
+          <input
+            disabled={formType == 'endTime' && !currentEditModeData.startTimeSaved}
+            className={styles.timeInput}
+            type="number"
+            value={hoursValue}
+            onChange={(e) => handleInputChange(formType, 'hours', e.target.value)}
+            min={0}
+            max={99}
+          />
+        </label>
+        <label>
+          Minutes:
+          <input
+            disabled={formType == 'endTime' && !currentEditModeData.startTimeSaved}
+            className={styles.timeInput}
+            type="number"
+            value={minutesValue}
+            onChange={(e) => handleInputChange(formType, 'minutes', e.target.value)}
+            min={0}
+            max={59}
+          />
+        </label>
+        <label>
+          Seconds:
+          <input
+            disabled={formType == 'endTime' && !currentEditModeData.startTimeSaved}
+            className={styles.timeInput}
+            type="number"
+            value={secondsValue}
+            onChange={(e) => handleInputChange(formType, 'seconds', e.target.value)}
+            min={0}
+            max={59}
+          />
+        </label>
     </div>
   );
 }

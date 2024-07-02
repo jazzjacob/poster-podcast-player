@@ -16,3 +16,7 @@
 .timeInput[type=number] {
     -moz-appearance: textfield;
 }
+
+.container {
+    margin: 1rem;
+}
