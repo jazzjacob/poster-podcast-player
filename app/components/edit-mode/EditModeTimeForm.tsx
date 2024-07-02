@@ -22,7 +22,7 @@ const EditModeTimeForm: React.FC<EditModeTimeFormProps> = ({ timeType, editModeT
     ) => {
       setUserIsEditing(true);
       // Allow empty input for user convenience, and handle it appropriately
-      if (value === "") {
+      if (value === "" || value.length <= 2) {
         setEditModeTime(prevState => ({
           ...prevState,
           [timeType]: {
@@ -32,7 +32,11 @@ const EditModeTimeForm: React.FC<EditModeTimeFormProps> = ({ timeType, editModeT
         }));
         return;
       }
-      const intValue = parseInt(value, 10);
+
+      // Truncate to two digits
+      const truncatedValue = value.slice(0, 2);
+      const intValue = parseInt(truncatedValue, 10);
+
       console.log(intValue);
 
       if (!isNaN(intValue)) {
@@ -48,15 +52,27 @@ const EditModeTimeForm: React.FC<EditModeTimeFormProps> = ({ timeType, editModeT
 
   const handleInputBlur = (
     timeType: 'startTime' | 'endTime',
-    field: 'hours' | 'minutes' | 'seconds'
+    field: 'hours' | 'minutes' | 'seconds',
+    maxValue: number,
   ) => {
-    setEditModeTime(prevState => ({
-      ...prevState,
-      [timeType]: {
-        ...prevState[timeType],
-        [field]: prevState[timeType][field] === '' ? 0 : prevState[timeType][field]
-      }
-    }));
+    setEditModeTime(prevState => {
+      let value = parseInt(prevState[timeType][field], 10);
+      if (isNaN(value) || value === "") value = 0;
+       if (value > maxValue) value = maxValue;
+       return {
+        ...prevState,
+        [timeType]: {
+          ...prevState[timeType],
+          [field]: value
+        }
+      };
+    });
+  };
+
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter') {
+      (event.target as HTMLInputElement).blur();
+    }
   };
 
   const hoursValue = timeType === 'startTime' ? editModeTime.startTime.hours : editModeTime.endTime.hours;
@@ -72,9 +88,10 @@ const EditModeTimeForm: React.FC<EditModeTimeFormProps> = ({ timeType, editModeT
             disabled={timeType == 'endTime' && !currentEditModeData.startTimeSaved}
             className={styles.timeInput}
             type="number"
-            value={hoursValue}
+            value={hoursValue !== undefined ? hoursValue : ''}
             onChange={(e) => handleInputChange(timeType, 'hours', e.target.value)}
-            onBlur={() => handleInputBlur(timeType, 'hours')}
+            onBlur={() => handleInputBlur(timeType, 'hours', 99)}
+            onKeyDown={handleKeyDown}
             min={0}
             max={99}
           />
@@ -85,9 +102,10 @@ const EditModeTimeForm: React.FC<EditModeTimeFormProps> = ({ timeType, editModeT
             disabled={timeType == 'endTime' && !currentEditModeData.startTimeSaved}
             className={styles.timeInput}
             type="number"
-            value={minutesValue}
+            value={minutesValue !== undefined ? minutesValue : ''}
             onChange={(e) => handleInputChange(timeType, 'minutes', e.target.value)}
-            onBlur={() => handleInputBlur(timeType, 'minutes')}
+            onBlur={() => handleInputBlur(timeType, 'minutes', 59)}
+            onKeyDown={handleKeyDown}
             min={0}
             max={59}
           />
@@ -98,9 +116,10 @@ const EditModeTimeForm: React.FC<EditModeTimeFormProps> = ({ timeType, editModeT
             disabled={timeType == 'endTime' && !currentEditModeData.startTimeSaved}
             className={styles.timeInput}
             type="number"
-            value={secondsValue}
+            value={secondsValue !== undefined ? secondsValue : ''}
             onChange={(e) => handleInputChange(timeType, 'seconds', e.target.value)}
-            onBlur={() => handleInputBlur(timeType, 'seconds')}
+            onBlur={() => handleInputBlur(timeType, 'seconds', 59)}
+            onKeyDown={handleKeyDown}
             min={0}
             max={59}
           />
