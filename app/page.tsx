@@ -66,8 +66,8 @@ export default function Home() {
       console.log(`Current startTime in state: ${currentStartTime}`);
       console.log(`Current endTime in state: ${currentEndTime}`);
 
-      if (!userIsEditing) {
-        updateEditModeTime(currentTime);
+      if (!currentEditModeData.startTimeSaved) {
+        updateEditModeTime('startTime', currentTime);
       }
 
       if (episodeData) {
@@ -183,20 +183,31 @@ export default function Home() {
       if (currentEditModeData.startTimeSaved) {
         console.log("EDIT MODE START TIME SHOULD BE RESETTED NOW (STARTS TICKING AGAIN)");
         updateEditModeData("startTimeSaved", false);
+        updateEditModeTime('startTime', currentTime);
       }
     }
 
-  }, [currentEditModeData.images, currentEditModeData.startTimeSaved]);
+  }, [currentEditModeData.images, currentEditModeData.startTimeSaved, currentTime]);
 
   useEffect(() => {
     console.log("Current edit mode data:");
     console.log(currentEditModeData);
   }, [currentEditModeData]);
 
+  useEffect(() => {
+    console.log("editModeTime: ");
+    console.log(editModeTime);
+
+  }, [editModeTime]);
+
 
 
 
   // FUNCTIONS
+
+  function convertEditModeTimeToSeconds(time: {hours: number, minutes: number, seconds: number}) {
+    return (time.hours * 60 * 60) + (time.minutes * 60) + (time.seconds);
+  }
 
   function timelineJump(addedTime: number) {
     if (audioRef.current) {
@@ -229,18 +240,24 @@ export default function Home() {
       console.log("End time can't be less than start time");
     } else if (currentEditModeData.startTime < currentTime) {
 
+
       // SAVE NEW TIMESTAMP
       const newTimestamp: Timestamp = {
         id: "123",
-        start: currentEditModeData.startTime,
+        start: convertEditModeTimeToSeconds(editModeTime.startTime),
+        //start: currentEditModeData.startTime,
         end: currentTime,
         images: [...currentEditModeData.images]
       };
       console.log(newTimestamp);
       // Real save should happen here... only logging for now...
 
+
+      console.log(convertEditModeTimeToSeconds(editModeTime.startTime));
+
       // Reset relevant states
       setCurrentEditModeData(defaultEditModeData);
+      updateEditModeTime('startTime', currentTime);
       /*setCurrentImagesInEditMode([]);*/
     } else {
       console.error("Something went wrong with saving!");
@@ -270,19 +287,15 @@ export default function Home() {
     }));
   };
 
-  function updateEditModeTime(timeInSeconds: number) {
-    setEditModeTime({
-      startTime: {
+  function updateEditModeTime(field: keyof EditModeTime, timeInSeconds: number) {
+    setEditModeTime(prevData => ({
+      ...prevData,
+      [field]: {
         hours: Math.floor(timeInSeconds / 60 / 60) % 24,
         minutes: Math.floor(timeInSeconds / 60) % 60,
         seconds: timeInSeconds % 60
-      },
-      endTime: {
-        hours: 0,
-        minutes: 0,
-        seconds: 0
       }
-    });
+    }));
   }
 
   return (
@@ -348,8 +361,8 @@ export default function Home() {
               <button disabled={!(currentEditModeData.images.length > 0)} onClick={handleSave}>
                 Save
               </button>
-              <button>
-                Reset start time
+              <button disabled={!(currentEditModeData.images.length > 0)} onClick={() => updateEditModeTime('startTime', currentTime)}>
+                Update start time
               </button>
             </div>
           </div>
