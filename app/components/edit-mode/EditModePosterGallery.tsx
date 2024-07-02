@@ -4,17 +4,16 @@ import { TimestampImage, Timestamp, UploadedImage, EpisodeData } from '@/app/hel
 
 interface EditModePosterGalleryProps {
   episodeData: EpisodeData;
-  setCurrentImagesInEditMode: (image: string[]) => void;
   addImage: (image: string) => void;
   removeImage: (image: string) => void;
-  currentImages: string[];
+  currentImages: TimestampImage[];
   currentTime: number;
 }
 
 
 
 const EditModePosterGallery: React.FC<EditModePosterGalleryProps> = (
-  { episodeData, setCurrentImagesInEditMode, addImage, removeImage, currentImages, currentTime }
+  { episodeData, addImage, removeImage, currentImages, currentTime }
 ) => {
   useEffect(() => {
     console.log("current time inside edit mode gallery:");
@@ -26,13 +25,19 @@ const EditModePosterGallery: React.FC<EditModePosterGalleryProps> = (
   //console.log(episodeData);
 
   function handleImageClick(uploadedImage: UploadedImage) {
-    console.log("Image is clicked from EditMode");
-    console.log(uploadedImage);
-    // setCurrentImagesInEditMode(prevItems => [...prevItems, uploadedImage.image]);
-    if (currentImages.includes(uploadedImage.image)) {
-      removeImage(uploadedImage.image);
-    } else {
+    if (currentImages.length < 1) {
       addImage(uploadedImage.image);
+    } else {
+      let imageIsRemoved = false;
+      currentImages.forEach((currentImage) => {
+        if (currentImage.image == uploadedImage.image) {
+          removeImage(uploadedImage.image);
+          imageIsRemoved = true;
+        }
+      })
+      if (!imageIsRemoved) {
+        addImage(uploadedImage.image);
+      }
     }
   }
 

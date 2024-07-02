@@ -62,3 +62,9 @@
 .audioButtonContainer {
     margin-bottom: 2rem;
 }
+
+.editModeButtonContainer {
+    display: flex;
+    gap: 8px;
+    margin: 8px;
+}

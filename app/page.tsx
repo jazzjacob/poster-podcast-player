@@ -21,10 +21,10 @@ export default function Home() {
   const [currentImages, setCurrentImages] = useState<TimestampImage[]>([]);
   const [episodeData, setEpisodeData] = useState<EpisodeData>(nullEpisode);
   const [editMode, setEditMode] = useState(false);
-  const [currentImagesInEditMode, setCurrentImagesInEditMode] = useState<string[]>([]);
   const [currentEditModeData, setCurrentEditModeData] = useState<EditModeData>(defaultEditModeData);
   const [userIsEditing, setUserIsEditing] = useState(false);
   const [editModeTime, setEditModeTime] = useState(defaultEditModeTime);
+  const [editModeStartTimeSaved, setEditModeStartTimeSaved] = useState(false);
   // const loaded = usePreload(episodeData);
   // const loaded = usePreload(episodeData ? episodeData : []);
   // const loaded = true;
@@ -173,8 +173,21 @@ export default function Home() {
 
   useEffect(() => {
     console.log("Current images in edit mode")
-    console.log(currentImagesInEditMode)
-  }, [currentImagesInEditMode]);
+    console.log(currentEditModeData.images)
+
+    if (currentEditModeData.images.length > 0) {
+      if (!editModeStartTimeSaved) {
+        console.log("EDIT MODE START TIME SHOULD BE SAVED NOW");
+        setEditModeStartTimeSaved(true);
+      }
+    } else {
+      if (editModeStartTimeSaved) {
+        console.log("EDIT MODE START TIME SHOULD BE RESETTED NOW (STARTS TICKING AGAIN)");
+        setEditModeStartTimeSaved(false);
+      }
+    }
+
+  }, [currentEditModeData.images]);
 
   useEffect(() => {
     console.log("Current edit mode data:");
@@ -202,11 +215,9 @@ export default function Home() {
       image: image,
       description: ""
     });
-    setCurrentImagesInEditMode(prevItems => [...prevItems, image]);
   }
 
   function removeEditModeImage(image: string) {
-    setCurrentImagesInEditMode(currentImagesInEditMode.filter(img => img !== image)); // will return ['A', 'C']);
     removeEditModeData(image);
   }
 
@@ -218,6 +229,8 @@ export default function Home() {
     } else if (currentTime < currentEditModeData.startTime) {
       console.log("End time can't be less than start time");
     } else if (currentEditModeData.startTime < currentTime) {
+
+      // SAVE NEW TIMESTAMP
       const newTimestamp: Timestamp = {
         id: "123",
         start: currentEditModeData.startTime,
@@ -225,7 +238,11 @@ export default function Home() {
         images: [...currentEditModeData.images]
       };
       console.log(newTimestamp);
+      // Real save should happen here... only logging for now...
+
+      // Reset relevant states
       setCurrentEditModeData(defaultEditModeData);
+      /*setCurrentImagesInEditMode([]);*/
     } else {
       console.error("Something went wrong with saving!");
     }
@@ -328,16 +345,21 @@ export default function Home() {
               <p>Start time {currentEditModeData.images.length > 0 && "✅"}</p>
               <EditModeTimeForm editModeTime={editModeTime} currentTime={currentTime} setEditModeTime={setEditModeTime} setUserIsEditing={setUserIsEditing} />
             </div>
-            <button disabled={!(currentEditModeData.images.length > 0)} onClick={handleSave}>
-              Save
-            </button>
+            <div className={styles.editModeButtonContainer}>
+              <button disabled={!(currentEditModeData.images.length > 0)} onClick={handleSave}>
+                Save
+              </button>
+              <button>
+                Reset start time
+              </button>
+            </div>
           </div>
           <div>
             <h3>Timestamps</h3>
           </div>
           <div>
             <h3>Gallery</h3>
-            <EditModePosterGallery episodeData={episodeData} setCurrentImagesInEditMode={setCurrentImagesInEditMode} currentImages={currentImagesInEditMode} addImage={addEditModeImage} removeImage={removeEditModeImage} currentTime={currentTime} />
+            <EditModePosterGallery episodeData={episodeData} currentImages={currentEditModeData.images} addImage={addEditModeImage} removeImage={removeEditModeImage} currentTime={currentTime} />
           </div>
         </div>
       )}
