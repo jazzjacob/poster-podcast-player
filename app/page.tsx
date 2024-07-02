@@ -245,20 +245,27 @@ export default function Home() {
 
   // Save new timestamp in Edit Mode
   function handleSave() {
+    const startTime = convertEditModeTimeToSeconds(editModeTime.startTime);
+    const endTime = convertEditModeTimeToSeconds(editModeTime.endTime);
+
     console.log("Gonna try and save new timestamp...");
-    if (currentEditModeData.startTime == currentTime) {
+    console.log("Starttime: ");
+    console.log(startTime);
+    console.log("EndTime: ");
+    console.log(endTime);
+    if (startTime == endTime) {
       console.log("Did not save! Start time and end time can't be the same.");
-    } else if (currentTime < currentEditModeData.startTime) {
+    } else if (startTime > endTime) {
       console.log("End time can't be less than start time");
-    } else if (currentEditModeData.startTime < currentTime) {
+    } else if (startTime < endTime) {
 
 
       // SAVE NEW TIMESTAMP
       const newTimestamp: Timestamp = {
         id: "123",
-        start: convertEditModeTimeToSeconds(editModeTime.startTime),
+        start: startTime,
         //start: currentEditModeData.startTime,
-        end: currentTime,
+        end: endTime,
         images: [...currentEditModeData.images]
       };
       console.log(newTimestamp);
