@@ -2,11 +2,6 @@ import React from 'react';
 import { Timestamp, TimestampImage } from '@/app/helpers/customTypes';
 import styles from "./EditModeTimestamps.module.css";
 
-interface EditModeTimestampProps {
-  episodeData: EpisodeData;
-  currentImages: TimestampImage[];
-}
-
 const exampleTimestamps: Timestamp[] = [
   {
     id: "1",
@@ -44,7 +39,7 @@ const exampleTimestamps: Timestamp[] = [
   },
 ];
 
-const EditModeTimestamps: React.FC<EditModeTimestampProps> = () => {
+const EditModeTimestamps: React.FC = () => {
 
   //const PosterGallery = ({episodeData, playFromSpecificTime}) => {
   //console.log("episode data from within PosterGallery");

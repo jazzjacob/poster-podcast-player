@@ -56,8 +56,9 @@ const EditModeTimeForm: React.FC<EditModeTimeFormProps> = ({ timeType, editModeT
     maxValue: number,
   ) => {
     setEditModeTime(prevState => {
-      let value = parseInt(prevState[timeType][field], 10);
-      if (isNaN(value) || value === "") value = 0;
+      //let value = parseInt(prevState[timeType][field], 10);
+      let value = prevState[timeType][field];
+      if (isNaN(value)) value = 0;
        if (value > maxValue) value = maxValue;
        return {
         ...prevState,

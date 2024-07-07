@@ -126,6 +126,7 @@ export default function Home() {
     currentStartTime,
     episodeData,
     userIsEditing,
+    currentEditModeData.startTimeSaved
   ]);
 
   useEffect(() => {
