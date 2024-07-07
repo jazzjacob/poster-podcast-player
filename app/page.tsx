@@ -22,7 +22,8 @@ export default function Home() {
   const [currentImages, setCurrentImages] = useState<TimestampImage[]>([]);
   const [episodeData, setEpisodeData] = useState<EpisodeData>(nullEpisode);
   const [editMode, setEditMode] = useState(false);
-  const [currentEditModeData, setCurrentEditModeData] = useState<EditModeData>(defaultEditModeData);
+  const [currentEditModeData, setCurrentEditModeData] =
+    useState<EditModeData>(defaultEditModeData);
   const [userIsEditing, setUserIsEditing] = useState(false);
   const [editModeTime, setEditModeTime] = useState(defaultEditModeTime);
   // const loaded = usePreload(episodeData);
@@ -61,58 +62,71 @@ export default function Home() {
 
   // ON CURRENT TIME UPDATE - EVERY SECOND AUDIO IS PLAYING
   useEffect(() => {
-
     if (-1 < currentTime) {
       console.log(`Current time in state: ${currentTime}`);
       console.log(`Current startTime in state: ${currentStartTime}`);
       console.log(`Current endTime in state: ${currentEndTime}`);
 
       if (!currentEditModeData.startTimeSaved) {
-        updateEditModeTime('startTime', currentTime);
+        updateEditModeTime("startTime", currentTime);
+        updateEditModeTime("endTime", currentTime);
       } else {
-        updateEditModeTime('endTime', currentTime);
+        updateEditModeTime("endTime", currentTime);
       }
 
       if (episodeData) {
         // Check if currentTime is outside the currentStart and currentEnd times
         if (currentTime < currentStartTime || currentEndTime < currentTime) {
-
           // Iterate timestamps on every second
           episodeData.timestamps.every((timestamp: Timestamp) => {
             console.log("Iterating timestamps every second");
 
-              // Check if currentTime matches timestamp in iteration
-              if (timestamp.start <= currentTime && currentTime <= timestamp.end) {
-                console.log(`Timestamp start: ${timestamp.start} = current time: ${currentTime}`);
-                setCurrentImages(timestamp.images);
-                setCurrentStartTime(timestamp.start);
-                setCurrentEndTime(timestamp.end);
+            // Check if currentTime matches timestamp in iteration
+            if (
+              timestamp.start <= currentTime &&
+              currentTime <= timestamp.end
+            ) {
+              console.log(
+                `Timestamp start: ${timestamp.start} = current time: ${currentTime}`,
+              );
+              setCurrentImages(timestamp.images);
+              setCurrentStartTime(timestamp.start);
+              setCurrentEndTime(timestamp.end);
 
-                // Return false to end every-loop
+              // Return false to end every-loop
+              return false;
+            } else {
+              // CurrentTime does not match any timestamps
+              // SET CURRENT DATA TO DEFAULT VALUES
+              if (
+                currentEndTime != -1 ||
+                currentStartTime != -1 ||
+                currentImages.length > 0
+              ) {
+                console.log("ReSetting end and start times");
+                setCurrentEndTime(-1);
+                setCurrentStartTime(-1);
+                setCurrentImages([]);
                 return false;
-
-              } else {
-                // CurrentTime does not match any timestamps
-                // SET CURRENT DATA TO DEFAULT VALUES
-                if (currentEndTime != -1 || currentStartTime != -1 || currentImages.length > 0) {
-                  console.log("ReSetting end and start times")
-                  setCurrentEndTime(-1);
-                  setCurrentStartTime(-1);
-                  setCurrentImages([]);
-                  return false;
-                }
-
-                // Return true to make every-loop keep iterating
-                return true;
               }
-            },
-          );
+
+              // Return true to make every-loop keep iterating
+              return true;
+            }
+          });
         }
       } else {
         console.error("No episode data saved.");
       }
     }
-  }, [currentTime, currentEndTime, currentImages.length, currentStartTime, episodeData, userIsEditing]);
+  }, [
+    currentTime,
+    currentEndTime,
+    currentImages.length,
+    currentStartTime,
+    episodeData,
+    userIsEditing,
+  ]);
 
   useEffect(() => {
     const audioElement = audioRef.current;
@@ -145,7 +159,6 @@ export default function Home() {
         console.log("Data from the new fetch:");
         console.log(data);
         setEpisodeData(data.episodes[0]);
-
       } catch (error) {
         console.error("Failed to fetch episode data:", error);
       }
@@ -153,9 +166,6 @@ export default function Home() {
 
     fetchEpisodeData();
   }, []);
-
-
-
 
   // USE EFFECTS FOR HELP IN DEVELOPMENT
 
@@ -167,25 +177,30 @@ export default function Home() {
   }, [episodeData]);
 
   useEffect(() => {
-    console.log("Current images in edit mode")
-    console.log(currentEditModeData.images)
+    console.log("Current images in edit mode");
+    console.log(currentEditModeData.images);
 
     if (currentEditModeData.images.length > 0) {
       if (!currentEditModeData.startTimeSaved) {
         console.log("EDIT MODE START TIME SHOULD BE SAVED NOW");
         updateEditModeData("startTimeSaved", true);
-        updateEditModeTime('endTime', currentTime);
+        updateEditModeTime("endTime", currentTime);
       }
     } else {
       if (currentEditModeData.startTimeSaved) {
-        console.log("EDIT MODE START TIME SHOULD BE RESETTED NOW (STARTS TICKING AGAIN)");
+        console.log(
+          "EDIT MODE START TIME SHOULD BE RESETTED NOW (STARTS TICKING AGAIN)",
+        );
         updateEditModeData("startTimeSaved", false);
-        updateEditModeTime('startTime', currentTime);
-        updateEditModeTime('endTime', -1);
+        updateEditModeTime("startTime", currentTime);
+        updateEditModeTime("endTime", currentTime);
       }
     }
-
-  }, [currentEditModeData.images, currentEditModeData.startTimeSaved, currentTime]);
+  }, [
+    currentEditModeData.images,
+    currentEditModeData.startTimeSaved,
+    currentTime,
+  ]);
 
   useEffect(() => {
     console.log("Current edit mode data:");
@@ -195,11 +210,7 @@ export default function Home() {
   useEffect(() => {
     console.log("editModeTime: ");
     console.log(editModeTime);
-
   }, [editModeTime]);
-
-
-
 
   // FUNCTIONS
 
@@ -218,8 +229,12 @@ export default function Home() {
     }
   }
 
-  function convertEditModeTimeToSeconds(time: {hours: number, minutes: number, seconds: number}) {
-    return (time.hours * 60 * 60) + (time.minutes * 60) + (time.seconds);
+  function convertEditModeTimeToSeconds(time: {
+    hours: number;
+    minutes: number;
+    seconds: number;
+  }) {
+    return time.hours * 60 * 60 + time.minutes * 60 + time.seconds;
   }
 
   function timelineJump(addedTime: number) {
@@ -231,12 +246,12 @@ export default function Home() {
 
   function addEditModeImage(image: string) {
     if (currentEditModeData.images.length == 0) {
-      updateEditModeData('startTime', currentTime);
+      updateEditModeData("startTime", currentTime);
     }
-    updateEditModeData('images', {
+    updateEditModeData("images", {
       id: "123",
       image: image,
-      description: ""
+      description: "",
     });
   }
 
@@ -254,26 +269,24 @@ export default function Home() {
     } else if (startTime > endTime) {
       console.log("End time can't be less than start time");
     } else if (startTime < endTime) {
-
       // SAVE NEW TIMESTAMP
       const newTimestamp: Timestamp = {
         id: "123",
         start: startTime,
         //start: currentEditModeData.startTime,
         end: endTime,
-        images: [...currentEditModeData.images]
+        images: [...currentEditModeData.images],
       };
       console.log(newTimestamp);
       pauseAudio();
       // Real save should happen here... only logging for now...
 
-
       console.log(convertEditModeTimeToSeconds(editModeTime.startTime));
 
       // Reset relevant states
       setCurrentEditModeData(defaultEditModeData);
-      updateEditModeTime('startTime', currentTime);
-      updateEditModeTime('endTime', -1);
+      updateEditModeTime("startTime", currentTime);
+      updateEditModeTime("endTime", currentTime);
       /*setCurrentImagesInEditMode([]);*/
     } else {
       console.error("Something went wrong with saving!");
@@ -281,36 +294,42 @@ export default function Home() {
   }
 
   // Function to update a specific field in the currentEditModeData object
-  const updateEditModeData = (field: keyof EditModeData, value: string | number | TimestampImage | boolean) => {
+  const updateEditModeData = (
+    field: keyof EditModeData,
+    value: string | number | TimestampImage | boolean,
+  ) => {
     if (field == "images") {
       // Type assertion to ensure value is of type TimestampImage
       const newImage = value as TimestampImage;
 
-      setCurrentEditModeData(prevData => ({
+      setCurrentEditModeData((prevData) => ({
         ...prevData,
         images: [...prevData.images, newImage],
       }));
     } else {
-      setCurrentEditModeData(prevData => ({ ...prevData, [field]: value }));
+      setCurrentEditModeData((prevData) => ({ ...prevData, [field]: value }));
     }
   };
 
   // Function to remove a tag from the tags array
   const removeEditModeData = (image: string) => {
-    setCurrentEditModeData(prevData => ({
+    setCurrentEditModeData((prevData) => ({
       ...prevData,
-      images: prevData.images.filter(img => img.image !== image),
+      images: prevData.images.filter((img) => img.image !== image),
     }));
   };
 
-  function updateEditModeTime(field: keyof EditModeTime, timeInSeconds: number) {
-    setEditModeTime(prevData => ({
+  function updateEditModeTime(
+    field: keyof EditModeTime,
+    timeInSeconds: number,
+  ) {
+    setEditModeTime((prevData) => ({
       ...prevData,
       [field]: {
         hours: Math.floor(timeInSeconds / 60 / 60) % 24,
         minutes: Math.floor(timeInSeconds / 60) % 60,
-        seconds: timeInSeconds % 60
-      }
+        seconds: timeInSeconds % 60,
+      },
     }));
   }
 
@@ -336,8 +355,12 @@ export default function Home() {
         preload="auto"
       ></audio>
       <div className={styles.audioButtonContainer}>
-        <button className={styles.skipButton} onClick={() => timelineJump(-5)}>Back 5 seconds</button>
-        <button className={styles.skipButton} onClick={() => timelineJump(5)}>Skip 5 seconds</button>
+        <button className={styles.skipButton} onClick={() => timelineJump(-5)}>
+          Back 5 seconds
+        </button>
+        <button className={styles.skipButton} onClick={() => timelineJump(5)}>
+          Skip 5 seconds
+        </button>
       </div>
 
       {/* NORMAL MODE */}
@@ -349,12 +372,26 @@ export default function Home() {
               <section>
                 <div>
                   {currentImages.length > 0 ? (
-                    currentImages.map((image) => <img alt={`${image.image}`} key={image.id} className={styles.imageStyle} src={`/images/episode-59/${image.image}`} />)
+                    currentImages.map((image) => (
+                      <img
+                        alt={`${image.image}`}
+                        key={image.id}
+                        className={styles.imageStyle}
+                        src={`/images/episode-59/${image.image}`}
+                      />
+                    ))
                   ) : (
-                    <img alt={`${episodeData.episodeImage}`} className={styles.imageStyle} src={episodeData.episodeImage} />
+                    <img
+                      alt={`${episodeData.episodeImage}`}
+                      className={styles.imageStyle}
+                      src={episodeData.episodeImage}
+                    />
                   )}
                 </div>
-                <PosterGallery episodeData={episodeData} playFromSpecificTime={playFromSpecificTime} />
+                <PosterGallery
+                  episodeData={episodeData}
+                  playFromSpecificTime={playFromSpecificTime}
+                />
               </section>
             ) : (
               <p>Loading...</p>
@@ -362,22 +399,44 @@ export default function Home() {
           </div>
         </div>
       ) : (
-
         <div className={styles.editModeContainer}>
           {/* EDIT MODE */}
           <h2>EDIT MODE</h2>
           <div>
             <h3>Poster view</h3>
-            <EditModePosterView episodeData={episodeData} currentImages={currentEditModeData.images} />
+            <EditModePosterView
+              episodeData={episodeData}
+              currentImages={currentEditModeData.images}
+            />
             <div>
-              <EditModeTimeForm timeType='startTime' currentEditModeData={currentEditModeData} editModeTime={editModeTime} currentTime={currentTime} setEditModeTime={setEditModeTime} setUserIsEditing={setUserIsEditing} />
-              <EditModeTimeForm timeType='endTime' currentEditModeData={currentEditModeData} editModeTime={editModeTime} currentTime={currentTime} setEditModeTime={setEditModeTime} setUserIsEditing={setUserIsEditing} />
+              <EditModeTimeForm
+                timeType="startTime"
+                currentEditModeData={currentEditModeData}
+                editModeTime={editModeTime}
+                currentTime={currentTime}
+                setEditModeTime={setEditModeTime}
+                setUserIsEditing={setUserIsEditing}
+              />
+              <EditModeTimeForm
+                timeType="endTime"
+                currentEditModeData={currentEditModeData}
+                editModeTime={editModeTime}
+                currentTime={currentTime}
+                setEditModeTime={setEditModeTime}
+                setUserIsEditing={setUserIsEditing}
+              />
             </div>
             <div className={styles.editModeButtonContainer}>
-              <button disabled={!(currentEditModeData.images.length > 0)} onClick={handleSave}>
+              <button
+                disabled={!(currentEditModeData.images.length > 0)}
+                onClick={handleSave}
+              >
                 Save
               </button>
-              <button disabled={!(currentEditModeData.images.length > 0)} onClick={() => updateEditModeTime('startTime', currentTime)}>
+              <button
+                disabled={!(currentEditModeData.images.length > 0)}
+                onClick={() => updateEditModeTime("startTime", currentTime)}
+              >
                 Update start time
               </button>
             </div>
@@ -388,7 +447,13 @@ export default function Home() {
           </div>
           <div>
             <h3>Gallery</h3>
-            <EditModePosterGallery episodeData={episodeData} currentImages={currentEditModeData.images} addImage={addEditModeImage} removeImage={removeEditModeImage} currentTime={currentTime} />
+            <EditModePosterGallery
+              episodeData={episodeData}
+              currentImages={currentEditModeData.images}
+              addImage={addEditModeImage}
+              removeImage={removeEditModeImage}
+              currentTime={currentTime}
+            />
           </div>
         </div>
       )}
