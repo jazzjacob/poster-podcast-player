@@ -57,10 +57,10 @@ const EditModeTimestamps: React.FC<EditModeTimestampProps> = () => {
   return (
     <div style={{}}>
       <p>Timestamps component</p>
-      {exampleTimestamps.map((timestamp) => (
-        <div onClick={handleBoxClick} className={styles.timestampBox} key={timestamp.id}>
-          {timestamp.images.map((image) => (
-            <img className={styles.image} key={image.id} alt="" src={`/images/episode-59/${image.image}`} />
+      {exampleTimestamps.map((timestamp, index) => (
+        <div onClick={handleBoxClick} className={styles.timestampBox} key={`${index}-${timestamp.id}`}>
+          {timestamp.images.map((image, index) => (
+            <img className={styles.image} key={`${index}-${image.id}`} alt="" src={`/images/episode-59/${image.image}`} />
           ))}
           <div className={styles.startEndContainer}>
             <p>{timestamp.start}</p>
