@@ -1,3 +1,15 @@
+# Poster Podcast Player (working title)
+
+## About the project
+
+This is an ongoing project developed by me during the summer course "Applied Programming" at Karlstad University, 2024.
+
+## The idea, simply
+
+A podcast player that can sync images (and more) with the audio.
+
+---
+
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ## Getting Started
