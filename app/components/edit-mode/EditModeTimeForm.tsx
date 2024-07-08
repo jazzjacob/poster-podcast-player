@@ -1,5 +1,7 @@
 import React from 'react';
-import { TimestampImage, EpisodeData, EditModeTime, EditModeData } from '@/app/helpers/customTypes';
+import { TimestampImage, EpisodeData, EditModeTime, EditModeData, OverlapDetails } from '@/app/helpers/customTypes';
+import { checkOverlap, convertEditModeTimeToSeconds } from '@/app/helpers/functions';
+
 import styles from "./EditModeTimeForm.module.css";
 
 type TimeType = 'startTime' | 'endTime';
@@ -68,6 +70,7 @@ const EditModeTimeForm: React.FC<EditModeTimeFormProps> = ({ timeType, editModeT
     field: 'hours' | 'minutes' | 'seconds',
     maxValue: number,
   ) => {
+
     setEditModeTime(prevState => {
       //let value = parseInt(prevState[timeType][field], 10);
       let value = prevState[timeType][field];

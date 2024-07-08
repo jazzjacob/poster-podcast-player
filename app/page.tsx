@@ -12,8 +12,8 @@ import EditModePosterView from "./components/edit-mode/EditModePosterView";
 import EditModeTimeForm from "./components/edit-mode/EditModeTimeForm";
 import EditModeTimestamps from "./components/edit-mode/EditModeTimestamps";
 
-import { Timestamp, TimestampImage, EpisodeData, EditModeData, EditModeTime, defaultEditModeTime, defaultEditModeData, nullEpisode, defaultExampleTimestamps } from "@/app/helpers/customTypes";
-import { generateId } from "@/app/helpers/functions";
+import { Timestamp, TimestampImage, EpisodeData, EditModeData, EditModeTime, OverlapDetails, defaultEditModeTime, defaultEditModeData, nullEpisode, defaultExampleTimestamps } from "@/app/helpers/customTypes";
+import { generateId, checkOverlap } from "@/app/helpers/functions";
 
 export default function Home() {
   // const [rssFeed, setRssFeed] = useState(null); Save for possible future use
@@ -270,57 +270,67 @@ export default function Home() {
     const startTime = convertEditModeTimeToSeconds(editModeTime.startTime);
     const endTime = convertEditModeTimeToSeconds(editModeTime.endTime);
 
-    if (startTime == endTime) {
-      console.log("Did not save! Start time and end time can't be the same.");
-    } else if (startTime > endTime) {
-      console.log("End time can't be less than start time");
-    } else if (startTime < endTime) {
-      // SAVE NEW TIMESTAMP
+    const overlapResults = checkOverlap(startTime, endTime, exampleTimestamps);
+    console.log("OVERLAP RESULTS");
+    console.log(overlapResults);
 
-      // Check if updating a timestamp
-      // Handle save accordingly
-      if (currentEditModeData.timestampId !== "") {
-        console.log("CURRENTLY UPDATING A TIMESTAMP");
-        const updatedTimestamp: Timestamp = {
-          id: currentEditModeData.timestampId,
-          start: startTime,
-          //start: currentEditModeData.startTime,
-          end: endTime,
-          images: [...currentEditModeData.images],
+    if (overlapResults.isOverlap) {
+      console.log("NOT SAVED! OVERLAPPING");
+    }
+
+    if (!overlapResults.isOverlap) {
+      if (startTime == endTime) {
+        console.log("Did not save! Start time and end time can't be the same.");
+      } else if (startTime > endTime) {
+        console.log("End time can't be less than start time");
+      } else if (startTime < endTime) {
+        // SAVE NEW TIMESTAMP
+
+        // Check if updating a timestamp
+        // Handle save accordingly
+        if (currentEditModeData.timestampId !== "") {
+          console.log("CURRENTLY UPDATING A TIMESTAMP");
+          const updatedTimestamp: Timestamp = {
+            id: currentEditModeData.timestampId,
+            start: startTime,
+            //start: currentEditModeData.startTime,
+            end: endTime,
+            images: [...currentEditModeData.images],
+          }
+
+          const updatedExampleTimestamps = exampleTimestamps.filter(item => item.id !== updatedTimestamp.id);
+
+          setExampleTimestamps([...updatedExampleTimestamps, updatedTimestamp]);
+
+        } else {
+          // Creating a new timestamp
+          const newTimestamp: Timestamp = {
+            id: generateId(),
+            start: startTime,
+            //start: currentEditModeData.startTime,
+            end: endTime,
+            images: [...currentEditModeData.images],
+          };
+          console.log("newTimestamp:")
+          console.log(newTimestamp);
+          setExampleTimestamps([...exampleTimestamps, newTimestamp]);
+          // Real save should happen here... only logging for now...
+
+          console.log(convertEditModeTimeToSeconds(editModeTime.startTime));
         }
 
-        const updatedExampleTimestamps = exampleTimestamps.filter(item => item.id !== updatedTimestamp.id);
+        pauseAudio();
 
-        setExampleTimestamps([...updatedExampleTimestamps, updatedTimestamp]);
 
+
+        // Reset relevant states
+        setCurrentEditModeData(defaultEditModeData);
+        updateEditModeTime("startTime", currentTime);
+        updateEditModeTime("endTime", currentTime);
+        /*setCurrentImagesInEditMode([]);*/
       } else {
-        // Creating a new timestamp
-        const newTimestamp: Timestamp = {
-          id: generateId(),
-          start: startTime,
-          //start: currentEditModeData.startTime,
-          end: endTime,
-          images: [...currentEditModeData.images],
-        };
-        console.log("newTimestamp:")
-        console.log(newTimestamp);
-        setExampleTimestamps([...exampleTimestamps, newTimestamp]);
-        // Real save should happen here... only logging for now...
-
-        console.log(convertEditModeTimeToSeconds(editModeTime.startTime));
+        console.error("Something went wrong with saving!");
       }
-
-      pauseAudio();
-
-
-
-      // Reset relevant states
-      setCurrentEditModeData(defaultEditModeData);
-      updateEditModeTime("startTime", currentTime);
-      updateEditModeTime("endTime", currentTime);
-      /*setCurrentImagesInEditMode([]);*/
-    } else {
-      console.error("Something went wrong with saving!");
     }
   }
 

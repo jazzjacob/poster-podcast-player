@@ -51,6 +51,14 @@ export interface EditModeTime {
   }
 }
 
+export interface OverlapDetails {
+  startTimeOverlap: boolean,
+  endTimeOverlap: boolean,
+  closestStartTime: number,
+  closestEndTime: number,
+  overlapId: string
+}
+
 
 
 

@@ -49,7 +49,7 @@ const EditModePosterGallery: React.FC<EditModePosterGalleryProps> = (
             episodeData.uploadedImages.map(
               (uploadedImage, index) => {
                 return (
-                  <img alt={`Episode image ${uploadedImage.image}`} key={index} onClick={() => handleImageClick(uploadedImage)} style={{height: "100px"}} src={`/images/episode-59/${uploadedImage.image}`} />
+                  <img alt={`Episode image ${uploadedImage.image}`} key={index} onClick={() => handleImageClick(uploadedImage)} style={{height: "100px", cursor: "pointer", margin: "8px"}} src={`/images/episode-59/${uploadedImage.image}`} />
                 )
               }
             )
