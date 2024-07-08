@@ -422,6 +422,7 @@ export default function Home() {
     const timestampId = currentEditModeData.timestampId;
     console.log(currentEditModeData);
     const arrayWithoutItem = removeObjectFromArrayByKey([...exampleTimestamps], "id", timestampId);
+    setExampleTimestamps(arrayWithoutItem);
     console.log(arrayWithoutItem);
     handleCancel();
   }
