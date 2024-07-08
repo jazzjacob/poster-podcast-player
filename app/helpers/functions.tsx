@@ -52,3 +52,11 @@ export function checkOverlap(startTime: number, endTime: number, existingTimesta
 
   return overlapDetails;
 }
+
+export function removeObjectFromArrayByKey(array: any[], key: string, value: string) {
+  const itemIndex = array.findIndex(item => item[key] === value);
+  if (itemIndex > -1) {
+    array.splice(itemIndex, 1);
+  }
+  return array;
+}

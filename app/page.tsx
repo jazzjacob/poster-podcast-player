@@ -13,7 +13,7 @@ import EditModeTimeForm from "./components/edit-mode/EditModeTimeForm";
 import EditModeTimestamps from "./components/edit-mode/EditModeTimestamps";
 
 import { Timestamp, TimestampImage, EpisodeData, EditModeData, EditModeTime, OverlapDetails, defaultEditModeTime, defaultEditModeData, nullEpisode, defaultExampleTimestamps } from "@/app/helpers/customTypes";
-import { generateId, checkOverlap } from "@/app/helpers/functions";
+import { generateId, checkOverlap, removeObjectFromArrayByKey } from "@/app/helpers/functions";
 import { Updock } from "next/font/google";
 
 export default function Home() {
@@ -417,6 +417,15 @@ export default function Home() {
     setCurrentEditModeData(defaultEditModeData);
   };
 
+  function handleDelete() {
+    console.log("Delete timestamp here");
+    const timestampId = currentEditModeData.timestampId;
+    console.log(currentEditModeData);
+    const arrayWithoutItem = removeObjectFromArrayByKey([...exampleTimestamps], "id", timestampId);
+    console.log(arrayWithoutItem);
+    handleCancel();
+  }
+
   return (
     <main className={styles.main}>
       <p className={styles.greetingText}>
@@ -529,6 +538,12 @@ export default function Home() {
               >
                 Cancel
               </button>
+              <button
+                  disabled={!(currentEditModeData.images.length > 0)}
+                  onClick={handleDelete}
+              >
+                Delete
+              </button >
             </div>
           </div>
           <div>

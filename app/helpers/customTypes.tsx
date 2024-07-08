@@ -135,7 +135,7 @@ export const defaultExampleTimestamps: Timestamp[] = [
     ]
   },
   {
-    id: "2",
+    id: "3",
     start: 11,
     end: 19,
     images: [
