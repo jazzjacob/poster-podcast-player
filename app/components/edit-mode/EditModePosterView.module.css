@@ -1,0 +1,9 @@
+.startView {
+    background-color: #f2f2f2;
+    margin: 2rem;
+    min-height: 350px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    outline: 1px solid black;
+}

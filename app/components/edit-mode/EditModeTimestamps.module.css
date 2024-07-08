@@ -1,10 +1,30 @@
+.container {
+    /*background-color: gold;*/
+    margin: 1rem 0;
+    display: flex;
+    overflow: scroll;
+}
+
 .timestampBox {
-    background-color: lightgray;
-    width: fit-content;
-    height: fit-content;
+    background-color: #f2f2f2;
+    outline: 1px solid gray;
+    flex: 0 0 auto;
+    display: flex;
+    width: 150px;
+    height: 150px;
     margin: 1rem;
     padding: 10px;
     cursor: pointer;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.thumbnailContainer {
+    /*background-color: red;*/
+    height: fill;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .image {

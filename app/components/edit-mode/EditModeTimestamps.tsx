@@ -37,6 +37,107 @@ const exampleTimestamps: Timestamp[] = [
       },
     ]
   },
+  {
+    id: "2",
+    start: 11,
+    end: 20,
+    images: [
+      {
+        id: "2-1",
+        image: "in-fabric-1.jpg",
+        description: "Infabric theatrical poster 1"
+      },
+      {
+        id: "2-2",
+        image: "in-fabric-2.jpg",
+        description: "In fabric theatrical poster 2"
+      },
+    ]
+  },  {
+    id: "2",
+    start: 11,
+    end: 20,
+    images: [
+      {
+        id: "2-1",
+        image: "in-fabric-1.jpg",
+        description: "Infabric theatrical poster 1"
+      },
+      {
+        id: "2-2",
+        image: "in-fabric-2.jpg",
+        description: "In fabric theatrical poster 2"
+      },
+    ]
+  },
+  {
+    id: "2",
+    start: 11,
+    end: 20,
+    images: [
+      {
+        id: "2-1",
+        image: "in-fabric-1.jpg",
+        description: "Infabric theatrical poster 1"
+      },
+      {
+        id: "2-2",
+        image: "in-fabric-2.jpg",
+        description: "In fabric theatrical poster 2"
+      },
+    ]
+  },
+  {
+    id: "2",
+    start: 11,
+    end: 20,
+    images: [
+      {
+        id: "2-1",
+        image: "in-fabric-1.jpg",
+        description: "Infabric theatrical poster 1"
+      },
+      {
+        id: "2-2",
+        image: "in-fabric-2.jpg",
+        description: "In fabric theatrical poster 2"
+      },
+    ]
+  },
+  {
+    id: "2",
+    start: 11,
+    end: 20,
+    images: [
+      {
+        id: "2-1",
+        image: "in-fabric-1.jpg",
+        description: "Infabric theatrical poster 1"
+      },
+      {
+        id: "2-2",
+        image: "in-fabric-2.jpg",
+        description: "In fabric theatrical poster 2"
+      },
+    ]
+  },
+  {
+    id: "2",
+    start: 11,
+    end: 20,
+    images: [
+      {
+        id: "2-1",
+        image: "in-fabric-1.jpg",
+        description: "Infabric theatrical poster 1"
+      },
+      {
+        id: "2-2",
+        image: "in-fabric-2.jpg",
+        description: "In fabric theatrical poster 2"
+      },
+    ]
+  },
 ];
 
 const EditModeTimestamps: React.FC = () => {
@@ -50,13 +151,14 @@ const EditModeTimestamps: React.FC = () => {
   }
 
   return (
-    <div style={{}}>
-      <p>Timestamps component</p>
+    <div className={styles.container}>
       {exampleTimestamps.map((timestamp, index) => (
         <div onClick={handleBoxClick} className={styles.timestampBox} key={`${index}-${timestamp.id}`}>
-          {timestamp.images.map((image, index) => (
-            <img className={styles.image} key={`${index}-${image.id}`} alt="" src={`/images/episode-59/${image.image}`} />
-          ))}
+          <div className={styles.thumbnailContainer}>
+            {timestamp.images.map((image, index) => (
+              <img className={styles.image} key={`${index}-${image.id}`} alt="" src={`/images/episode-59/${image.image}`} />
+            ))}
+          </div >
           <div className={styles.startEndContainer}>
             <p>{timestamp.start}</p>
             <p>{timestamp.end}</p>

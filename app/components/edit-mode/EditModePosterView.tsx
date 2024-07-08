@@ -1,5 +1,6 @@
 import React from 'react';
 import { TimestampImage, EpisodeData } from '@/app/helpers/customTypes';
+import styles from './EditModePosterView.module.css';
 
 interface PosterGalleryProps {
   episodeData: EpisodeData;
@@ -17,14 +18,15 @@ const EditModePosterView: React.FC<PosterGalleryProps> = (
   //console.log(episodeData);
 
   return (
-    <div style={{height: "400px"}}>
-      <p>Edit mode poster view</p>
-      {currentImages && currentImages.length > 0 && (
+    <div className={styles.startView}>
+      {currentImages && currentImages.length > 0 ? (
         currentImages.map((image) => {
           return (
             <img alt="" style={{height: "300px"}} key={image.image} src={`/images/episode-59/${image.image}`} />
           )
         })
+      ) : (
+          <p>Select images below</p>
       )}
     </div>
   );
