@@ -13,6 +13,7 @@ import EditModeTimeForm from "./components/edit-mode/EditModeTimeForm";
 import EditModeTimestamps from "./components/edit-mode/EditModeTimestamps";
 
 import { Timestamp, TimestampImage, EpisodeData, EditModeData, EditModeTime, defaultEditModeTime, defaultEditModeData, nullEpisode, defaultExampleTimestamps } from "@/app/helpers/customTypes";
+import { generateId } from "@/app/helpers/functions";
 
 export default function Home() {
   // const [rssFeed, setRssFeed] = useState(null); Save for possible future use
@@ -254,7 +255,7 @@ export default function Home() {
       updateEditModeData("startTime", currentTime);
     }
     updateEditModeData("images", {
-      id: "123",
+      id: generateId(),
       image: image,
       description: "",
     });
@@ -275,20 +276,43 @@ export default function Home() {
       console.log("End time can't be less than start time");
     } else if (startTime < endTime) {
       // SAVE NEW TIMESTAMP
-      const newTimestamp: Timestamp = {
-        id: "123",
-        start: startTime,
-        //start: currentEditModeData.startTime,
-        end: endTime,
-        images: [...currentEditModeData.images],
-      };
-      console.log("newTimestamp:")
-      console.log(newTimestamp);
-      setExampleTimestamps([...exampleTimestamps, newTimestamp]);
-      pauseAudio();
-      // Real save should happen here... only logging for now...
 
-      console.log(convertEditModeTimeToSeconds(editModeTime.startTime));
+      // Check if updating a timestamp
+      // Handle save accordingly
+      if (currentEditModeData.timestampId !== "") {
+        console.log("CURRENTLY UPDATING A TIMESTAMP");
+        const updatedTimestamp: Timestamp = {
+          id: currentEditModeData.timestampId,
+          start: startTime,
+          //start: currentEditModeData.startTime,
+          end: endTime,
+          images: [...currentEditModeData.images],
+        }
+
+        const updatedExampleTimestamps = exampleTimestamps.filter(item => item.id !== updatedTimestamp.id);
+
+        setExampleTimestamps([...updatedExampleTimestamps, updatedTimestamp]);
+
+      } else {
+        // Creating a new timestamp
+        const newTimestamp: Timestamp = {
+          id: generateId(),
+          start: startTime,
+          //start: currentEditModeData.startTime,
+          end: endTime,
+          images: [...currentEditModeData.images],
+        };
+        console.log("newTimestamp:")
+        console.log(newTimestamp);
+        setExampleTimestamps([...exampleTimestamps, newTimestamp]);
+        // Real save should happen here... only logging for now...
+
+        console.log(convertEditModeTimeToSeconds(editModeTime.startTime));
+      }
+
+      pauseAudio();
+
+
 
       // Reset relevant states
       setCurrentEditModeData(defaultEditModeData);
