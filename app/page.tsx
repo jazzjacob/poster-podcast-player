@@ -12,7 +12,7 @@ import EditModePosterView from "./components/edit-mode/EditModePosterView";
 import EditModeTimeForm from "./components/edit-mode/EditModeTimeForm";
 import EditModeTimestamps from "./components/edit-mode/EditModeTimestamps";
 
-import { Timestamp, TimestampImage, EpisodeData, EditModeData, EditModeTime, defaultEditModeTime, defaultEditModeData, nullEpisode } from "@/app/helpers/customTypes";
+import { Timestamp, TimestampImage, EpisodeData, EditModeData, EditModeTime, defaultEditModeTime, defaultEditModeData, nullEpisode, defaultExampleTimestamps } from "@/app/helpers/customTypes";
 
 export default function Home() {
   // const [rssFeed, setRssFeed] = useState(null); Save for possible future use
@@ -22,10 +22,11 @@ export default function Home() {
   const [currentImages, setCurrentImages] = useState<TimestampImage[]>([]);
   const [episodeData, setEpisodeData] = useState<EpisodeData>(nullEpisode);
   const [editMode, setEditMode] = useState(false);
-  const [currentEditModeData, setCurrentEditModeData] =
-    useState<EditModeData>(defaultEditModeData);
+  const [currentEditModeData, setCurrentEditModeData] = useState<EditModeData>(defaultEditModeData);
   const [userIsEditing, setUserIsEditing] = useState(false);
   const [editModeTime, setEditModeTime] = useState(defaultEditModeTime);
+
+  const [exampleTimestamps, setExampleTimestamps] = useState(defaultExampleTimestamps);
   // const loaded = usePreload(episodeData);
   // const loaded = usePreload(episodeData ? episodeData : []);
   // const loaded = true;
@@ -70,8 +71,10 @@ export default function Home() {
       if (!currentEditModeData.startTimeSaved) {
         updateEditModeTime("startTime", currentTime);
         updateEditModeTime("endTime", currentTime);
-      } else {
-        updateEditModeTime("endTime", currentTime);
+      }
+
+      if (!currentEditModeData.endTimeSaved) {
+        updateEditModeTime('endTime', currentTime);
       }
 
       if (episodeData) {
@@ -126,7 +129,8 @@ export default function Home() {
     currentStartTime,
     episodeData,
     userIsEditing,
-    currentEditModeData.startTimeSaved
+    currentEditModeData.startTimeSaved,
+    currentEditModeData.endTimeSaved
   ]);
 
   useEffect(() => {
@@ -278,7 +282,9 @@ export default function Home() {
         end: endTime,
         images: [...currentEditModeData.images],
       };
+      console.log("newTimestamp:")
       console.log(newTimestamp);
+      setExampleTimestamps([...exampleTimestamps, newTimestamp]);
       pauseAudio();
       // Real save should happen here... only logging for now...
 
@@ -333,6 +339,12 @@ export default function Home() {
       },
     }));
   }
+
+  function handleCancel() {
+    updateEditModeTime('startTime', currentTime);
+    updateEditModeTime('endTime', currentTime);
+    setCurrentEditModeData(defaultEditModeData);
+  };
 
   return (
     <main className={styles.main}>
@@ -440,11 +452,17 @@ export default function Home() {
               >
                 Update start time
               </button>
+              <button
+                disabled={!(currentEditModeData.images.length > 0)}
+                onClick={() => handleCancel()}
+              >
+                Cancel
+              </button>
             </div>
           </div>
           <div>
             <h3>Timestamps</h3>
-            <EditModeTimestamps />
+              <EditModeTimestamps updateEditModeTime={updateEditModeTime} setCurrentEditModeData={setCurrentEditModeData} timestamps={exampleTimestamps}  />
           </div>
           <div>
             <h3>Gallery</h3>

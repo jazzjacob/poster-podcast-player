@@ -22,7 +22,19 @@ const EditModeTimeForm: React.FC<EditModeTimeFormProps> = ({ timeType, editModeT
     ) => {
       setUserIsEditing(true);
       // Allow empty input for user convenience, and handle it appropriately
+      /*
       if (value === "" || value.length <= 2) {
+        setEditModeTime(prevState => ({
+          ...prevState,
+          [timeType]: {
+            ...prevState[timeType],
+            [field]: value
+          }
+        }));
+        return;
+      }*/
+
+      if (value === "") {
         setEditModeTime(prevState => ({
           ...prevState,
           [timeType]: {
@@ -37,6 +49,7 @@ const EditModeTimeForm: React.FC<EditModeTimeFormProps> = ({ timeType, editModeT
       const truncatedValue = value.slice(0, 2);
       const intValue = parseInt(truncatedValue, 10);
 
+      console.log("intValue:")
       console.log(intValue);
 
       if (!isNaN(intValue)) {
@@ -86,7 +99,6 @@ const EditModeTimeForm: React.FC<EditModeTimeFormProps> = ({ timeType, editModeT
         <label>
           Hours:
           <input
-            disabled={timeType == 'endTime' && !currentEditModeData.startTimeSaved}
             className={styles.timeInput}
             type="number"
             value={hoursValue !== undefined ? hoursValue : ''}
@@ -100,7 +112,6 @@ const EditModeTimeForm: React.FC<EditModeTimeFormProps> = ({ timeType, editModeT
         <label>
           Minutes:
           <input
-            disabled={timeType == 'endTime' && !currentEditModeData.startTimeSaved}
             className={styles.timeInput}
             type="number"
             value={minutesValue !== undefined ? minutesValue : ''}
@@ -114,7 +125,6 @@ const EditModeTimeForm: React.FC<EditModeTimeFormProps> = ({ timeType, editModeT
         <label>
           Seconds:
           <input
-            disabled={timeType == 'endTime' && !currentEditModeData.startTimeSaved}
             className={styles.timeInput}
             type="number"
             value={secondsValue !== undefined ? secondsValue : ''}

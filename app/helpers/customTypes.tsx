@@ -33,7 +33,9 @@ export interface EditModeData {
   startTime: number,
   endTime: number,
   images: TimestampImage[],
-  startTimeSaved: boolean
+  startTimeSaved: boolean,
+  endTimeSaved: boolean,
+  timestampId: string
 }
 
 export interface EditModeTime {
@@ -71,7 +73,9 @@ export const defaultEditModeData: EditModeData = {
   startTime: -1,
   endTime: -1,
   images: [],
-  startTimeSaved: false
+  startTimeSaved: false,
+  endTimeSaved: false,
+  timestampId: ""
 };
 
 // Default value for episodeData
@@ -85,3 +89,41 @@ export const nullEpisode: EpisodeData = {
   timestamps: [],
   uploadedImages: []
 };
+
+
+export const defaultExampleTimestamps: Timestamp[] = [
+  {
+    id: "1",
+    start: 0,
+    end: 10,
+    images: [
+      {
+        id: "1-1",
+        image: "last-black-man-1.jpg",
+        description: "Theatrical poster"
+      },
+      {
+        id: "1-1",
+        image: "last-black-man-2.jpg",
+        description: "Theatrical poster"
+      },
+    ]
+  },
+  {
+    id: "2",
+    start: 11,
+    end: 20,
+    images: [
+      {
+        id: "2-1",
+        image: "in-fabric-1.jpg",
+        description: "Infabric theatrical poster 1"
+      },
+      {
+        id: "2-2",
+        image: "in-fabric-2.jpg",
+        description: "In fabric theatrical poster 2"
+      },
+    ]
+  }
+]
