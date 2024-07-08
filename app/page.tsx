@@ -498,27 +498,10 @@ export default function Home() {
           <h2>EDIT MODE</h2>
           <div>
             <h3>Poster view</h3>
-            <EditModePosterView
-              episodeData={episodeData}
-              currentImages={currentEditModeData.images}
-            />
+              <EditModePosterView episodeData={episodeData} currentImages={currentEditModeData.images} currentEditModeData={currentEditModeData} editModeTime={editModeTime} currentTime={currentTime} setEditModeTime={setEditModeTime} setUserIsEditing={setUserIsEditing} />
             <div>
-              <EditModeTimeForm
-                timeType="startTime"
-                currentEditModeData={currentEditModeData}
-                editModeTime={editModeTime}
-                currentTime={currentTime}
-                setEditModeTime={setEditModeTime}
-                setUserIsEditing={setUserIsEditing}
-              />
-              <EditModeTimeForm
-                timeType="endTime"
-                currentEditModeData={currentEditModeData}
-                editModeTime={editModeTime}
-                currentTime={currentTime}
-                setEditModeTime={setEditModeTime}
-                setUserIsEditing={setUserIsEditing}
-              />
+                {/*<EditModeTimeForm timeType="startTime" currentEditModeData={currentEditModeData} editModeTime={editModeTime} currentTime={currentTime} setEditModeTime={setEditModeTime} setUserIsEditing={setUserIsEditing} /> */}
+              {/*<EditModeTimeForm timeType="endTime" currentEditModeData={currentEditModeData} editModeTime={editModeTime} currentTime={currentTime} setEditModeTime={setEditModeTime} setUserIsEditing={setUserIsEditing} />*/}
             </div>
             <div className={styles.editModeButtonContainer}>
               <button
