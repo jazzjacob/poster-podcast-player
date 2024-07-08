@@ -119,8 +119,8 @@ export const defaultExampleTimestamps: Timestamp[] = [
   },
   {
     id: "2",
-    start: 11,
-    end: 20,
+    start: 20,
+    end: 30,
     images: [
       {
         id: "2-1",
@@ -130,6 +130,18 @@ export const defaultExampleTimestamps: Timestamp[] = [
       {
         id: "2-2",
         image: "in-fabric-2.jpg",
+        description: "In fabric theatrical poster 2"
+      },
+    ]
+  },
+  {
+    id: "2",
+    start: 11,
+    end: 19,
+    images: [
+      {
+        id: "2-2",
+        image: "the-dead-1.jpg",
         description: "In fabric theatrical poster 2"
       },
     ]

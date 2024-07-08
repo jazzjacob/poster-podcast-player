@@ -14,6 +14,7 @@ import EditModeTimestamps from "./components/edit-mode/EditModeTimestamps";
 
 import { Timestamp, TimestampImage, EpisodeData, EditModeData, EditModeTime, OverlapDetails, defaultEditModeTime, defaultEditModeData, nullEpisode, defaultExampleTimestamps } from "@/app/helpers/customTypes";
 import { generateId, checkOverlap } from "@/app/helpers/functions";
+import { Updock } from "next/font/google";
 
 export default function Home() {
   // const [rssFeed, setRssFeed] = useState(null); Save for possible future use
@@ -171,6 +172,7 @@ export default function Home() {
     }
 
     fetchEpisodeData();
+
   }, []);
 
   // USE EFFECTS FOR HELP IN DEVELOPMENT
@@ -207,6 +209,12 @@ export default function Home() {
     currentEditModeData.startTimeSaved,
     currentTime,
   ]);
+
+  useEffect(() => {
+    console.log("Sorting the timestamps...");
+    const sortedTimestamps = exampleTimestamps.sort((a, b) => a.start - b.start);
+    setExampleTimestamps(sortedTimestamps);
+  }, [exampleTimestamps]);
 
   useEffect(() => {
     console.log("Current edit mode data:");
@@ -299,8 +307,8 @@ export default function Home() {
           }
 
           const updatedExampleTimestamps = exampleTimestamps.filter(item => item.id !== updatedTimestamp.id);
-
-          setExampleTimestamps([...updatedExampleTimestamps, updatedTimestamp]);
+          updatedExampleTimestamps.push(updatedTimestamp);
+          setExampleTimestamps(updatedExampleTimestamps);
 
         } else {
           // Creating a new timestamp
@@ -313,7 +321,10 @@ export default function Home() {
           };
           console.log("newTimestamp:")
           console.log(newTimestamp);
-          setExampleTimestamps([...exampleTimestamps, newTimestamp]);
+
+          const updatedExampleTimestamps = exampleTimestamps.filter(item => item.id !== newTimestamp.id);
+          updatedExampleTimestamps.push(newTimestamp);
+          setExampleTimestamps(updatedExampleTimestamps);
           // Real save should happen here... only logging for now...
 
           console.log(convertEditModeTimeToSeconds(editModeTime.startTime));
