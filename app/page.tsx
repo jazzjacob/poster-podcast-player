@@ -165,7 +165,10 @@ export default function Home() {
         const data = await response.json();
         console.log("Data from the new fetch:");
         console.log(data);
+
         setEpisodeData(data.episodes[0]);
+
+        // Set timestamps from edit mode to episodeData
       } catch (error) {
         console.error("Failed to fetch episode data:", error);
       }
@@ -174,6 +177,29 @@ export default function Home() {
     fetchEpisodeData();
 
   }, []);
+
+  /*useEffect(() => {
+    if (episodeData.timestamps.length > 0) {
+      let eData = episodeData;
+      console.log("EPISODE DATA: LOOK HERE")
+      eData = {
+        ...eData,
+        timestamps: exampleTimestamps
+      }
+      console.log(eData)
+      setEpisodeData(eData);
+    }
+  }, [exampleTimestamps, episodeData]);*/
+
+  useEffect(() => {
+    if (episodeData.timestamps.length > 0 && episodeData.timestamps !== exampleTimestamps) {
+      console.log("EPISODE DATA: LOOK HERE");
+      setEpisodeData((prevEpisodeData) => ({
+        ...prevEpisodeData,
+        timestamps: exampleTimestamps
+      }));
+    }
+  }, [exampleTimestamps, episodeData.timestamps]);
 
   // USE EFFECTS FOR HELP IN DEVELOPMENT
 
