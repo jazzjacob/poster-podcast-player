@@ -27,11 +27,11 @@
          <div className={styles.imagesContainer}>
            {episodeData.timestamps.map((timestamp, timestampIndex) => (
              timestamp.images && timestamp.images.length > 0 && (
-               <div key={timestampIndex}>
+               <div key={timestampIndex} className={styles.posterGroup}>
                  {timestamp.images.map((image, imageIndex) => (
                    <img
                     key={`${timestampIndex}-${imageIndex}`}
-                    style={{ width: "100px" }}
+                    style={{ width: "100px", cursor: "pointer" }}
                      onClick={() => handleImageClick(timestamp)}
                      src={`/images/episode-59/${image.image}`}
                      alt={`Episode image ${image.image}`}
