@@ -74,6 +74,7 @@ export default function Home() {
     }
   }, [currentEditModeData, updateEditModeTime]);
 
+  // Helper function to reset current data to default values
   const resetCurrentData = useCallback(() => {
     setCurrentEndTime(-1);
     setCurrentStartTime(-1);
