@@ -2,7 +2,7 @@
 
 import styles from "./page.module.css";
 // import usePreload from "./hooks/usePreload";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 //import xml2js from "xml2js";
 //import Image from "next/image";
 
@@ -63,62 +63,51 @@ export default function Home() {
   }, []);
   */
 
+  // Helper function to handle updating edit mode times
+  const handleEditModeTimes = useCallback((currentTime: number) => {
+    if (!currentEditModeData.startTimeSaved) {
+      updateEditModeTime("startTime", currentTime);
+      updateEditModeTime("endTime", currentTime);
+    }
+    if (!currentEditModeData.endTimeSaved) {
+      updateEditModeTime('endTime', currentTime);
+    }
+  }, [currentEditModeData, updateEditModeTime]);
+
+  const resetCurrentData = useCallback(() => {
+    setCurrentEndTime(-1);
+    setCurrentStartTime(-1);
+    setCurrentImages([]);
+  }, [setCurrentEndTime, setCurrentStartTime, setCurrentImages]);
+
+  // Helper function to handle timestamps iteration
+  const handleTimestampsIteration = useCallback((currentTime: number) => {
+    episodeData.timestamps.every((timestamp) => {
+      if (timestamp.start <= currentTime && currentTime <= timestamp.end) {
+        setCurrentImages(timestamp.images);
+        setCurrentStartTime(timestamp.start);
+        setCurrentEndTime(timestamp.end);
+        return false; // Break the loop
+      } else {
+        if (currentEndTime !== -1 || currentStartTime !== -1 || currentImages.length > 0) {
+          resetCurrentData();
+          return false;
+        }
+        return true; // Continue the loop
+      }
+    });
+  }, [episodeData, currentEndTime, currentStartTime, currentImages.length, resetCurrentData]);
+
   // ON CURRENT TIME UPDATE - EVERY SECOND AUDIO IS PLAYING
   useEffect(() => {
     if (-1 < currentTime) {
-      console.log(`Current time in state: ${currentTime}`);
-      console.log(`Current startTime in state: ${currentStartTime}`);
-      console.log(`Current endTime in state: ${currentEndTime}`);
 
-      if (!currentEditModeData.startTimeSaved) {
-        updateEditModeTime("startTime", currentTime);
-        updateEditModeTime("endTime", currentTime);
-      }
-
-      if (!currentEditModeData.endTimeSaved) {
-        updateEditModeTime('endTime', currentTime);
-      }
+      handleEditModeTimes(currentTime);
 
       if (episodeData) {
         // Check if currentTime is outside the currentStart and currentEnd times
         if (currentTime < currentStartTime || currentEndTime < currentTime) {
-          // Iterate timestamps on every second
-          episodeData.timestamps.every((timestamp: Timestamp) => {
-            console.log("Iterating timestamps every second");
-
-            // Check if currentTime matches timestamp in iteration
-            if (
-              timestamp.start <= currentTime &&
-              currentTime <= timestamp.end
-            ) {
-              console.log(
-                `Timestamp start: ${timestamp.start} = current time: ${currentTime}`,
-              );
-              setCurrentImages(timestamp.images);
-              setCurrentStartTime(timestamp.start);
-              setCurrentEndTime(timestamp.end);
-
-              // Return false to end every-loop
-              return false;
-            } else {
-              // CurrentTime does not match any timestamps
-              // SET CURRENT DATA TO DEFAULT VALUES
-              if (
-                currentEndTime != -1 ||
-                currentStartTime != -1 ||
-                currentImages.length > 0
-              ) {
-                console.log("ReSetting end and start times");
-                setCurrentEndTime(-1);
-                setCurrentStartTime(-1);
-                setCurrentImages([]);
-                return false;
-              }
-
-              // Return true to make every-loop keep iterating
-              return true;
-            }
-          });
+          handleTimestampsIteration(currentTime);
         }
       } else {
         console.error("No episode data saved.");
@@ -132,7 +121,9 @@ export default function Home() {
     episodeData,
     userIsEditing,
     currentEditModeData.startTimeSaved,
-    currentEditModeData.endTimeSaved
+    currentEditModeData.endTimeSaved,
+    handleEditModeTimes,
+    handleTimestampsIteration
   ]);
 
   useEffect(() => {
