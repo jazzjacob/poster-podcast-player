@@ -248,8 +248,8 @@ export default function Home() {
   }, [currentEditModeData]);
 
   useEffect(() => {
-    console.log("editModeTime: ");
-    console.log(editModeTime);
+    //console.log("editModeTime: ");
+    //console.log(editModeTime);
   }, [editModeTime]);
 
   // FUNCTIONS
@@ -304,9 +304,11 @@ export default function Home() {
     const startTime = convertEditModeTimeToSeconds(editModeTime.startTime);
     const endTime = convertEditModeTimeToSeconds(editModeTime.endTime);
 
-    const overlapResults = checkOverlap(startTime, endTime, exampleTimestamps);
+
+    const overlapResults = checkOverlap(startTime, endTime, currentEditModeData.timestampId, exampleTimestamps);
     console.log("OVERLAP RESULTS");
     console.log(overlapResults);
+    console.log(currentEditModeData);
 
     if (overlapResults.isOverlap) {
       console.log("NOT SAVED! OVERLAPPING");
@@ -500,7 +502,7 @@ export default function Home() {
             <h3>Poster view</h3>
               <EditModePosterView episodeData={episodeData} currentImages={currentEditModeData.images} currentEditModeData={currentEditModeData} editModeTime={editModeTime} currentTime={currentTime} setEditModeTime={setEditModeTime} setUserIsEditing={setUserIsEditing} />
             <div>
-                {/*<EditModeTimeForm timeType="startTime" currentEditModeData={currentEditModeData} editModeTime={editModeTime} currentTime={currentTime} setEditModeTime={setEditModeTime} setUserIsEditing={setUserIsEditing} /> */}
+              {/*<EditModeTimeForm timeType="startTime" currentEditModeData={currentEditModeData} editModeTime={editModeTime} currentTime={currentTime} setEditModeTime={setEditModeTime} setUserIsEditing={setUserIsEditing} /> */}
               {/*<EditModeTimeForm timeType="endTime" currentEditModeData={currentEditModeData} editModeTime={editModeTime} currentTime={currentTime} setEditModeTime={setEditModeTime} setUserIsEditing={setUserIsEditing} />*/}
             </div>
             <div className={styles.editModeButtonContainer}>
