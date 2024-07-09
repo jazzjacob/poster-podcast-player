@@ -63,6 +63,20 @@ export default function Home() {
   }, []);
   */
 
+  const updateEditModeTime = useCallback((
+    field: keyof EditModeTime,
+    timeInSeconds: number,
+    ) => {
+    setEditModeTime((prevData) => ({
+      ...prevData,
+      [field]: {
+        hours: Math.floor(timeInSeconds / 60 / 60) % 24,
+        minutes: Math.floor(timeInSeconds / 60) % 60,
+        seconds: timeInSeconds % 60,
+      },
+    }));
+  }, [])
+
   // Helper function to handle updating edit mode times
   const handleEditModeTimes = useCallback((currentTime: number) => {
     if (!currentEditModeData.startTimeSaved) {
@@ -92,7 +106,7 @@ export default function Home() {
       } else {
         if (currentEndTime !== -1 || currentStartTime !== -1 || currentImages.length > 0) {
           resetCurrentData();
-          return false;
+          return false; // Break the loop
         }
         return true; // Continue the loop
       }
@@ -170,19 +184,6 @@ export default function Home() {
 
   }, []);
 
-  /*useEffect(() => {
-    if (episodeData.timestamps.length > 0) {
-      let eData = episodeData;
-      console.log("EPISODE DATA: LOOK HERE")
-      eData = {
-        ...eData,
-        timestamps: exampleTimestamps
-      }
-      console.log(eData)
-      setEpisodeData(eData);
-    }
-  }, [exampleTimestamps, episodeData]);*/
-
   useEffect(() => {
     if (episodeData.timestamps.length > 0 && episodeData.timestamps !== exampleTimestamps) {
       console.log("EPISODE DATA: LOOK HERE");
@@ -203,20 +204,13 @@ export default function Home() {
   }, [episodeData]);
 
   useEffect(() => {
-    console.log("Current images in edit mode");
-    console.log(currentEditModeData.images);
-
     if (currentEditModeData.images.length > 0) {
       if (!currentEditModeData.startTimeSaved) {
-        console.log("EDIT MODE START TIME SHOULD BE SAVED NOW");
         updateEditModeData("startTimeSaved", true);
         updateEditModeTime("endTime", currentTime);
       }
     } else {
       if (currentEditModeData.startTimeSaved) {
-        console.log(
-          "EDIT MODE START TIME SHOULD BE RESETTED NOW (STARTS TICKING AGAIN)",
-        );
         updateEditModeData("startTimeSaved", false);
         updateEditModeTime("startTime", currentTime);
         updateEditModeTime("endTime", currentTime);
@@ -226,6 +220,7 @@ export default function Home() {
     currentEditModeData.images,
     currentEditModeData.startTimeSaved,
     currentTime,
+    updateEditModeTime
   ]);
 
   useEffect(() => {
@@ -234,15 +229,6 @@ export default function Home() {
     setExampleTimestamps(sortedTimestamps);
   }, [exampleTimestamps]);
 
-  useEffect(() => {
-    console.log("Current edit mode data:");
-    console.log(currentEditModeData);
-  }, [currentEditModeData]);
-
-  useEffect(() => {
-    //console.log("editModeTime: ");
-    //console.log(editModeTime);
-  }, [editModeTime]);
 
   // FUNCTIONS
 
@@ -296,11 +282,7 @@ export default function Home() {
     const startTime = convertEditModeTimeToSeconds(editModeTime.startTime);
     const endTime = convertEditModeTimeToSeconds(editModeTime.endTime);
 
-
     const overlapResults = checkOverlap(startTime, endTime, currentEditModeData.timestampId, exampleTimestamps);
-    console.log("OVERLAP RESULTS");
-    console.log(overlapResults);
-    console.log(currentEditModeData);
 
     if (overlapResults.isOverlap) {
       console.log("NOT SAVED! OVERLAPPING");
@@ -352,13 +334,10 @@ export default function Home() {
 
         pauseAudio();
 
-
-
         // Reset relevant states
         setCurrentEditModeData(defaultEditModeData);
         updateEditModeTime("startTime", currentTime);
         updateEditModeTime("endTime", currentTime);
-        /*setCurrentImagesInEditMode([]);*/
       } else {
         console.error("Something went wrong with saving!");
       }
@@ -390,20 +369,6 @@ export default function Home() {
       images: prevData.images.filter((img) => img.image !== image),
     }));
   };
-
-  function updateEditModeTime(
-    field: keyof EditModeTime,
-    timeInSeconds: number,
-  ) {
-    setEditModeTime((prevData) => ({
-      ...prevData,
-      [field]: {
-        hours: Math.floor(timeInSeconds / 60 / 60) % 24,
-        minutes: Math.floor(timeInSeconds / 60) % 60,
-        seconds: timeInSeconds % 60,
-      },
-    }));
-  }
 
   function handleCancel() {
     updateEditModeTime('startTime', currentTime);
