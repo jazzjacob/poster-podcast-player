@@ -11,6 +11,9 @@ import EditModePosterGallery from "./components/edit-mode/EditModePosterGallery"
 import EditModePosterView from "./components/edit-mode/EditModePosterView";
 import EditModeTimeForm from "./components/edit-mode/EditModeTimeForm";
 import EditModeTimestamps from "./components/edit-mode/EditModeTimestamps";
+import ReadDocumentComponent from "./components/ReadDocumentComponent";
+
+import { GET } from "./api/user/route";
 
 import { Timestamp, TimestampImage, EpisodeData, EditModeData, EditModeTime, OverlapDetails, defaultEditModeTime, defaultEditModeData, nullEpisode, defaultExampleTimestamps } from "@/app/helpers/customTypes";
 import { generateId, checkOverlap, removeObjectFromArrayByKey } from "@/app/helpers/functions";
@@ -62,6 +65,15 @@ export default function Home() {
     fetchData();
   }, []);
   */
+
+  /*async function fetchData() {
+    const data = await GET();
+    console.log(data);
+  }
+
+  useEffect(() => {
+    fetchData();
+  }, []);*/
 
   const updateEditModeTime = useCallback((
     field: keyof EditModeTime,
@@ -391,6 +403,7 @@ export default function Home() {
       <p className={styles.greetingText}>
         Hello, this is <b>Poster Podcast Player</b>.
       </p>
+      <ReadDocumentComponent />
       <button onClick={() => setEditMode(!editMode)}>
         {editMode ? "Turn off edit mode" : "Turn on edit mode"}
       </button>
