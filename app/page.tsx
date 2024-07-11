@@ -438,7 +438,7 @@ export default function Home() {
         </button>
       </div>
 
-      {/* NORMAL MODE */}
+      {/* NORMAL MODE - WOW */}
       {!editMode ? (
         <div>
           {/*<button onClick={() => playFromSpecificTime(62)}>Play from 1:02</button>*/}
