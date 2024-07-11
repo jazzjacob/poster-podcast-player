@@ -8,14 +8,18 @@ interface DocumentData {
   // Add other fields as needed
 }
 
-const ReadDocumentComponent: React.FC = () => {
+interface ReadDocumentComponentProps {
+  idToFetch: string;
+}
+
+const ReadDocumentComponent: React.FC<ReadDocumentComponentProps> = ({ idToFetch }) => {
   const [data, setData] = useState<DocumentData | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
-      const docData = await readDocument('jdB3sQsT8p1FE5qW76mH');
+      const docData = await readDocument(idToFetch);
       console.log("docData");
       console.log(docData);
       setData(docData);
@@ -23,7 +27,7 @@ const ReadDocumentComponent: React.FC = () => {
     };
 
     fetchData();
-  }, []);
+  }, [idToFetch]);
 
   if (loading) {
     return <div>Loading...</div>;

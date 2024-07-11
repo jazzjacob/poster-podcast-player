@@ -124,14 +124,16 @@ export const nullEpisode: EpisodeData = {
   duration: -1,
   episodeImage: "",
   timestamps: [],
-  uploadedImages: []
+  uploadedImages: [],
+  createdAt: new Date('2024-07-10T12:34:56Z'),
+  updatedAt: new Date('2024-07-10T12:34:56Z')
 };
 
 export const examplePodcastData: PodcastData = {
   id: "1",
-  podcastName: "My FAT Podcast",
-  description: "A podcast about awesome things.",
-  image: "podcast-image.jpg",
+  podcastName: "The Poster Boys",
+  description: "A podcast about movie posters",
+  image: "https://static.libsyn.com/p/assets/e/2/4/9/e249a269bb9e191c/Poster-Boys-logo.jpg",
   year: 2024,
   category: "Technology",
   host: "John Doe",
@@ -141,9 +143,9 @@ export const examplePodcastData: PodcastData = {
     {
       id: "1",
       episodeNumber: 1,
-      url: "http://example.com/episode1",
+      url: "https://traffic.libsyn.com/secure/theposterboys/posterboys-059-2019inreview.mp3",
       localPath: "/path/to/local/file",
-      title: "Episode 1: The Beginning",
+      title: "Episode 59: 2019 in review",
       duration: 900,
       description: "",
       episodeImage: "episode1.jpg",
@@ -159,7 +161,7 @@ export const examplePodcastData: PodcastData = {
           images: [
             {
               id: "1-1",
-              image: "timestamp1-image1.jpg",
+              image: "gs://poster-podcast-player.appspot.com/podcasts/the-poster-boys/episode-59/last-black-man-1.jpg",
               description: "Description for timestamp 1 image 1",
               createdAt: new Date('2024-07-09T12:34:56Z'),
               updatedAt: new Date('2024-07-10T12:34:56Z'),
@@ -170,7 +172,7 @@ export const examplePodcastData: PodcastData = {
       uploadedImages: [
         {
           id: "1",
-          image: "uploaded-image1.jpg",
+          image: "gs://poster-podcast-player.appspot.com/podcasts/the-poster-boys/episode-59/last-black-man-1.jpg",
           used: false,
           timestampIds: ["1"],
           createdAt: new Date('2024-07-09T12:34:56Z'),

@@ -13,8 +13,6 @@ import EditModeTimeForm from "./components/edit-mode/EditModeTimeForm";
 import EditModeTimestamps from "./components/edit-mode/EditModeTimestamps";
 import ReadDocumentComponent from "./components/ReadDocumentComponent";
 
-import { GET } from "./api/user/route";
-
 import { Timestamp, TimestampImage, EpisodeData, EditModeData, EditModeTime, OverlapDetails, defaultEditModeTime, defaultEditModeData, nullEpisode, defaultExampleTimestamps, examplePodcastData, exampleEpisodeData } from "@/app/helpers/customTypes";
 import { generateId, checkOverlap, removeObjectFromArrayByKey } from "@/app/helpers/functions";
 import { Updock } from "next/font/google";
@@ -285,6 +283,8 @@ export default function Home() {
       id: generateId(),
       image: image,
       description: "",
+      createdAt: new Date(),
+      updatedAt: new Date()
     });
   }
 
@@ -321,6 +321,8 @@ export default function Home() {
             //start: currentEditModeData.startTime,
             end: endTime,
             images: [...currentEditModeData.images],
+            createdAt: new Date(),
+            updatedAt: new Date()
           }
 
           const updatedExampleTimestamps = exampleTimestamps.filter(item => item.id !== updatedTimestamp.id);
@@ -335,6 +337,8 @@ export default function Home() {
             //start: currentEditModeData.startTime,
             end: endTime,
             images: [...currentEditModeData.images],
+            createdAt: new Date(),
+            updatedAt: new Date(),
           };
           console.log("newTimestamp:")
           console.log(newTimestamp);
@@ -406,7 +410,7 @@ export default function Home() {
       <p className={styles.greetingText}>
         Hello, this is <b>Poster Podcast Player</b>.
       </p>
-      <ReadDocumentComponent />
+      <ReadDocumentComponent idToFetch="KqiCQr3O4hucEQvbupKL" />
       <CreateDocumentComponent />
       <CreatePodcastComponent podcastData={examplePodcastData} />
       <AddEpisodeComponent podcastId="jdB3sQsT8p1FE5qW76mH" episodeData={exampleEpisodeData} />
@@ -416,7 +420,6 @@ export default function Home() {
       {episodeData.timestamps.length > 0 && (
         <section className={styles.titleSection}>
           <h2>{episodeData.title}</h2>
-          <p>{episodeData.podcastName}</p>
         </section>
       )}
 

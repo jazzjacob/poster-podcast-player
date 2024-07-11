@@ -130,7 +130,10 @@ export async function createPodcast(podcast: PodcastData): Promise<void> {
 
     // Create an empty 'episodes' sub-collection for the new podcast
     const episodesCollectionRef = collection(doc(db, 'podcasts', docRef.id), 'episodes');
-    await addDoc(episodesCollectionRef, { placeholder: true }); // Placeholder document to initialize the sub-collection
+    podcast.episodes.map(async (episode) => {
+      await addDoc(episodesCollectionRef, episode);
+    });
+    //await addDoc(episodesCollectionRef, podcast.episodes); // Placeholder document to initialize the sub-collection
 
     console.log("Episode added to sub-collection for podcast: ", podcast.podcastName);
 
