@@ -15,7 +15,7 @@ const ReadDocumentComponent: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
-      const docData = await readDocument('m3x5dY0OP3qn54KeGI7k');
+      const docData = await readDocument('jdB3sQsT8p1FE5qW76mH');
       console.log("docData");
       console.log(docData);
       setData(docData);

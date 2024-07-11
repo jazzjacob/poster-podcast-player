@@ -15,9 +15,12 @@ import ReadDocumentComponent from "./components/ReadDocumentComponent";
 
 import { GET } from "./api/user/route";
 
-import { Timestamp, TimestampImage, EpisodeData, EditModeData, EditModeTime, OverlapDetails, defaultEditModeTime, defaultEditModeData, nullEpisode, defaultExampleTimestamps } from "@/app/helpers/customTypes";
+import { Timestamp, TimestampImage, EpisodeData, EditModeData, EditModeTime, OverlapDetails, defaultEditModeTime, defaultEditModeData, nullEpisode, defaultExampleTimestamps, examplePodcastData, exampleEpisodeData } from "@/app/helpers/customTypes";
 import { generateId, checkOverlap, removeObjectFromArrayByKey } from "@/app/helpers/functions";
 import { Updock } from "next/font/google";
+import CreateDocumentComponent from "./components/CreateDocumentComponent";
+import CreatePodcastComponent from "./components/CreatePodcastComponent";
+import AddEpisodeComponent from "./components/AddEpisodeComponent";
 
 export default function Home() {
   // const [rssFeed, setRssFeed] = useState(null); Save for possible future use
@@ -404,6 +407,9 @@ export default function Home() {
         Hello, this is <b>Poster Podcast Player</b>.
       </p>
       <ReadDocumentComponent />
+      <CreateDocumentComponent />
+      <CreatePodcastComponent podcastData={examplePodcastData} />
+      <AddEpisodeComponent podcastId="jdB3sQsT8p1FE5qW76mH" episodeData={exampleEpisodeData} />
       <button onClick={() => setEditMode(!editMode)}>
         {editMode ? "Turn off edit mode" : "Turn on edit mode"}
       </button>
