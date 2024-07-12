@@ -1,6 +1,6 @@
 import { db } from './firebaseConfig';
-import { collection, addDoc, updateDoc, deleteDoc, doc, getDoc, getDocs, query, where, setDoc } from "firebase/firestore";
-import { PodcastData, EpisodeData } from '../helpers/customTypes';
+import { collection, addDoc, updateDoc, deleteDoc, doc, getDoc, getDocs, query, where, setDoc, arrayUnion } from "firebase/firestore";
+import { PodcastData, EpisodeData, Timestamp } from '../helpers/customTypes';
 
 // Create
 export async function createDocument(data: any): Promise<void> {
@@ -81,6 +81,39 @@ export async function fetchEpisodes(podcastId: string): Promise<EpisodeData[]> {
     console.error("Error fetching episodes: ", e);
     return [];
   }
+};
+
+export async function fetchAllPodcasts(): Promise<PodcastData[]> {
+  try {
+    const podcastsQuerySnapshot = await getDocs(collection(db, "podcasts"));
+    const podcasts: PodcastData[] = [];
+
+    // Iterate through each podcast document
+    for (const podcastDocument of podcastsQuerySnapshot.docs) {
+      const podcastData = podcastDocument.data() as PodcastData;
+      podcastData.id = podcastDocument.id; // Ensure the ID is set
+
+      // Fetch episodes subcollection for each podcast
+      const episodesQuerySnapshot = await getDocs(collection(db, "podcasts", podcastDocument.id, "episodes"));
+      const episodes: EpisodeData[] = [];
+
+      // Iterate through each episode document and add to episodes array
+      episodesQuerySnapshot.forEach(episodeDocument => {
+        const episodeData = episodeDocument.data() as EpisodeData;
+        episodeData.id = episodeDocument.id; // Ensure the ID is set
+        episodes.push(episodeData);
+      });
+
+      // Attach the episodes array to the podcast data
+      podcastData.episodes = episodes;
+      podcasts.push(podcastData);
+    }
+
+    return podcasts;
+  } catch (e) {
+    console.error("Error fetching podcasts: ", e);
+    return [];
+  }
 }
 
 // Update
@@ -91,6 +124,22 @@ export async function updateDocument(id: string, updatedData: any): Promise<void
     console.log("Document updated");
   } catch (e) {
     console.error("Error updating document: ", e);
+  }
+}
+
+export async function addTimestampToEpisode(podcastId: string, episodeId: string, timestamp: Timestamp): Promise<void> {
+  try {
+    const episodeDocRef = doc(db, 'podcasts', podcastId, 'episodes', episodeId);
+
+    // Add the new timestamp to the timestamps array using arrayUnion
+    await updateDoc(episodeDocRef, {
+      timestamps: arrayUnion(timestamp)
+    });
+
+    console.log("Timestamp added successfully");
+  } catch (e) {
+    console.error("Error adding timestamp: ", e);
+    throw e; // Re-throw the error to handle it elsewhere if needed
   }
 }
 

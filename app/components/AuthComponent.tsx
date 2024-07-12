@@ -2,6 +2,7 @@ import React, { useState, ChangeEvent, useEffect } from 'react';
 import { User, onAuthStateChanged } from 'firebase/auth';
 import { signInUser, signUpUser, signOutUser } from '../firebase/authOperations';
 import { setAuthPersistence, auth } from '../firebase/firebaseConfig';
+import useStore from '../helpers/store';
 
 const AuthComponent: React.FC = () => {
   const [email, setEmail] = useState<string>('');
@@ -10,6 +11,7 @@ const AuthComponent: React.FC = () => {
   const [persistence, setPersistence] = useState<'LOCAL' | 'SESSION' | 'NONE'>('LOCAL');
 
   const currentUser = auth.currentUser;
+  const podcastState = useStore((state) => state.podcasts);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -101,6 +103,10 @@ const AuthComponent: React.FC = () => {
       <button onClick={handleCheckAuth}>Check Auth State</button>
       {user ? <p>✅ Logged in!</p> : <p>😢 Not logged in...</p>}
       {user && <p>Welcome, {user.email}</p>}
+      { podcastState && podcastState[0] && (
+        <p>Data from global state: {podcastState[0].podcastName}</p>
+      )
+      }
     </div >
   );
 };

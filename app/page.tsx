@@ -20,6 +20,7 @@ import CreateDocumentComponent from "./components/CreateDocumentComponent";
 import CreatePodcastComponent from "./components/CreatePodcastComponent";
 import AddEpisodeComponent from "./components/AddEpisodeComponent";
 import AuthComponent from "./components/AuthComponent";
+import AddTimestampComponent from "./components/AddTimestampComponent";
 
 export default function Home() {
   // const [rssFeed, setRssFeed] = useState(null); Save for possible future use
@@ -413,6 +414,7 @@ export default function Home() {
       </p>
       <AuthComponent />
       <ReadDocumentComponent idToFetch="KqiCQr3O4hucEQvbupKL" />
+      <AddTimestampComponent  podcastId="KqiCQr3O4hucEQvbupKL" episodeId="8CtvmEvN8VZQMTTLU3GL" />
       <CreateDocumentComponent />
       <CreatePodcastComponent podcastData={examplePodcastData} />
       <AddEpisodeComponent podcastId="jdB3sQsT8p1FE5qW76mH" episodeData={exampleEpisodeData} />
