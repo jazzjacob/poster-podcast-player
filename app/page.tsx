@@ -19,6 +19,7 @@ import { Updock } from "next/font/google";
 import CreateDocumentComponent from "./components/CreateDocumentComponent";
 import CreatePodcastComponent from "./components/CreatePodcastComponent";
 import AddEpisodeComponent from "./components/AddEpisodeComponent";
+import AuthComponent from "./components/AuthComponent";
 
 export default function Home() {
   // const [rssFeed, setRssFeed] = useState(null); Save for possible future use
@@ -410,6 +411,7 @@ export default function Home() {
       <p className={styles.greetingText}>
         Hello, this is <b>Poster Podcast Player</b>.
       </p>
+      <AuthComponent />
       <ReadDocumentComponent idToFetch="KqiCQr3O4hucEQvbupKL" />
       <CreateDocumentComponent />
       <CreatePodcastComponent podcastData={examplePodcastData} />
@@ -438,7 +440,7 @@ export default function Home() {
         </button>
       </div>
 
-      {/* NORMAL MODE - WOW */}
+      {/* NORMAL MODE */}
       {!editMode ? (
         <div>
           {/*<button onClick={() => playFromSpecificTime(62)}>Play from 1:02</button>*/}

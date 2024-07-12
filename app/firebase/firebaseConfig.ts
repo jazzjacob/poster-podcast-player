@@ -1,6 +1,7 @@
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
+import { getAuth, setPersistence, browserLocalPersistence, browserSessionPersistence, inMemoryPersistence } from 'firebase/auth';
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -16,5 +17,31 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const storage = getStorage(app);
+const auth = getAuth(app);
 
-export { db, storage };
+export const setAuthPersistence = async (persistence: 'LOCAL' | 'SESSION' | 'NONE') => {
+  let persistenceType;
+
+  switch (persistence) {
+    case 'LOCAL':
+      persistenceType = browserLocalPersistence;
+      break;
+    case 'SESSION':
+      persistenceType = browserSessionPersistence;
+      break;
+    case 'NONE':
+      persistenceType = inMemoryPersistence;
+      break;
+    default:
+      throw new Error('Invalid persistence type');
+  }
+
+  try {
+    await setPersistence(auth, persistenceType);
+    console.log(`Persistence set to ${persistence}`);
+  } catch (error) {
+    console.error('Error setting persistence:', error);
+  }
+};
+
+export { db, storage , auth};
