@@ -28,7 +28,8 @@ const EditModePosterView: React.FC<PosterGalleryProps> = (
       {currentImages && currentImages.length > 0 ? (
         <div className={styles.imagesAndTimeContainer}>
           <div className={styles.currentImagesContainer}>
-            {currentImages.map(image => (<img alt="" style={{ height: "300px"}} key={image.image} src={`/images/episode-59/${image.image}`} />))}
+            {/*currentImages.map(image => (<img alt="" style={{ height: "300px"}} key={image.image} src={`/images/episode-59/${image.image}`} />))*/}
+            {currentImages.map(image => (<img alt="" style={{ height: "300px"}} key={image.image} src={image.image} />))}
           </div >
           <div className={styles.timeFormContainer}>
             <EditModeTimeForm timeType="startTime" currentEditModeData={currentEditModeData} editModeTime={editModeTime} currentTime={currentTime} setEditModeTime={setEditModeTime} setUserIsEditing={setUserIsEditing} />
