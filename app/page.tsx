@@ -14,13 +14,14 @@ import EditModeTimestamps from "./components/edit-mode/EditModeTimestamps";
 import ReadDocumentComponent from "./components/ReadDocumentComponent";
 
 import { Timestamp, TimestampImage, EpisodeData, EditModeData, EditModeTime, OverlapDetails, defaultEditModeTime, defaultEditModeData, nullEpisode, defaultExampleTimestamps, examplePodcastData, exampleEpisodeData } from "@/app/helpers/customTypes";
-import { generateId, checkOverlap, removeObjectFromArrayByKey } from "@/app/helpers/functions";
+import { generateId, checkOverlap, removeObjectFromArrayByKey, setGlobalStateFromFirebase } from "@/app/helpers/functions";
 import { Updock } from "next/font/google";
 import CreateDocumentComponent from "./components/CreateDocumentComponent";
 import CreatePodcastComponent from "./components/CreatePodcastComponent";
 import AddEpisodeComponent from "./components/AddEpisodeComponent";
 import AuthComponent from "./components/AuthComponent";
 import AddTimestampComponent from "./components/AddTimestampComponent";
+import useStore from "./helpers/store";
 
 export default function Home() {
   // const [rssFeed, setRssFeed] = useState(null); Save for possible future use
@@ -28,13 +29,16 @@ export default function Home() {
   const [currentStartTime, setCurrentStartTime] = useState(-1);
   const [currentEndTime, setCurrentEndTime] = useState(-1);
   const [currentImages, setCurrentImages] = useState<TimestampImage[]>([]);
-  const [episodeData, setEpisodeData] = useState<EpisodeData>(nullEpisode);
+  // const [episodeData, setEpisodeData] = useState<EpisodeData>(nullEpisode);
   const [editMode, setEditMode] = useState(false);
   const [currentEditModeData, setCurrentEditModeData] = useState<EditModeData>(defaultEditModeData);
   const [userIsEditing, setUserIsEditing] = useState(false);
   const [editModeTime, setEditModeTime] = useState(defaultEditModeTime);
 
   const [exampleTimestamps, setExampleTimestamps] = useState(defaultExampleTimestamps);
+
+  const episodeData  = useStore((state) => state.currentEpisode);
+  const setEpisodeData = useStore((state) => state.setCurrentEpisode);
   // const loaded = usePreload(episodeData);
   // const loaded = usePreload(episodeData ? episodeData : []);
   // const loaded = true;
@@ -112,7 +116,9 @@ export default function Home() {
 
   // Helper function to handle timestamps iteration
   const handleTimestampsIteration = useCallback((currentTime: number) => {
-    episodeData.timestamps.every((timestamp) => {
+    episodeData && episodeData.timestamps.every((timestamp) => {
+      console.log("timestamp check:");
+      console.log(timestamp);
       if (timestamp.start <= currentTime && currentTime <= timestamp.end) {
         setCurrentImages(timestamp.images);
         setCurrentStartTime(timestamp.start);
@@ -130,6 +136,8 @@ export default function Home() {
 
   // ON CURRENT TIME UPDATE - EVERY SECOND AUDIO IS PLAYING
   useEffect(() => {
+    console.log("current time");
+    console.log(currentTime);
     if (-1 < currentTime) {
 
       handleEditModeTimes(currentTime);
@@ -160,6 +168,7 @@ export default function Home() {
     const audioElement = audioRef.current;
 
     const handleTimeUpdate = () => {
+      console.log("Updating time");
       if (audioElement) {
         const audioElementTime = Math.floor(audioElement.currentTime);
         if (currentTime !== audioElementTime) {
@@ -170,6 +179,8 @@ export default function Home() {
 
     if (audioElement) {
       audioElement.addEventListener("timeupdate", handleTimeUpdate);
+    } else {
+      console.log("No audio element found");
     }
 
     return () => {
@@ -187,7 +198,7 @@ export default function Home() {
         console.log("Data from the new fetch:");
         console.log(data);
 
-        setEpisodeData(data.episodes[0]);
+        //setEpisodeData(data.episodes[0]);
 
         // Set timestamps from edit mode to episodeData
       } catch (error) {
@@ -199,15 +210,15 @@ export default function Home() {
 
   }, []);
 
-  useEffect(() => {
-    if (episodeData.timestamps.length > 0 && episodeData.timestamps !== exampleTimestamps) {
+  /*useEffect(() => {
+    if (episodeData && episodeData.timestamps.length > 0 && episodeData.timestamps !== exampleTimestamps) {
       console.log("EPISODE DATA: LOOK HERE");
       setEpisodeData((prevEpisodeData) => ({
         ...prevEpisodeData,
         timestamps: exampleTimestamps
       }));
     }
-  }, [exampleTimestamps, episodeData.timestamps]);
+  }, [exampleTimestamps, episodeData.timestamps]);*/
 
   // USE EFFECTS FOR HELP IN DEVELOPMENT
 
@@ -418,21 +429,24 @@ export default function Home() {
       <CreateDocumentComponent />
       <CreatePodcastComponent podcastData={examplePodcastData} />
       <AddEpisodeComponent podcastId="jdB3sQsT8p1FE5qW76mH" episodeData={exampleEpisodeData} />
+      <button onClick={() => setGlobalStateFromFirebase("KqiCQr3O4hucEQvbupKL", "8CtvmEvN8VZQMTTLU3GL")}>Set Global State</button>
       <button onClick={() => setEditMode(!editMode)}>
         {editMode ? "Turn off edit mode" : "Turn on edit mode"}
       </button>
-      {episodeData.timestamps.length > 0 && (
+      {episodeData && episodeData.timestamps.length > 0 && (
         <section className={styles.titleSection}>
           <h2>{episodeData.title}</h2>
         </section>
       )}
 
-      <audio
-        ref={audioRef}
-        controls
-        src={episodeData.url}
-        preload="auto"
-      ></audio>
+      {
+        <audio
+          ref={audioRef}
+          controls
+          src={episodeData ? episodeData.url : ""}
+          preload="auto"
+        ></audio>
+      }
       <div className={styles.audioButtonContainer}>
         <button className={styles.skipButton} onClick={() => timelineJump(-5)}>
           Back 5 seconds
@@ -447,7 +461,7 @@ export default function Home() {
         <div>
           {/*<button onClick={() => playFromSpecificTime(62)}>Play from 1:02</button>*/}
           <div className={styles.exampleImageContainer}>
-            {episodeData.timestamps.length > 0 ? (
+            {episodeData && episodeData.timestamps.length > 0 ? (
               <section>
                 <div>
                   {currentImages.length > 0 ? (
@@ -456,7 +470,7 @@ export default function Home() {
                         alt={`${image.image}`}
                         key={image.id}
                         className={styles.imageStyle}
-                        src={`/images/episode-59/${image.image}`}
+                        src={image.image}
                       />
                     ))
                   ) : (
@@ -483,7 +497,11 @@ export default function Home() {
           <h2>EDIT MODE</h2>
           <div>
             <h3>Poster view</h3>
-              <EditModePosterView episodeData={episodeData} currentImages={currentEditModeData.images} currentEditModeData={currentEditModeData} editModeTime={editModeTime} currentTime={currentTime} setEditModeTime={setEditModeTime} setUserIsEditing={setUserIsEditing} />
+              {
+                episodeData && (
+                   <EditModePosterView episodeData={episodeData} currentImages={currentEditModeData.images} currentEditModeData={currentEditModeData} editModeTime={editModeTime} currentTime={currentTime} setEditModeTime={setEditModeTime} setUserIsEditing={setUserIsEditing} />
+                )
+              }
             <div>
               {/*<EditModeTimeForm timeType="startTime" currentEditModeData={currentEditModeData} editModeTime={editModeTime} currentTime={currentTime} setEditModeTime={setEditModeTime} setUserIsEditing={setUserIsEditing} /> */}
               {/*<EditModeTimeForm timeType="endTime" currentEditModeData={currentEditModeData} editModeTime={editModeTime} currentTime={currentTime} setEditModeTime={setEditModeTime} setUserIsEditing={setUserIsEditing} />*/}

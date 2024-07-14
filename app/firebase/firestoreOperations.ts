@@ -13,7 +13,7 @@ export async function createDocument(data: any): Promise<void> {
 }
 
 // Read
-export async function readDocument(id: string): Promise<PodcastData | null> {
+export async function fetchPodcastById(id: string): Promise<PodcastData | null> {
   try {
     const podcastDocRef = doc(db, 'podcasts', id);
     const podcastDocSnap = await getDoc(podcastDocRef);
@@ -82,6 +82,24 @@ export async function fetchEpisodes(podcastId: string): Promise<EpisodeData[]> {
     return [];
   }
 };
+
+export async function fetchEpisode(podcastId: string, episodeId: string): Promise<EpisodeData | null> {
+  try {
+    const episodeDocRef = doc(db, 'podcasts', podcastId, 'episodes', episodeId);
+    const episodeDocSnap = await getDoc(episodeDocRef);
+
+    if (episodeDocSnap.exists()) {
+      const episodeData = episodeDocSnap.data() as EpisodeData;
+      return episodeData;
+    } else {
+      console.log("No such document!");
+      return null;
+    }
+  } catch (e) {
+    console.error("Error fetching episode: ", e);
+    return null;
+  }
+}
 
 export async function fetchAllPodcasts(): Promise<PodcastData[]> {
   try {
