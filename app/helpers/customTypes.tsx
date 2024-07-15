@@ -186,10 +186,10 @@ export const examplePodcastData: PodcastData = {
 };
 
 export const exampleEpisodeData: EpisodeData = {
-  id: "2",
-  episodeNumber: 2,
-  url: "http://example.com/episode1",
-  title: "Episode 2: Introduction to Podcasting",
+  id: "3",
+  episodeNumber: 59,
+  url: "https://traffic.libsyn.com/secure/theposterboys/posterboys-059-2019inreview.mp3",
+  title: "Episode 59: 2019 In Review",
   createdAt: new Date('2024-07-10T12:34:56Z'),
   updatedAt: new Date('2024-07-10T12:34:56Z'),
   timestamps: [
@@ -202,7 +202,7 @@ export const exampleEpisodeData: EpisodeData = {
       images: [
         {
           id: "1-1",
-          image: "timestamp1-image1.jpg",
+          image: "https://firebasestorage.googleapis.com/v0/b/poster-podcast-player.appspot.com/o/podcasts%2Fthe-poster-boys%2Fepisode-59%2Fonce-upon-1.jpg?alt=media&token=38a05d9d-f8c3-4d87-9b8c-3fc4753783a4",
           description: "Description for timestamp 1 image 1",
           createdAt: new Date('2024-07-10T12:34:56Z'),
           updatedAt: new Date('2024-07-10T12:34:56Z')
@@ -214,9 +214,9 @@ export const exampleEpisodeData: EpisodeData = {
   uploadedImages: [
     {
       id: "1",
-      image: "uploaded-image1.jpg",
+      image: "https://firebasestorage.googleapis.com/v0/b/poster-podcast-player.appspot.com/o/podcasts%2Fthe-poster-boys%2Fepisode-59%2Fonce-upon-1.jpg?alt=media&token=38a05d9d-f8c3-4d87-9b8c-3fc4753783a4",
       used: false,
-      timestampIds: ["1"],
+      timestampIds: [],
       createdAt: new Date('2024-07-09T12:34:56Z'),
       updatedAt: new Date('2024-07-09T12:34:56Z')
     },
@@ -224,7 +224,7 @@ export const exampleEpisodeData: EpisodeData = {
   ],
   duration: 1800, // 30 minutes in seconds
   localPath: "/path/to/local/file", // Optional local file path
-  episodeImage: "episode1.jpg", // Optional episode image
+  episodeImage: "https://firebasestorage.googleapis.com/v0/b/poster-podcast-player.appspot.com/o/podcasts%2Fthe-poster-boys%2Fimages%2F1200x1200bb-75.jpg?alt=media&token=f2cc2a3f-4280-477b-ae5d-d04e4c58c624", // Optional episode image
   releaseDate: new Date('2024-07-01'), // Optional release date
   description: "In this introductory episode, we discuss the basics of podcasting and what to expect in future episodes.",
   showNotes: "Detailed show notes including key topics discussed, links to resources mentioned, and timestamps for important moments.",

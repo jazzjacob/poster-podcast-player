@@ -90,6 +90,20 @@ export async function fetchEpisode(podcastId: string, episodeId: string): Promis
 
     if (episodeDocSnap.exists()) {
       const episodeData = episodeDocSnap.data() as EpisodeData;
+
+      // Fetch timestamps sub-collection
+      const timestampsRef = collection(db, 'podcasts', podcastId, 'episodes', episodeId, 'timestamps');
+      const timestampsQuerySnapshot = await getDocs(timestampsRef);
+
+      const timestamps: Timestamp[] = [];
+      timestampsQuerySnapshot.forEach(doc => {
+        timestamps.push(doc.data() as Timestamp);
+      });
+
+      // Add timestamps to episode data
+      episodeData.timestamps = timestamps;
+      console.log("episodeData in fetch");
+      console.log(episodeData);
       return episodeData;
     } else {
       console.log("No such document!");
@@ -100,6 +114,25 @@ export async function fetchEpisode(podcastId: string, episodeId: string): Promis
     return null;
   }
 }
+
+/*
+export async function fetchEpisode(podcastId: string, episodeId: string): Promise<EpisodeData | null> {
+  try {
+    const episodeDocRef = doc(db, 'podcasts', podcastId, 'episodes', episodeId);
+    const episodeDocSnap = await getDoc(episodeDocRef);
+
+    if (episodeDocSnap.exists()) {
+      const episodeData = episodeDocSnap.data() as EpisodeData;
+      return episodeData;
+    } else {
+      console.log("No such document!");
+      return null;
+    }
+  } catch (e) {
+    console.error("Error fetching episode: ", e);
+    return null;
+  }
+}*/
 
 export async function fetchAllPodcasts(): Promise<PodcastData[]> {
   try {
@@ -145,6 +178,7 @@ export async function updateDocument(id: string, updatedData: any): Promise<void
   }
 }
 
+/*
 export async function addTimestampToEpisode(podcastId: string, episodeId: string, timestamp: Timestamp): Promise<void> {
   try {
     const episodeDocRef = doc(db, 'podcasts', podcastId, 'episodes', episodeId);
@@ -160,6 +194,7 @@ export async function addTimestampToEpisode(podcastId: string, episodeId: string
     throw e; // Re-throw the error to handle it elsewhere if needed
   }
 }
+*/
 
 // Delete
 export async function deleteDocument(id: string): Promise<void> {
@@ -210,13 +245,95 @@ export async function createPodcast(podcast: PodcastData): Promise<void> {
   }
 }
 
-export async function addEpisode(podcastId: string, episode: EpisodeData): Promise<void> {
+export async function addEpisode(podcastId: string, episodeData: EpisodeData): Promise<void> {
   try {
-    const podcastRef = collection(db, "podcasts", podcastId, "episodes");
-    const docRef = await addDoc(podcastRef, episode);
+    const episodesRef = collection(db, "podcasts", podcastId, "episodes");
+    console.log("episodesRef:");
+    console.log(episodesRef);
+
+    // Remove timestamps array before adding the episode
+    const { timestamps, ...episodeDataWithoutTimestamps } = episodeData;
+    console.log("episodeDataWithoutTimestamps");
+    console.log(episodeDataWithoutTimestamps);
+    const docRef = await addDoc(episodesRef, episodeDataWithoutTimestamps);
     console.log("Episode document written with ID: ", docRef.id);
+    console.log("timestamps");
+    console.log(timestamps);
+
+    // Create 'timestamps' sub-collection for the new episode
+    if (timestamps && timestamps.length > 0) {
+      const timestampsRef = collection(doc(db, "podcasts", podcastId, "episodes", docRef.id), "timestamps");
+      console.log(timestampsRef);
+      console.log("timestampsRef");
+      timestamps.map(async (timestamp) => {
+        console.log("timestamp");
+        console.log(timestamp);
+        await addDoc(timestampsRef, timestamp);
+      });
+      console.log("Episode added successfully");
+      /*
+      for (const timestamp of timestamps) {
+        console.log("timestamp");
+        console.log(timestamp);
+        await addDoc(timestampsRef, timestamp);
+        console.log("timestamp added")
+      }*/
+    }
+
   } catch (e) {
     console.error("Error adding episode document: ", e);
     throw e; // Re-throw the error to handle it elsewhere if needed
+  }
+}
+
+
+
+/**
+ * Updates a specific timestamp for an episode in Firestore.
+ *
+ * @param podcastId - The ID of the podcast.
+ * @param episodeId - The ID of the episode.
+ * @param timestampId - The ID of the timestamp to update.
+ * @param newData - The new data to update the timestamp with.
+ */
+export async function updateTimestamp(
+  podcastId: string,
+  episodeId: string,
+  timestampId: string,
+  newData: Partial<Timestamp>
+): Promise<void> {
+  try {
+    // Reference to the specific timestamp document
+    const timestampRef = doc(db, 'podcasts', podcastId, 'episodes', episodeId, 'timestamps', timestampId);
+    console.log("timestampRef");
+    console.log(timestampRef);
+    // Fetch the current timestamp data
+    const timestampDoc = await getDoc(timestampRef);
+    console.log("timestampDoc");
+    console.log(timestampDoc);
+
+    if (!timestampDoc.exists()) {
+      throw new Error('Timestamp not found');
+    }
+
+    // Update the timestamp with the new data
+    await updateDoc(timestampRef, {
+      ...newData,
+      updatedAt: new Date() // Update the updatedAt field
+    });
+
+    console.log('Timestamp updated successfully');
+  } catch (error) {
+    console.error('Error updating timestamp: ', error);
+  }
+}
+
+export async function addTimestampToEpisode(podcastId: string, episodeId: string, timestamp: Timestamp): Promise<void> {
+  try {
+    const timestampsCollectionRef = collection(db, 'podcasts', podcastId, 'episodes', episodeId, 'timestamps');
+    await addDoc(timestampsCollectionRef, { ...timestamp, createdAt: new Date(), updatedAt: new Date() });
+    console.log('Timestamp added successfully');
+  } catch (e) {
+    console.error('Error adding timestamp: ', e);
   }
 }

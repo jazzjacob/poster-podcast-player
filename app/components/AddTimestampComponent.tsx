@@ -17,7 +17,7 @@ const AddTimestampComponent: React.FC<{ podcastId: string, episodeId: string }> 
       images: [
         {
           id: generateId(),
-          image: "https://firebasestorage.googleapis.com/v0/b/poster-podcast-player.appspot.com/o/podcasts%2Fthe-poster-boys%2Fepisode-59once-upon-1.jpg?alt=media&token=cf5a4ee4-c774-4c53-999b-e68c92363d78",
+          image: "https://firebasestorage.googleapis.com/v0/b/poster-podcast-player.appspot.com/o/podcasts%2Fthe-poster-boys%2Fepisode-59%2Flast-black-man-1.jpg?alt=media&token=cf5a4ee4-c774-4c53-999b-e68c92363d78",
           description: "",
           createdAt: new Date(),
           updatedAt: new Date()

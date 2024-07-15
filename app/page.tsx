@@ -22,6 +22,7 @@ import AddEpisodeComponent from "./components/AddEpisodeComponent";
 import AuthComponent from "./components/AuthComponent";
 import AddTimestampComponent from "./components/AddTimestampComponent";
 import useStore from "./helpers/store";
+import { updateTimestamp } from "./firebase/firestoreOperations";
 
 export default function Home() {
   // const [rssFeed, setRssFeed] = useState(null); Save for possible future use
@@ -116,7 +117,7 @@ export default function Home() {
 
   // Helper function to handle timestamps iteration
   const handleTimestampsIteration = useCallback((currentTime: number) => {
-    episodeData && episodeData.timestamps.every((timestamp) => {
+    episodeData && episodeData.timestamps && episodeData.timestamps.every((timestamp) => {
       console.log("timestamp check:");
       console.log(timestamp);
       if (timestamp.start <= currentTime && currentTime <= timestamp.end) {
@@ -306,11 +307,15 @@ export default function Home() {
   }
 
   // Save new timestamp in Edit Mode
-  function handleSave() {
+  async function handleSave() {
     const startTime = convertEditModeTimeToSeconds(editModeTime.startTime);
     const endTime = convertEditModeTimeToSeconds(editModeTime.endTime);
 
-    const overlapResults = checkOverlap(startTime, endTime, currentEditModeData.timestampId, exampleTimestamps);
+    console.log("currentEditModeData");
+    console.log(currentEditModeData);
+    const overlapResults = checkOverlap(startTime, endTime, currentEditModeData.timestampId, episodeData?.timestamps || []);
+    console.log("overlapResults");
+    console.log(overlapResults);
 
     if (overlapResults.isOverlap) {
       console.log("NOT SAVED! OVERLAPPING");
@@ -328,18 +333,22 @@ export default function Home() {
         // Handle save accordingly
         if (currentEditModeData.timestampId !== "") {
           console.log("CURRENTLY UPDATING A TIMESTAMP");
-          const updatedTimestamp: Timestamp = {
+          const updatedTimestamp: Partial<Timestamp> = {
             id: currentEditModeData.timestampId,
             start: startTime,
-            //start: currentEditModeData.startTime,
             end: endTime,
-            images: [...currentEditModeData.images],
-            createdAt: new Date(),
-            updatedAt: new Date()
+            images: [...currentEditModeData.images]
           }
 
+          if (episodeData && episodeData.timestamps) {
+            console.log("episodeData.timestamps");
+            console.log(episodeData.timestamps);
+            // Update a timestamp for real here... in firebase...
+            console.log(episodeData.id);
+            await updateTimestamp("KqiCQr3O4hucEQvbupKL", episodeData?.id, currentEditModeData.timestampId, updatedTimestamp)
+          }
           const updatedExampleTimestamps = exampleTimestamps.filter(item => item.id !== updatedTimestamp.id);
-          updatedExampleTimestamps.push(updatedTimestamp);
+          // updatedExampleTimestamps.push(updatedTimestamp);
           setExampleTimestamps(updatedExampleTimestamps);
 
         } else {
@@ -360,6 +369,7 @@ export default function Home() {
           updatedExampleTimestamps.push(newTimestamp);
           setExampleTimestamps(updatedExampleTimestamps);
           // Real save should happen here... only logging for now...
+
 
           console.log(convertEditModeTimeToSeconds(editModeTime.startTime));
         }
@@ -425,15 +435,15 @@ export default function Home() {
       </p>
       <AuthComponent />
       <ReadDocumentComponent idToFetch="KqiCQr3O4hucEQvbupKL" />
-      <AddTimestampComponent  podcastId="KqiCQr3O4hucEQvbupKL" episodeId="8CtvmEvN8VZQMTTLU3GL" />
+      <AddTimestampComponent  podcastId="KqiCQr3O4hucEQvbupKL" episodeId="LynfNei4oTT5RC9tBiou" />
       <CreateDocumentComponent />
       <CreatePodcastComponent podcastData={examplePodcastData} />
-      <AddEpisodeComponent podcastId="jdB3sQsT8p1FE5qW76mH" episodeData={exampleEpisodeData} />
-      <button onClick={() => setGlobalStateFromFirebase("KqiCQr3O4hucEQvbupKL", "8CtvmEvN8VZQMTTLU3GL")}>Set Global State</button>
+      <AddEpisodeComponent podcastId="KqiCQr3O4hucEQvbupKL" episodeData={exampleEpisodeData} />
+      <button onClick={() => setGlobalStateFromFirebase("KqiCQr3O4hucEQvbupKL", "LynfNei4oTT5RC9tBiou")}>Set Global State</button>
       <button onClick={() => setEditMode(!editMode)}>
         {editMode ? "Turn off edit mode" : "Turn on edit mode"}
       </button>
-      {episodeData && episodeData.timestamps.length > 0 && (
+      {episodeData && episodeData.timestamps && episodeData.timestamps.length > 0 && (
         <section className={styles.titleSection}>
           <h2>{episodeData.title}</h2>
         </section>
@@ -461,7 +471,7 @@ export default function Home() {
         <div>
           {/*<button onClick={() => playFromSpecificTime(62)}>Play from 1:02</button>*/}
           <div className={styles.exampleImageContainer}>
-            {episodeData && episodeData.timestamps.length > 0 ? (
+            {episodeData && episodeData.timestamps && episodeData.timestamps.length > 0 ? (
               <section>
                 <div>
                   {currentImages.length > 0 ? (
@@ -539,13 +549,15 @@ export default function Home() {
           </div>
           <div>
             <h3>Gallery</h3>
-            <EditModePosterGallery
-              episodeData={episodeData}
-              currentImages={currentEditModeData.images}
-              addImage={addEditModeImage}
-              removeImage={removeEditModeImage}
-              currentTime={currentTime}
-            />
+            {episodeData && (
+              <EditModePosterGallery
+                episodeData={episodeData}
+                currentImages={currentEditModeData.images}
+                addImage={addEditModeImage}
+                removeImage={removeEditModeImage}
+                currentTime={currentTime}
+              />
+            )}
           </div>
         </div>
       )}

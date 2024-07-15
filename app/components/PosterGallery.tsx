@@ -10,7 +10,7 @@
  }
 
  const PosterGallery: React.FC<PosterGalleryProps> = ({ episodeData, playFromSpecificTime }) => {
-   const timestampState = useStore((state) => state.podcasts[0].episodes[0].timestamps);
+   const timestampState = useStore((state) => state.currentEpisode?.timestamps);
    const [sortedTimestamps, setSortedTimestamps] = useState<Timestamp[]>([]);
 
    const handleImageClick = (timestamp: Timestamp) => {
@@ -20,9 +20,11 @@
    };
 
    useEffect(() => {
-     console.log("Sorting the timestamps...");
-     const sortedTimestamps = timestampState.sort((a, b) => a.start - b.start);
-     setSortedTimestamps(sortedTimestamps);
+     if (timestampState) {
+       console.log("Sorting the timestamps...");
+       const sortedTimestamps = timestampState.sort((a, b) => a.start - b.start);
+       setSortedTimestamps(sortedTimestamps);
+     }
    }, [timestampState]);
 
    return (

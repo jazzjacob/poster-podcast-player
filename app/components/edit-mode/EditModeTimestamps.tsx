@@ -17,12 +17,14 @@ const EditModeTimestamps: React.FC <EditModeTimestampsProps> = ({ timestamps, se
   //console.log("episode data from within PosterGallery");
   //console.log(episodeData);
 
-  const timestampState = useStore((state) => state.podcasts[0].episodes[0].timestamps);
+  const timestampState = useStore((state) => state?.currentEpisode?.timestamps);
 
   useEffect(() => {
-    console.log("Sorting the timestamps...");
-    const sortedTimestamps = timestampState.sort((a, b) => a.start - b.start);
-    setSortedTimestamps(sortedTimestamps);
+    if (timestampState) {
+      console.log("Sorting the timestamps...");
+      const sortedTimestamps = timestampState.sort((a, b) => a.start - b.start);
+      setSortedTimestamps(sortedTimestamps);
+    }
   }, [timestampState]);
 
   function handleBoxClick(timestamp: Timestamp) {

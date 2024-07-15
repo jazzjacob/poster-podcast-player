@@ -79,8 +79,9 @@ export async function setGlobalStateFromFirebase(podcastId: string, episodeId: s
 
   try {
     const podcastDocument = await fetchPodcastById(podcastId);
-    const episodeDocument = await fetchEpisode(podcastId, episodeId)
-    //const episodeDocument = await readDocument(episodeId);
+    const episodeDocument = await fetchEpisode(podcastId, episodeId);
+
+    // const episodeDocument = await readDocument(episodeId);
     if (podcastDocument) {
       setPodcast(podcastDocument)
     };
