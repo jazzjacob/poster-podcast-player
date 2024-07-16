@@ -16,14 +16,13 @@ import ImageUploadComponent from "./components/edit-mode/ImageUploadComponent";
 
 import { Timestamp, TimestampImage, EpisodeData, EditModeData, EditModeTime, OverlapDetails, defaultEditModeTime, defaultEditModeData, nullEpisode, defaultExampleTimestamps, examplePodcastData, exampleEpisodeData } from "@/app/helpers/customTypes";
 import { generateId, checkOverlap, removeObjectFromArrayByKey, setGlobalStateFromFirebase } from "@/app/helpers/functions";
-import { Updock } from "next/font/google";
 import CreateDocumentComponent from "./components/CreateDocumentComponent";
 import CreatePodcastComponent from "./components/CreatePodcastComponent";
 import AddEpisodeComponent from "./components/AddEpisodeComponent";
 import AuthComponent from "./components/AuthComponent";
 import AddTimestampComponent from "./components/AddTimestampComponent";
 import useStore from "./helpers/store";
-import { updateTimestamp, addTimestampToEpisode } from "./firebase/firestoreOperations";
+import { updateTimestamp, addTimestampToEpisode, deleteTimestamp } from "./firebase/firestoreOperations";
 
 export default function Home() {
   // const [rssFeed, setRssFeed] = useState(null); Save for possible future use
@@ -441,14 +440,22 @@ export default function Home() {
     setCurrentEditModeData(defaultEditModeData);
   };
 
-  function handleDelete() {
-    console.log("Delete timestamp here");
+  async function handleDelete() {
     const timestampId = currentEditModeData.timestampId;
+    console.log("Delete timestamp with id: ", timestampId);
+    const deleted = await deleteTimestamp(PODCAST_ID, EPISODE_ID, timestampId);
+    if (deleted) {
+      setGlobalStateFromFirebase(PODCAST_ID, EPISODE_ID);
+      handleCancel();
+    }
+
+    /*
     console.log(currentEditModeData);
     const arrayWithoutItem = removeObjectFromArrayByKey([...exampleTimestamps], "id", timestampId);
     setExampleTimestamps(arrayWithoutItem);
     console.log(arrayWithoutItem);
     handleCancel();
+    */
   }
 
   return (

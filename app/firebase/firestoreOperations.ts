@@ -236,6 +236,18 @@ export async function deleteDocument(id: string): Promise<void> {
   }
 }
 
+export async function deleteTimestamp(podcastId: string, episodeId: string, timestampId: string): Promise<boolean> {
+  try {
+    const timestampRef = doc(db, 'podcasts', podcastId, 'episodes', episodeId, 'timestamps', timestampId);
+    await deleteDoc(timestampRef);
+    console.log("Timestamp deleted");
+    return true;
+  } catch (error) {
+    console.log("Error deleting timestamp: ", error);
+    return false;
+  }
+}
+
 
 export async function createPodcast(podcast: PodcastData): Promise<void> {
   try {
