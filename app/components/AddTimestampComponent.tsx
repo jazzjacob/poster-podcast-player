@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { addTimestampToEpisode } from '../firebase/firestoreOperations';
 import { Timestamp } from '../helpers/customTypes';
+import { generateId } from '../helpers/functions';
 
 const AddTimestampComponent: React.FC<{ podcastId: string, episodeId: string }> = ({ podcastId, episodeId }) => {
   const [loading, setLoading] = useState<boolean>(false);
@@ -10,10 +11,18 @@ const AddTimestampComponent: React.FC<{ podcastId: string, episodeId: string }> 
     setLoading(true);
 
     const newTimestamp: Timestamp = {
-      id: 'new-timestamp-id',
-      start: 30,
-      end: 60,
-      images: [],
+      id: generateId(),
+      start: 11,
+      end: 20,
+      images: [
+        {
+          id: generateId(),
+          image: "https://firebasestorage.googleapis.com/v0/b/poster-podcast-player.appspot.com/o/podcasts%2Fthe-poster-boys%2Fepisode-59%2Flast-black-man-1.jpg?alt=media&token=cf5a4ee4-c774-4c53-999b-e68c92363d78",
+          description: "",
+          createdAt: new Date(),
+          updatedAt: new Date()
+        }
+      ],
       createdAt: new Date(),
       updatedAt: new Date(),
     };

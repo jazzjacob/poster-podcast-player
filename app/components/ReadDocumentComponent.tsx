@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { fetchAllPodcasts, readDocument } from '../firebase/firestoreOperations';
+import { fetchAllPodcasts, fetchPodcastById } from '../firebase/firestoreOperations';
 import { PodcastData } from '../helpers/customTypes';
 import { create } from 'zustand'
 import useStore from '../helpers/store';
@@ -21,17 +21,21 @@ const ReadDocumentComponent: React.FC<ReadDocumentComponentProps> = ({ idToFetch
   const [podcastData, setPodcastData] = useState<PodcastData[] | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const podcastState = useStore((state) => state.podcasts);
+  const globalState = useStore((state) => state);
 
   const updatePodcastState = useStore((state) => state.setPodcasts);
+  const setCurrentEpisode = useStore((state) => state.setCurrentEpisode);
+  const currentEpisode = useStore((state) => state.currentEpisode);
 
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const docData = await readDocument(idToFetch);
+        const docData = await fetchPodcastById(idToFetch);
         const allPodcasts = await fetchAllPodcasts();
         setData(docData);
         updatePodcastState(allPodcasts);
+        setCurrentEpisode(allPodcasts[0].episodes[0]);
       } catch (error) {
         console.error("Error fetching data:", error);
       } finally {
@@ -40,12 +44,12 @@ const ReadDocumentComponent: React.FC<ReadDocumentComponentProps> = ({ idToFetch
     };
 
     fetchData();
-  }, [idToFetch, updatePodcastState]);
+  }, [idToFetch, updatePodcastState, setCurrentEpisode]);
 
   useEffect(() => {
     console.log("Global state:");
-    console.log(podcastState);
-  }, [podcastState]);
+    console.log(globalState);
+  }, [globalState]);
 
   if (loading) {
     return <div>Loading...</div>;
@@ -63,7 +67,7 @@ const ReadDocumentComponent: React.FC<ReadDocumentComponentProps> = ({ idToFetch
     }}>
       <h2>Data from Firestore</h2>
       <p>Podcast name: {data.podcastName}</p>
-      {podcastData && (
+      {/*podcastData && (
         podcastData.map((podcast, index) => (
           <div key={`${index}-${podcast.id}`}>
             <p>{podcast.podcastName}</p>
@@ -76,6 +80,9 @@ const ReadDocumentComponent: React.FC<ReadDocumentComponentProps> = ({ idToFetch
             ))}
           </div>
         ))
+      )*/}
+      {currentEpisode && (
+        <p>{currentEpisode.title}</p>
       )}
     </div >
   );

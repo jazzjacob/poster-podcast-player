@@ -1,5 +1,7 @@
 import { v4 as uuidv4 } from 'uuid';
 import { Timestamp, OverlapDetails } from './customTypes';
+import { fetchEpisode, fetchPodcastById } from '../firebase/firestoreOperations';
+import useStore from './store';
 
 export const generateId = (): string => {
   return uuidv4();
@@ -25,8 +27,8 @@ export function checkOverlap(startTime: number, endTime: number, id: string, exi
   };
 
   for (let timestamp of existingTimestamps) {
-    console.log(timestamp);
-    console.log(id);
+    //console.log(timestamp);
+    //console.log(id);
 
     // Check if there is an overlap
     if (
@@ -67,3 +69,28 @@ export function removeObjectFromArrayByKey(array: any[], key: string, value: str
   }
   return array;
 }
+
+
+export async function setGlobalStateFromFirebase(podcastId: string, episodeId: string) {
+  const setPodcast = useStore.getState().setPodcast;
+   const setEpisode = useStore.getState().setCurrentEpisode;
+  //const setPodcast = useStore((state) => state.setPodcast);
+  //const setEpisode = useStore((state) => state.setCurrentEpisode);
+
+  try {
+    const podcastDocument = await fetchPodcastById(podcastId);
+    const episodeDocument = await fetchEpisode(podcastId, episodeId);
+
+    // const episodeDocument = await readDocument(episodeId);
+    if (podcastDocument) {
+      setPodcast(podcastDocument)
+    };
+
+    if (episodeDocument) {
+      setEpisode(episodeDocument);
+    }
+
+  } catch (error) {
+    console.error("Error fetching data:", error);
+  }
+};

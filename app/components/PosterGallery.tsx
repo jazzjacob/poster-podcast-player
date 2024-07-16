@@ -1,7 +1,8 @@
- import React, {useEffect} from 'react';
+ import React, {useEffect, useState} from 'react';
  import Image from 'next/image';
  import { EpisodeData, Timestamp } from '../helpers/customTypes';
  import styles from "./PosterGallery.module.css"
+ import useStore from '../helpers/store';
 
  interface PosterGalleryProps {
    episodeData: EpisodeData;
@@ -9,6 +10,9 @@
  }
 
  const PosterGallery: React.FC<PosterGalleryProps> = ({ episodeData, playFromSpecificTime }) => {
+   const timestampState = useStore((state) => state.currentEpisode?.timestamps);
+   const [sortedTimestamps, setSortedTimestamps] = useState<Timestamp[]>([]);
+
    const handleImageClick = (timestamp: Timestamp) => {
      console.log("Image is clicked");
      console.log(timestamp);
@@ -16,14 +20,17 @@
    };
 
    useEffect(() => {
-     console.log("Episode data inside poster gallery");
-     console.log(episodeData);
-   }, [episodeData]);
+     if (timestampState) {
+       // console.log("Sorting the timestamps...");
+       const sortedTimestamps = timestampState.sort((a, b) => a.start - b.start);
+       setSortedTimestamps(sortedTimestamps);
+     }
+   }, [timestampState]);
 
    return (
      <div>
        <h2>This is the poster gallery</h2>
-       {episodeData && episodeData.timestamps && episodeData.timestamps.length > 0 ? (
+       {/*episodeData && episodeData.timestamps && episodeData.timestamps.length > 0 ? (
          <div className={styles.imagesContainer}>
            {episodeData.timestamps.map((timestamp, timestampIndex) => (
              timestamp.images && timestamp.images.length > 0 && (
@@ -34,6 +41,24 @@
                     style={{ width: "100px", cursor: "pointer" }}
                      onClick={() => handleImageClick(timestamp)}
                      src={`/images/episode-59/${image.image}`}
+                     alt={`Episode image ${image.image}`}
+                   />
+                 ))}
+               </div>
+             )
+           ))*/}
+       {/* USING  DATA FROM DATABASE BELOW */}
+       {sortedTimestamps &&  sortedTimestamps.length > 0 ? (
+         <div className={styles.imagesContainer}>
+           {sortedTimestamps.map((timestamp, timestampIndex) => (
+             timestamp.images && timestamp.images.length > 0 && (
+               <div key={timestamp.id} className={styles.posterGroup}>
+                 {timestamp.images.map((image, imageIndex) => (
+                   <img
+                    key={`${timestampIndex}-${imageIndex}`}
+                    style={{ width: "100px", cursor: "pointer" }}
+                     onClick={() => handleImageClick(timestamp)}
+                     src={image.image}
                      alt={`Episode image ${image.image}`}
                    />
                  ))}

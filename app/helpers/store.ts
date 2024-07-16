@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { examplePodcastData, PodcastData, nullEpisode } from "./customTypes";
+import { examplePodcastData, PodcastData, nullEpisode, EpisodeData } from "./customTypes";
 
 export const usePodcastStore = create<PodcastData[]>()((set) => ([examplePodcastData]));
 
@@ -22,7 +22,13 @@ interface CurrentPodcastState {
   clearPodcast: () => void;
 }
 
-const useStore = create<AuthState & PodcastState & CurrentPodcastState>((set) => ({
+interface CurrentEpisodeState {
+  currentEpisode: EpisodeData | null;
+  setCurrentEpisode: (episode: EpisodeData) => void;
+  clearCurrentEpisode: () => void;
+}
+
+const useStore = create<AuthState & PodcastState & CurrentPodcastState & CurrentEpisodeState>((set) => ({
   user: null,
   setUser: (user) => set({ user }),
   clearUser: () => set({ user: null }),
@@ -34,7 +40,11 @@ const useStore = create<AuthState & PodcastState & CurrentPodcastState>((set) =>
 
   podcast: null,
   setPodcast: (podcast) => set({ podcast }),
-  clearPodcast: () => set({ podcast: null })
+  clearPodcast: () => set({ podcast: null }),
+
+  currentEpisode: null,
+  setCurrentEpisode: (currentEpisode) => set({ currentEpisode }),
+  clearCurrentEpisode: () => set({ currentEpisode: null }),
 }));
 
 export default useStore;
