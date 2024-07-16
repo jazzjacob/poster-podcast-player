@@ -40,6 +40,9 @@ export default function Home() {
 
   const [loading, setLoading] = useState(false);
 
+  const PODCAST_ID = "KqiCQr3O4hucEQvbupKL";
+  const EPISODE_ID = "LynfNei4oTT5RC9tBiou";
+
   const episodeData  = useStore((state) => state.currentEpisode);
   const setEpisodeData = useStore((state) => state.setCurrentEpisode);
   // const loaded = usePreload(episodeData);
@@ -356,18 +359,15 @@ export default function Home() {
         if (currentEditModeData.timestampId !== "") {
           console.log("CURRENTLY UPDATING A TIMESTAMP");
           const updatedTimestamp: Partial<Timestamp> = {
-            id: currentEditModeData.timestampId,
             start: startTime,
             end: endTime,
             images: [...currentEditModeData.images]
           }
 
           if (episodeData && episodeData.timestamps) {
-            console.log("episodeData.timestamps");
-            console.log(episodeData.timestamps);
             // Update a timestamp for real here... in firebase...
-            console.log(episodeData.id);
-            await updateTimestamp("KqiCQr3O4hucEQvbupKL", episodeData?.id, currentEditModeData.timestampId, updatedTimestamp)
+            await updateTimestamp(PODCAST_ID, EPISODE_ID, currentEditModeData.timestampId, updatedTimestamp)
+            await setGlobalStateFromFirebase(PODCAST_ID, EPISODE_ID);
           }
           const updatedExampleTimestamps = exampleTimestamps.filter(item => item.id !== updatedTimestamp.id);
           // updatedExampleTimestamps.push(updatedTimestamp);

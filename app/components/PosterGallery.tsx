@@ -50,7 +50,7 @@
        {/* USING  DATA FROM DATABASE BELOW */}
        {sortedTimestamps &&  sortedTimestamps.length > 0 ? (
          <div className={styles.imagesContainer}>
-           {timestampState.map((timestamp, timestampIndex) => (
+           {sortedTimestamps.map((timestamp, timestampIndex) => (
              timestamp.images && timestamp.images.length > 0 && (
                <div key={timestamp.id} className={styles.posterGroup}>
                  {timestamp.images.map((image, imageIndex) => (

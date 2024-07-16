@@ -96,12 +96,22 @@ export async function fetchEpisode(podcastId: string, episodeId: string): Promis
       const timestampsQuerySnapshot = await getDocs(timestampsRef);
 
       const timestamps: Timestamp[] = [];
-      timestampsQuerySnapshot.forEach(doc => {
-        timestamps.push(doc.data() as Timestamp);
+      timestampsQuerySnapshot.forEach(timestampDoc => {
+        const timestampData = timestampDoc.data() as Timestamp;
+        timestampData.id = timestampDoc.id; // Store the timestamp ID
+        console.log("timestampDoc.id")
+        console.log(timestampDoc.id);
+        console.log("timestampData.id");
+        console.log(timestampData.id);
+        timestamps.push(timestampData);
       });
+
+      console.log("timestamps");
+      console.log(timestamps);
 
       // Add timestamps to episode data
       episodeData.timestamps = timestamps;
+      episodeData.id = episodeDocSnap.id; // Store the episode ID
       console.log("episodeData in fetch");
       console.log(episodeData);
       return episodeData;
@@ -296,6 +306,40 @@ export async function addEpisode(podcastId: string, episodeData: EpisodeData): P
  * @param timestampId - The ID of the timestamp to update.
  * @param newData - The new data to update the timestamp with.
  */
+
+ export async function updateTimestamp(
+   podcastId: string,
+   episodeId: string,
+   timestampId: string,
+   newData: Partial<Timestamp>
+ ): Promise<void> {
+   try {
+     // Reference to the specific timestamp document
+     const timestampRef = doc(db, 'podcasts', podcastId, 'episodes', episodeId, 'timestamps', timestampId);
+     console.log("Updating Timestamp with ID:", timestampId);
+     console.log("EpisodeId:", episodeId);
+
+     // Fetch the current timestamp data
+     const timestampDoc = await getDoc(timestampRef);
+     console.log("Fetched Timestamp Document Data:", timestampDoc.data());
+
+     if (!timestampDoc.exists()) {
+       throw new Error('Timestamp not found');
+     }
+
+     // Update the timestamp with the new data
+     await updateDoc(timestampRef, {
+       ...newData,
+       updatedAt: new Date() // Update the updatedAt field
+     });
+
+     console.log('Timestamp updated successfully');
+   } catch (error) {
+     console.error('Error updating timestamp: ', error);
+   }
+ }
+
+/*
 export async function updateTimestamp(
   podcastId: string,
   episodeId: string,
@@ -305,8 +349,8 @@ export async function updateTimestamp(
   try {
     // Reference to the specific timestamp document
     const timestampRef = doc(db, 'podcasts', podcastId, 'episodes', episodeId, 'timestamps', timestampId);
-    console.log("timestampRef");
-    console.log(timestampRef);
+    console.log("timestampId");
+    console.log(timestampId);
     // Fetch the current timestamp data
     const timestampDoc = await getDoc(timestampRef);
     console.log("timestampDoc");
@@ -326,7 +370,7 @@ export async function updateTimestamp(
   } catch (error) {
     console.error('Error updating timestamp: ', error);
   }
-}
+  }*/
 
 export async function addTimestampToEpisode(podcastId: string, episodeId: string, timestamp: Timestamp): Promise<void> {
   try {
