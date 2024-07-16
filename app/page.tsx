@@ -22,7 +22,7 @@ import AddEpisodeComponent from "./components/AddEpisodeComponent";
 import AuthComponent from "./components/AuthComponent";
 import AddTimestampComponent from "./components/AddTimestampComponent";
 import useStore from "./helpers/store";
-import { updateTimestamp } from "./firebase/firestoreOperations";
+import { updateTimestamp, addTimestampToEpisode } from "./firebase/firestoreOperations";
 
 export default function Home() {
   // const [rssFeed, setRssFeed] = useState(null); Save for possible future use
@@ -378,7 +378,6 @@ export default function Home() {
           const newTimestamp: Timestamp = {
             id: generateId(),
             start: startTime,
-            //start: currentEditModeData.startTime,
             end: endTime,
             images: [...currentEditModeData.images],
             createdAt: new Date(),
@@ -390,8 +389,9 @@ export default function Home() {
           const updatedExampleTimestamps = exampleTimestamps.filter(item => item.id !== newTimestamp.id);
           updatedExampleTimestamps.push(newTimestamp);
           setExampleTimestamps(updatedExampleTimestamps);
-          // Real save should happen here... only logging for now...
-
+          // Real save (CREATE TIMESTAMP) should happen here... only logging for now...
+          await addTimestampToEpisode(PODCAST_ID, EPISODE_ID, newTimestamp);
+          await setGlobalStateFromFirebase(PODCAST_ID, EPISODE_ID);
 
           console.log(convertEditModeTimeToSeconds(editModeTime.startTime));
         }
