@@ -73,8 +73,8 @@ const ImageUploadComponent: React.FC<ImageUploadComponentProps> = ({ podcastId, 
   };
 
   return (
-    <div>
-      <h2>Upload Image</h2>
+    <div style={{ margin: "2rem 0" }}>
+      <h2 style={{ marginBottom: "0.5rem" }}>Upload Image</h2 >
       <input type="file" onChange={handleFileChange} />
       {file && (
         <div>
@@ -84,7 +84,7 @@ const ImageUploadComponent: React.FC<ImageUploadComponentProps> = ({ podcastId, 
           </button>
         </div>
       )}
-    </div>
+    </div >
   );
 };
 

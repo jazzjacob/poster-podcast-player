@@ -21,7 +21,7 @@
 
    useEffect(() => {
      if (timestampState) {
-       console.log("Sorting the timestamps...");
+       // console.log("Sorting the timestamps...");
        const sortedTimestamps = timestampState.sort((a, b) => a.start - b.start);
        setSortedTimestamps(sortedTimestamps);
      }

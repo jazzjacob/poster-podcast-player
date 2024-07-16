@@ -21,17 +21,13 @@ const EditModeTimestamps: React.FC <EditModeTimestampsProps> = ({ timestamps, se
 
   useEffect(() => {
     if (timestampState) {
-      console.log("Sorting the timestamps...");
+      //console.log("Sorting the timestamps...");
       const sortedTimestamps = timestampState.sort((a, b) => a.start - b.start);
       setSortedTimestamps(sortedTimestamps);
     }
   }, [timestampState]);
 
   function handleBoxClick(timestamp: Timestamp) {
-    console.log("Clicking the box");
-    console.log(timestamp);
-    console.log("timestampState:");
-    console.log(timestampState)
 
     setCurrentEditModeData({
       startTime: timestamp.start,
@@ -52,7 +48,6 @@ const EditModeTimestamps: React.FC <EditModeTimestampsProps> = ({ timestamps, se
 
   return (
     <>
-    <p>These timestamps are now fetched from the database</p>
     <div className={styles.container}>
       {/*timestamps.map((timestamp, index) => (
         <div onClick={() => handleBoxClick(timestamp)} className={styles.timestampBox} key={`${index}-${timestamp.id}`}>

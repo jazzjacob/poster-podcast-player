@@ -35,7 +35,7 @@ export async function fetchPodcastById(id: string): Promise<PodcastData | null> 
       // Assign episodes array to podcastData
       podcastData.episodes = episodes;
 
-      console.log("Document data:", podcastData);
+      // console.log("Document data:", podcastData);
       return podcastData;
     } else {
       console.log("No such document!");
@@ -85,7 +85,7 @@ export async function fetchEpisodes(podcastId: string): Promise<EpisodeData[]> {
 
 export async function fetchEpisode(podcastId: string, episodeId: string): Promise<EpisodeData | null> {
   try {
-    console.log("Fetching the episode...");
+    //console.log("Fetching the episode...");
     const episodeDocRef = doc(db, 'podcasts', podcastId, 'episodes', episodeId);
     const episodeDocSnap = await getDoc(episodeDocRef);
 
@@ -93,7 +93,7 @@ export async function fetchEpisode(podcastId: string, episodeId: string): Promis
       const episodeData = episodeDocSnap.data() as EpisodeData;
 
       // Fetch timestamps sub-collection
-      console.log("Fetching the timestamps...");
+      //console.log("Fetching the timestamps...");
       const timestampsRef = collection(db, 'podcasts', podcastId, 'episodes', episodeId, 'timestamps');
       const timestampsQuerySnapshot = await getDocs(timestampsRef);
 
@@ -101,15 +101,8 @@ export async function fetchEpisode(podcastId: string, episodeId: string): Promis
       timestampsQuerySnapshot.forEach(timestampDoc => {
         const timestampData = timestampDoc.data() as Timestamp;
         timestampData.id = timestampDoc.id; // Store the timestamp ID
-        console.log("timestampDoc.id")
-        console.log(timestampDoc.id);
-        console.log("timestampData.id");
-        console.log(timestampData.id);
         timestamps.push(timestampData);
       });
-
-      console.log("timestamps");
-      console.log(timestamps);
 
       // Add timestamps to episode data
       episodeData.timestamps = timestamps;
@@ -122,8 +115,8 @@ export async function fetchEpisode(podcastId: string, episodeId: string): Promis
       uploadedImagesQuerySnapshot.forEach(uploadedImageDoc => {
         const uploadedImageData = uploadedImageDoc.data() as UploadedImage;
         uploadedImageData.id = uploadedImageDoc.id; // Store the uploadedImage ID
-        console.log("uploadedImageDoc.id")
-        console.log(uploadedImageDoc.id);
+        //console.log("uploadedImageDoc.id")
+        //console.log(uploadedImageDoc.id);
         uploadedImages.push(uploadedImageData);
       });
 
@@ -131,8 +124,6 @@ export async function fetchEpisode(podcastId: string, episodeId: string): Promis
       episodeData.uploadedImages = uploadedImages;
 
       episodeData.id = episodeDocSnap.id; // Store the episode ID
-      console.log("episodeData in fetch");
-      console.log(episodeData);
       return episodeData;
     } else {
       console.log("No such document!");
@@ -289,26 +280,22 @@ export async function createPodcast(podcast: PodcastData): Promise<void> {
 export async function addEpisode(podcastId: string, episodeData: EpisodeData): Promise<void> {
   try {
     const episodesRef = collection(db, "podcasts", podcastId, "episodes");
-    console.log("episodesRef:");
-    console.log(episodesRef);
 
     // Remove timestamps array before adding the episode
     const { timestamps, ...episodeDataWithoutTimestamps } = episodeData;
-    console.log("episodeDataWithoutTimestamps");
-    console.log(episodeDataWithoutTimestamps);
+    //console.log("episodeDataWithoutTimestamps");
+    //console.log(episodeDataWithoutTimestamps);
     const docRef = await addDoc(episodesRef, episodeDataWithoutTimestamps);
     console.log("Episode document written with ID: ", docRef.id);
-    console.log("timestamps");
-    console.log(timestamps);
+    //console.log("timestamps");
+    //console.log(timestamps);
 
     // Create 'timestamps' sub-collection for the new episode
     if (timestamps && timestamps.length > 0) {
       const timestampsRef = collection(doc(db, "podcasts", podcastId, "episodes", docRef.id), "timestamps");
-      console.log(timestampsRef);
-      console.log("timestampsRef");
       timestamps.map(async (timestamp) => {
-        console.log("timestamp");
-        console.log(timestamp);
+        //console.log("timestamp");
+        //console.log(timestamp);
         await addDoc(timestampsRef, timestamp);
       });
       console.log("Episode added successfully");
@@ -348,11 +335,11 @@ export async function addEpisode(podcastId: string, episodeData: EpisodeData): P
      // Reference to the specific timestamp document
      const timestampRef = doc(db, 'podcasts', podcastId, 'episodes', episodeId, 'timestamps', timestampId);
      console.log("Updating Timestamp with ID:", timestampId);
-     console.log("EpisodeId:", episodeId);
+     //console.log("EpisodeId:", episodeId);
 
      // Fetch the current timestamp data
      const timestampDoc = await getDoc(timestampRef);
-     console.log("Fetched Timestamp Document Data:", timestampDoc.data());
+     //console.log("Fetched Timestamp Document Data:", timestampDoc.data());
 
      if (!timestampDoc.exists()) {
        throw new Error('Timestamp not found');

@@ -45,6 +45,7 @@ export default function Home() {
 
   const episodeData  = useStore((state) => state.currentEpisode);
   const setEpisodeData = useStore((state) => state.setCurrentEpisode);
+  const podcastData = useStore((state) => state.podcast);
   const globalState = useStore((state) => state);
   // const loaded = usePreload(episodeData);
   // const loaded = usePreload(episodeData ? episodeData : []);
@@ -145,8 +146,8 @@ export default function Home() {
   // Helper function to handle timestamps iteration
   const handleTimestampsIteration = useCallback((currentTime: number) => {
     episodeData && episodeData.timestamps && episodeData.timestamps.every((timestamp) => {
-      console.log("timestamp check:");
-      console.log(timestamp);
+      //console.log("timestamp check:");
+      //console.log(timestamp);
       if (timestamp.start <= currentTime && currentTime <= timestamp.end) {
         setCurrentImages(timestamp.images);
         setCurrentStartTime(timestamp.start);
@@ -164,8 +165,8 @@ export default function Home() {
 
   // ON CURRENT TIME UPDATE - EVERY SECOND AUDIO IS PLAYING
   useEffect(() => {
-    console.log("current time");
-    console.log(currentTime);
+    //console.log("current time");
+    //console.log(currentTime);
     if (-1 < currentTime) {
 
       handleEditModeTimes(currentTime);
@@ -196,7 +197,7 @@ export default function Home() {
     const audioElement = audioRef.current;
 
     const handleTimeUpdate = () => {
-      console.log("Updating time");
+      //console.log("Updating time");
       if (audioElement) {
         const audioElementTime = Math.floor(audioElement.currentTime);
         if (currentTime !== audioElementTime) {
@@ -223,8 +224,8 @@ export default function Home() {
       try {
         const response = await fetch("/episodes.json");
         const data = await response.json();
-        console.log("Data from the new fetch:");
-        console.log(data);
+        //console.log("Data from the new fetch:");
+        //console.log(data);
 
         //setEpisodeData(data.episodes[0]);
 
@@ -252,8 +253,8 @@ export default function Home() {
 
   useEffect(() => {
     if (episodeData) {
-      console.log("Episode data:");
-      console.log(episodeData);
+      //console.log("Episode data:");
+      //console.log(episodeData);
     }
   }, [episodeData]);
 
@@ -278,7 +279,7 @@ export default function Home() {
   ]);
 
   useEffect(() => {
-    console.log("Sorting the timestamps...");
+    //console.log("Sorting the timestamps...");
     const sortedTimestamps = exampleTimestamps.sort((a, b) => a.start - b.start);
     setExampleTimestamps(sortedTimestamps);
   }, [exampleTimestamps]);
@@ -338,11 +339,11 @@ export default function Home() {
     const startTime = convertEditModeTimeToSeconds(editModeTime.startTime);
     const endTime = convertEditModeTimeToSeconds(editModeTime.endTime);
 
-    console.log("currentEditModeData");
-    console.log(currentEditModeData);
+    //console.log("currentEditModeData");
+    //console.log(currentEditModeData);
     const overlapResults = checkOverlap(startTime, endTime, currentEditModeData.timestampId, episodeData?.timestamps || []);
-    console.log("overlapResults");
-    console.log(overlapResults);
+    //console.log("overlapResults");
+    //console.log(overlapResults);
 
     if (overlapResults.isOverlap) {
       console.log("NOT SAVED! OVERLAPPING");
@@ -385,8 +386,8 @@ export default function Home() {
             createdAt: new Date(),
             updatedAt: new Date(),
           };
-          console.log("newTimestamp:")
-          console.log(newTimestamp);
+          //console.log("newTimestamp:")
+          //console.log(newTimestamp);
 
           const updatedExampleTimestamps = exampleTimestamps.filter(item => item.id !== newTimestamp.id);
           updatedExampleTimestamps.push(newTimestamp);
@@ -395,7 +396,7 @@ export default function Home() {
           await addTimestampToEpisode(PODCAST_ID, EPISODE_ID, newTimestamp);
           await setGlobalStateFromFirebase(PODCAST_ID, EPISODE_ID);
 
-          console.log(convertEditModeTimeToSeconds(editModeTime.startTime));
+          //console.log(convertEditModeTimeToSeconds(editModeTime.startTime));
         }
 
         pauseAudio();
@@ -483,6 +484,9 @@ export default function Home() {
       {episodeData && episodeData.timestamps && episodeData.timestamps.length > 0 && (
         <section className={styles.titleSection}>
           <h2>{episodeData.title}</h2>
+          {podcastData && podcastData.podcastName && (
+            <p>{podcastData.podcastName}</p>
+          )}
         </section>
       )}
 

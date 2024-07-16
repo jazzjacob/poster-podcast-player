@@ -27,8 +27,8 @@ export function checkOverlap(startTime: number, endTime: number, id: string, exi
   };
 
   for (let timestamp of existingTimestamps) {
-    console.log(timestamp);
-    console.log(id);
+    //console.log(timestamp);
+    //console.log(id);
 
     // Check if there is an overlap
     if (
@@ -90,10 +90,6 @@ export async function setGlobalStateFromFirebase(podcastId: string, episodeId: s
       setEpisode(episodeDocument);
     }
 
-    console.log("podcastDocument");
-    console.log(podcastDocument)
-    console.log("episodeDocument");
-    console.log(episodeDocument);
   } catch (error) {
     console.error("Error fetching data:", error);
   }
