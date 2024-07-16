@@ -12,6 +12,7 @@ import EditModePosterView from "./components/edit-mode/EditModePosterView";
 import EditModeTimeForm from "./components/edit-mode/EditModeTimeForm";
 import EditModeTimestamps from "./components/edit-mode/EditModeTimestamps";
 import ReadDocumentComponent from "./components/ReadDocumentComponent";
+import ImageUploadComponent from "./components/edit-mode/ImageUploadComponent";
 
 import { Timestamp, TimestampImage, EpisodeData, EditModeData, EditModeTime, OverlapDetails, defaultEditModeTime, defaultEditModeData, nullEpisode, defaultExampleTimestamps, examplePodcastData, exampleEpisodeData } from "@/app/helpers/customTypes";
 import { generateId, checkOverlap, removeObjectFromArrayByKey, setGlobalStateFromFirebase } from "@/app/helpers/functions";
@@ -565,6 +566,7 @@ export default function Home() {
               </button >
             </div>
           </div>
+            <ImageUploadComponent podcastId={PODCAST_ID} episodeId={EPISODE_ID}  />
           <div>
             <h3>Timestamps</h3>
               <EditModeTimestamps updateEditModeTime={updateEditModeTime} setCurrentEditModeData={setCurrentEditModeData} timestamps={exampleTimestamps}  />

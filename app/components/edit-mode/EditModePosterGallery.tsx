@@ -10,8 +10,6 @@ interface EditModePosterGalleryProps {
   currentTime: number;
 }
 
-
-
 const EditModePosterGallery: React.FC<EditModePosterGalleryProps> = (
   { episodeData, addImage, removeImage, currentImages, currentTime }
 ) => {
@@ -26,17 +24,17 @@ const EditModePosterGallery: React.FC<EditModePosterGalleryProps> = (
 
   function handleImageClick(uploadedImage: UploadedImage) {
     if (currentImages.length < 1) {
-      addImage(uploadedImage.image);
+      addImage(uploadedImage.url);
     } else {
       let imageIsRemoved = false;
       currentImages.forEach((currentImage) => {
-        if (currentImage.image == uploadedImage.image) {
-          removeImage(uploadedImage.image);
+        if (currentImage.image == uploadedImage.url) {
+          removeImage(uploadedImage.url);
           imageIsRemoved = true;
         }
       })
       if (!imageIsRemoved) {
-        addImage(uploadedImage.image);
+        addImage(uploadedImage.url);
       }
     }
   }
@@ -49,7 +47,7 @@ const EditModePosterGallery: React.FC<EditModePosterGalleryProps> = (
             episodeData.uploadedImages.map(
               (uploadedImage, index) => {
                 return (
-                  <img alt={`Episode image ${uploadedImage.image}`} key={index} onClick={() => handleImageClick(uploadedImage)} style={{height: "100px", cursor: "pointer", margin: "8px"}} src={uploadedImage.image} />
+                  <img alt={`Episode image ${uploadedImage.url}`} key={index} onClick={() => handleImageClick(uploadedImage)} style={{height: "100px", cursor: "pointer", margin: "8px"}} src={uploadedImage.url} />
                 )
               }
             )

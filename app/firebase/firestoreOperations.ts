@@ -1,6 +1,6 @@
 import { db } from './firebaseConfig';
 import { collection, addDoc, updateDoc, deleteDoc, doc, getDoc, getDocs, query, where, setDoc, arrayUnion } from "firebase/firestore";
-import { PodcastData, EpisodeData, Timestamp } from '../helpers/customTypes';
+import { PodcastData, EpisodeData, Timestamp, UploadedImage } from '../helpers/customTypes';
 
 // Create
 export async function createDocument(data: any): Promise<void> {
@@ -85,6 +85,7 @@ export async function fetchEpisodes(podcastId: string): Promise<EpisodeData[]> {
 
 export async function fetchEpisode(podcastId: string, episodeId: string): Promise<EpisodeData | null> {
   try {
+    console.log("Fetching the episode...");
     const episodeDocRef = doc(db, 'podcasts', podcastId, 'episodes', episodeId);
     const episodeDocSnap = await getDoc(episodeDocRef);
 
@@ -92,6 +93,7 @@ export async function fetchEpisode(podcastId: string, episodeId: string): Promis
       const episodeData = episodeDocSnap.data() as EpisodeData;
 
       // Fetch timestamps sub-collection
+      console.log("Fetching the timestamps...");
       const timestampsRef = collection(db, 'podcasts', podcastId, 'episodes', episodeId, 'timestamps');
       const timestampsQuerySnapshot = await getDocs(timestampsRef);
 
@@ -111,6 +113,23 @@ export async function fetchEpisode(podcastId: string, episodeId: string): Promis
 
       // Add timestamps to episode data
       episodeData.timestamps = timestamps;
+
+      // Fetch uploadedImages sub-collection
+      const uploadedImagesRef = collection(db, 'podcasts', podcastId, 'episodes', episodeId, 'uploadedImages');
+      const uploadedImagesQuerySnapshot = await getDocs(uploadedImagesRef);
+
+      const uploadedImages: UploadedImage[] = [];
+      uploadedImagesQuerySnapshot.forEach(uploadedImageDoc => {
+        const uploadedImageData = uploadedImageDoc.data() as UploadedImage;
+        uploadedImageData.id = uploadedImageDoc.id; // Store the uploadedImage ID
+        console.log("uploadedImageDoc.id")
+        console.log(uploadedImageDoc.id);
+        uploadedImages.push(uploadedImageData);
+      });
+
+      // Add uploadedImages to episode data
+      episodeData.uploadedImages = uploadedImages;
+
       episodeData.id = episodeDocSnap.id; // Store the episode ID
       console.log("episodeData in fetch");
       console.log(episodeData);
