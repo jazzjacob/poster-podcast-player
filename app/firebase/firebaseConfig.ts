@@ -1,7 +1,8 @@
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
-import { getAuth, setPersistence, browserLocalPersistence, browserSessionPersistence, inMemoryPersistence } from 'firebase/auth';
+import { getAuth, setPersistence, browserLocalPersistence, browserSessionPersistence, inMemoryPersistence, onAuthStateChanged } from 'firebase/auth';
+import useStore from "@/app/helpers/store";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -18,6 +19,16 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const storage = getStorage(app);
 const auth = getAuth(app);
+
+// Set up authentication state listener
+onAuthStateChanged(auth, (user) => {
+  const { setUser, clearUser } = useStore.getState();
+  if (user) {
+    setUser(user);
+  } else {
+    clearUser();
+  }
+});
 
 export const setAuthPersistence = async (persistence: 'LOCAL' | 'SESSION' | 'NONE') => {
   let persistenceType;

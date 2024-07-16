@@ -7,19 +7,12 @@ import useStore from '../helpers/store';
 const AuthComponent: React.FC = () => {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
-  const [user, setUser] = useState<User | null>(null);
+  //const [user, setUser] = useState<User | null>(null);
   const [persistence, setPersistence] = useState<'LOCAL' | 'SESSION' | 'NONE'>('LOCAL');
+  const [viewLogin, setViewLogin] = useState(false);
 
-  const currentUser = auth.currentUser;
   const podcastState = useStore((state) => state.podcasts);
-
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      setUser(currentUser);
-    });
-
-    return () => unsubscribe();
-  }, []);
+  const user = useStore((state) => state.user);
 
   const handleChange = (setter: React.Dispatch<React.SetStateAction<string>>) => (
     e: ChangeEvent<HTMLInputElement>
@@ -40,7 +33,7 @@ const AuthComponent: React.FC = () => {
       try {
         await setAuthPersistence(persistence);
         const user = await signInUser(email, password);
-        setUser(user);
+        //setUser(user);
       } catch (error) {
         console.error('Error signing in:', error);
       }
@@ -51,7 +44,7 @@ const AuthComponent: React.FC = () => {
     try {
       await setAuthPersistence(persistence);
       const user = await signUpUser(email, password);
-      setUser(user);
+      // setUser(user);
     } catch (error) {
       console.error('Error signing up:', error);
     }
@@ -60,7 +53,7 @@ const AuthComponent: React.FC = () => {
   const handleSignOut = async () => {
     try {
       await signOutUser();
-      setUser(null);
+      //setUser(null);
       console.log("Successfully signed out!");
     } catch (error) {
       console.error('Error signing out:', error);
@@ -77,36 +70,46 @@ const AuthComponent: React.FC = () => {
 
   return (
     <div style={{ margin: "2rem 0" }}>
-      <h1>Authentication</h1>
-      <input
-        type="email"
-        placeholder="Email"
-        value={email}
-        onChange={handleChange(setEmail)}
-      />
-      <input
-        type="password"
-        placeholder="Password"
-        value={password}
-        onChange={handleChange(setPassword)}
-      />
-      <select value={persistence} onChange={handlePersistenceChange}>
-        <option value="LOCAL">Local Persistence</option>
-        <option value="SESSION">Session Persistence</option>
-        <option value="NONE">No Persistence</option>
-      </select>
-      <button
-        style={{ margin: "0 1rem" }}
-        onClick={() =>  user ? handleSignOut() : handleSignIn() }>
-      {user ? 'Sign Out' : 'Sign In'}
-      </button>
-      <button onClick={handleCheckAuth}>Check Auth State</button>
-      {user ? <p>✅ Logged in!</p> : <p>😢 Not logged in...</p>}
-      {user && <p>Welcome, {user.email}</p>}
-      { podcastState && podcastState[0] && (
-        <p>Data from global state: {podcastState[0].podcastName}</p>
-      )
-      }
+      {user ? (
+        <button
+          style={{ margin: "0 1rem" }}
+          onClick={() =>  user ? handleSignOut() : handleSignIn() }>
+        {user ? 'Sign Out' : 'Sign In'}
+        </button>
+      ) : (
+        <>
+          <input
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={handleChange(setEmail)}
+          />
+          <input
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={handleChange(setPassword)}
+          />
+          <select value={persistence} onChange={handlePersistenceChange}>
+            <option value="LOCAL">Local Persistence</option>
+            <option value="SESSION">Session Persistence</option>
+            <option value="NONE">No Persistence</option>
+          </select>
+          <button
+            style={{ margin: "0 1rem" }}
+            onClick={() =>  user ? handleSignOut() : handleSignIn() }>
+          {user ? 'Sign Out' : 'Sign In'}
+          </button>
+        </>
+      )}
+
+        {/*<button onClick={handleCheckAuth}>Check Auth State</button>*/}
+        {user ? <p>✅ Logged in! Welcome, {user.email}</p> : <p>😢 Not logged in...</p>}
+        { podcastState && podcastState[0] && (
+          <p>Data from global state: {podcastState[0].podcastName}</p>
+        )
+        }
+
     </div >
   );
 };

@@ -45,6 +45,7 @@ export default function Home() {
 
   const episodeData  = useStore((state) => state.currentEpisode);
   const setEpisodeData = useStore((state) => state.setCurrentEpisode);
+  const globalState = useStore((state) => state);
   // const loaded = usePreload(episodeData);
   // const loaded = usePreload(episodeData ? episodeData : []);
   // const loaded = true;
@@ -54,6 +55,7 @@ export default function Home() {
   const updatePodcastState = useStore((state) => state.setPodcasts);
   const setCurrentEpisode = useStore((state) => state.setCurrentEpisode);
   const currentEpisode = useStore((state) => state.currentEpisode);
+  const user = useStore((state) => state.user);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -464,15 +466,20 @@ export default function Home() {
         Hello, this is <b>Poster Podcast Player</b>.
       </p>
       <AuthComponent />
-      <ReadDocumentComponent idToFetch="KqiCQr3O4hucEQvbupKL" />
-      <AddTimestampComponent  podcastId="KqiCQr3O4hucEQvbupKL" episodeId="LynfNei4oTT5RC9tBiou" />
-      <CreateDocumentComponent />
-      <CreatePodcastComponent podcastData={examplePodcastData} />
-      <AddEpisodeComponent podcastId="KqiCQr3O4hucEQvbupKL" episodeData={exampleEpisodeData} />
-      <button onClick={() => setGlobalStateFromFirebase("KqiCQr3O4hucEQvbupKL", "LynfNei4oTT5RC9tBiou")}>Set Global State</button>
-      <button onClick={() => setEditMode(!editMode)}>
-        {editMode ? "Turn off edit mode" : "Turn on edit mode"}
-      </button>
+      {/*<ReadDocumentComponent idToFetch="KqiCQr3O4hucEQvbupKL" />*/}
+      {/*<AddTimestampComponent podcastId="KqiCQr3O4hucEQvbupKL" episodeId="LynfNei4oTT5RC9tBiou" />*/}
+      {/*<CreatePodcastComponent podcastData={examplePodcastData} />*/}
+      {/*<AddEpisodeComponent podcastId="KqiCQr3O4hucEQvbupKL" episodeData={exampleEpisodeData} />*/}
+
+      {user && (
+        <div>
+          <h2>Admin stuff</h2>
+          <button onClick={() => setGlobalStateFromFirebase("KqiCQr3O4hucEQvbupKL", "LynfNei4oTT5RC9tBiou")}>Set Global State</button>
+          <button onClick={() => setEditMode(!editMode)}>
+            {editMode ? "Turn off edit mode" : "Turn on edit mode"}
+          </button>
+        </div>
+      )}
       {episodeData && episodeData.timestamps && episodeData.timestamps.length > 0 && (
         <section className={styles.titleSection}>
           <h2>{episodeData.title}</h2>
@@ -497,7 +504,7 @@ export default function Home() {
       </div>
 
       {/* NORMAL MODE */}
-      {!editMode ? (
+      {(!editMode || !user) ? (
         <div>
           {/*<button onClick={() => playFromSpecificTime(62)}>Play from 1:02</button>*/}
           <div className={styles.exampleImageContainer}>
