@@ -38,6 +38,8 @@ export default function Home() {
 
   const [exampleTimestamps, setExampleTimestamps] = useState(defaultExampleTimestamps);
 
+  const [loading, setLoading] = useState(false);
+
   const episodeData  = useStore((state) => state.currentEpisode);
   const setEpisodeData = useStore((state) => state.setCurrentEpisode);
   // const loaded = usePreload(episodeData);
@@ -45,6 +47,26 @@ export default function Home() {
   // const loaded = true;
 
   const audioRef = useRef<HTMLAudioElement>(null);
+
+  const updatePodcastState = useStore((state) => state.setPodcasts);
+  const setCurrentEpisode = useStore((state) => state.setCurrentEpisode);
+  const currentEpisode = useStore((state) => state.currentEpisode);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        // podcastId, episodeId
+        setGlobalStateFromFirebase("KqiCQr3O4hucEQvbupKL", "LynfNei4oTT5RC9tBiou");
+      } catch (error) {
+        console.error("Error setting global :", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   // FETCH DATA FROM POSTER BOYS RSS FEED
   // Save for possible future use
