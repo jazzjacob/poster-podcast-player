@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
 import { Timestamp, OverlapDetails } from './customTypes';
-import { fetchEpisode, fetchPodcast } from '../firebase/firestoreOperations';
+import { fetchAllPodcasts, fetchEpisode, fetchPodcast } from '../firebase/firestoreOperations';
 import useStore from './store';
 
 export const generateId = (): string => {
@@ -73,22 +73,32 @@ export function removeObjectFromArrayByKey(array: any[], key: string, value: str
 
 export async function setGlobalStateFromFirebase(podcastId: string, episodeId: string) {
   const setPodcast = useStore.getState().setPodcast;
-   const setEpisode = useStore.getState().setCurrentEpisode;
+  const setEpisode = useStore.getState().setCurrentEpisode;
+  const setPodcasts = useStore.getState().setPodcasts;
   //const setPodcast = useStore((state) => state.setPodcast);
   //const setEpisode = useStore((state) => state.setCurrentEpisode);
 
   try {
-    const podcastDocument = await fetchPodcast(podcastId);
-    const episodeDocument = await fetchEpisode(podcastId, episodeId);
+    if (podcastId !== "") {
+      const podcastDocument = await fetchPodcast(podcastId);
+      if (podcastDocument) {
+        setPodcast(podcastDocument)
+      };
+    }
+    if (podcastId !== "" && episodeId !== "") {
+      const episodeDocument = await fetchEpisode(podcastId, episodeId);
+      if (episodeDocument) {
+        setEpisode(episodeDocument);
+      }
+
+    }
+    const podcastsDocument = await fetchAllPodcasts();
 
     // const episodeDocument = await readDocument(episodeId);
-    if (podcastDocument) {
-      setPodcast(podcastDocument)
-    };
-
-    if (episodeDocument) {
-      setEpisode(episodeDocument);
-    }
+    //
+    if (podcastsDocument) {
+          setPodcasts(podcastsDocument);
+        }
 
   } catch (error) {
     console.error("Error fetching data:", error);

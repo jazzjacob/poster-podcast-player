@@ -23,6 +23,8 @@ import AuthComponent from "./components/AuthComponent";
 import AddTimestampComponent from "./components/AddTimestampComponent";
 import useStore from "./helpers/store";
 import { updateTimestamp, addTimestampToEpisode, deleteTimestamp } from "./firebase/firestoreOperations";
+import SelectPodcastComponent from "./components/SelectPodcastComponent";
+import SelectEpisodeComponent from "./components/SelectEpisodeComponent";
 
 export default function Home() {
   // const [rssFeed, setRssFeed] = useState(null); Save for possible future use
@@ -39,14 +41,18 @@ export default function Home() {
   const [exampleTimestamps, setExampleTimestamps] = useState(defaultExampleTimestamps);
 
   const [loading, setLoading] = useState(false);
+  const [podcastId, setPodcastId] = useState<string>("");
+  const [episodeId, setEpisodeId] = useState<string>("");
 
   const PODCAST_ID = "Or17ZeOG5b1VkWZz2mMc";
   const EPISODE_ID = "DC1zdnuSW9Y7VVSFeDyP";
 
-  const episodeData  = useStore((state) => state.currentEpisode);
+  const episodeData = useStore((state) => state.currentEpisode);
   const setEpisodeData = useStore((state) => state.setCurrentEpisode);
   const podcastData = useStore((state) => state.podcast);
   const globalState = useStore((state) => state);
+
+
   // const loaded = usePreload(episodeData);
   // const loaded = usePreload(episodeData ? episodeData : []);
   // const loaded = true;
@@ -63,7 +69,7 @@ export default function Home() {
       setLoading(true);
       try {
         // podcastId, episodeId
-        setGlobalStateFromFirebase(PODCAST_ID, EPISODE_ID);
+        setGlobalStateFromFirebase(podcastId, episodeId);
       } catch (error) {
         console.error("Error setting global :", error);
       } finally {
@@ -72,7 +78,19 @@ export default function Home() {
     };
 
     fetchData();
-  }, []);
+  }, [podcastId, episodeId]);
+
+  useEffect(() => {
+    if (episodeData) {
+      setEpisodeId(episodeData.id);
+    }
+  }, [episodeData])
+
+  useEffect(() => {
+    if (podcastData) {
+      setPodcastId(podcastData.id);
+    }
+  }, [podcastData]);
 
   // FETCH DATA FROM POSTER BOYS RSS FEED
   // Save for possible future use
@@ -369,8 +387,8 @@ export default function Home() {
 
           if (episodeData && episodeData.timestamps) {
             // Update a timestamp for real here... in firebase...
-            await updateTimestamp(PODCAST_ID, EPISODE_ID, currentEditModeData.timestampId, updatedTimestamp)
-            await setGlobalStateFromFirebase(PODCAST_ID, EPISODE_ID);
+            await updateTimestamp(podcastId, episodeId, currentEditModeData.timestampId, updatedTimestamp)
+            await setGlobalStateFromFirebase(podcastId, episodeId);
           }
           const updatedExampleTimestamps = exampleTimestamps.filter(item => item.id !== updatedTimestamp.id);
           // updatedExampleTimestamps.push(updatedTimestamp);
@@ -393,8 +411,8 @@ export default function Home() {
           updatedExampleTimestamps.push(newTimestamp);
           setExampleTimestamps(updatedExampleTimestamps);
           // Real save (CREATE TIMESTAMP) should happen here... only logging for now...
-          await addTimestampToEpisode(PODCAST_ID, EPISODE_ID, newTimestamp);
-          await setGlobalStateFromFirebase(PODCAST_ID, EPISODE_ID);
+          await addTimestampToEpisode(podcastId, episodeId, newTimestamp);
+          await setGlobalStateFromFirebase(podcastId, episodeId);
 
           //console.log(convertEditModeTimeToSeconds(editModeTime.startTime));
         }
@@ -446,10 +464,12 @@ export default function Home() {
   async function handleDelete() {
     const timestampId = currentEditModeData.timestampId;
     console.log("Delete timestamp with id: ", timestampId);
-    const deleted = await deleteTimestamp(PODCAST_ID, EPISODE_ID, timestampId);
-    if (deleted) {
-      setGlobalStateFromFirebase(PODCAST_ID, EPISODE_ID);
-      handleCancel();
+    if (podcastId) {
+      const deleted = await deleteTimestamp(podcastId, episodeId, timestampId);
+      if (deleted) {
+        setGlobalStateFromFirebase(podcastId, episodeId);
+        handleCancel();
+      }
     }
 
     /*
@@ -467,6 +487,9 @@ export default function Home() {
         Hello, this is <b>Poster Podcast Player</b>.
       </p>
       <AuthComponent />
+      <SelectPodcastComponent setPodcastId={setPodcastId} setEpisodeId={setEpisodeId}  />
+      <SelectEpisodeComponent />
+      <p>{ podcastId !== "" ? `Podcast set with id: ${podcastId}` : 'No podcast chosen'}</p>
       {/*<ReadDocumentComponent idToFetch="KqiCQr3O4hucEQvbupKL" />*/}
       {/*<AddTimestampComponent podcastId="KqiCQr3O4hucEQvbupKL" episodeId="LynfNei4oTT5RC9tBiou" />*/}
       {/*<CreatePodcastComponent podcastData={examplePodcastData} />*/}
@@ -475,12 +498,16 @@ export default function Home() {
       {user && (
         <div>
           <h2>Admin stuff</h2>
-          <button onClick={() => setGlobalStateFromFirebase("KqiCQr3O4hucEQvbupKL", "LynfNei4oTT5RC9tBiou")}>Set Global State</button>
+          {podcastId && episodeId && (
+            <button onClick={() => setGlobalStateFromFirebase(podcastId, episodeId)}>Set Global State</button>
+          )}
           <button onClick={() => setEditMode(!editMode)}>
             {editMode ? "Turn off edit mode" : "Turn on edit mode"}
           </button>
           <CreatePodcastComponent podcastData={examplePodcastData} />
-          <AddEpisodeComponent podcastId="Or17ZeOG5b1VkWZz2mMc" episodeData={exampleEpisodeData} />
+          {podcastId && (
+            <AddEpisodeComponent podcastId={podcastId} episodeData={exampleEpisodeData} />
+          )}
         </div>
       )}
       {episodeData && (
@@ -583,14 +610,16 @@ export default function Home() {
                   onClick={handleDelete}
               >
                 Delete
-              </button >
+              </button>
             </div>
             <div style={{ margin: "0.5rem", display: "flex", gap: "1rem"}}>
               <button onClick={() => playFromSpecificTime(currentEditModeData.startTime)}  disabled={!(currentEditModeData.images.length > 0)}>Go to start time</button >
               <button onClick={() => playFromSpecificTime(currentEditModeData.endTime)}  disabled={!(currentEditModeData.images.length > 0)}>Go to end time</button >
             </div >
           </div>
-            <ImageUploadComponent podcastId={PODCAST_ID} episodeId={EPISODE_ID}  />
+            {podcastId && episodeId && (
+              <ImageUploadComponent podcastId={podcastId} episodeId={episodeId}  />
+            )}
           <div>
             <h3>Timestamps</h3>
               <EditModeTimestamps updateEditModeTime={updateEditModeTime} setCurrentEditModeData={setCurrentEditModeData} timestamps={exampleTimestamps}  />
