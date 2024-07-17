@@ -26,8 +26,8 @@ const ImageUploadComponent: React.FC<ImageUploadComponentProps> = ({ podcastId, 
   const handleUpload = async () => {
     if (!file) return;
 
-    //const storageRef = ref(storage, `podcasts/${podcastId}/episodes/${episodeId}/uploadedImages/${file.name}`);
-    const storageRef = ref(storage, `podcasts/the-poster-boys/episode-59/${file.name}`);
+    const storageRef = ref(storage, `podcasts/${podcastId}/episodes/${episodeId}/uploadedImages/${file.name}`);
+    //const storageRef = ref(storage, `podcasts/the-poster-boys/episode-59/${file.name}`);
     const uploadTask = uploadBytesResumable(storageRef, file);
 
     setUploading(true);

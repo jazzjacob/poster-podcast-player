@@ -130,61 +130,39 @@ export const nullEpisode: EpisodeData = {
 };
 
 export const examplePodcastData: PodcastData = {
-  id: "1",
-  podcastName: "The Poster Boys",
-  description: "A podcast about movie posters",
-  image: "https://static.libsyn.com/p/assets/e/2/4/9/e249a269bb9e191c/Poster-Boys-logo.jpg",
+  id: "0",
+  podcastName: "Lilla Rummet",
+  description: "A podcast by two men",
+  image: "",
   year: 2024,
-  category: "Technology",
-  host: "John Doe",
+  category: "Talking",
+  host: "Nemo and Jacob",
   totalEpisodes: 10,
   website: "http://example.com",
-  episodes: [
-    {
-      id: "1",
-      episodeNumber: 1,
-      url: "https://traffic.libsyn.com/secure/theposterboys/posterboys-059-2019inreview.mp3",
-      localPath: "/path/to/local/file",
-      title: "Episode 59: 2019 in review",
-      duration: 900,
-      description: "",
-      episodeImage: "episode1.jpg",
-      createdAt: new Date('2024-07-07T12:34:56Z'),
-      updatedAt: new Date('2024-07-08T12:34:56Z'),
-      timestamps: [
-        {
-          id: "1",
-          start: 0,
-          end: 10,
-          createdAt: new Date('2024-07-09T12:34:56Z'),
-          updatedAt: new Date('2024-07-10T12:34:56Z'),
-          images: [
-            {
-              id: "1-1",
-              image: "gs://poster-podcast-player.appspot.com/podcasts/the-poster-boys/episode-59/last-black-man-1.jpg",
-              description: "Description for timestamp 1 image 1",
-              createdAt: new Date('2024-07-09T12:34:56Z'),
-              updatedAt: new Date('2024-07-10T12:34:56Z'),
-            },
-          ],
-        },
-      ],
-      uploadedImages: [
-        {
-          name: "last-black-man-1.jpg",
-          id: "1",
-          url: "gs://poster-podcast-player.appspot.com/podcasts/the-poster-boys/episode-59/last-black-man-1.jpg",
-          timestampIds: [],
-          createdAt: new Date('2024-07-09T12:34:56Z'),
-          updatedAt: new Date('2024-07-10T12:34:56Z'),
-        },
-      ],
-    },
-  ],
+  episodes: [],
   createdAt: new Date(),
   updatedAt: new Date()
 };
 
+export const exampleEpisodeData: EpisodeData = {
+  id: "0",
+  episodeNumber: 1,
+  url: "https://traffic.libsyn.com/secure/theposterboys/posterboys-059-2019inreview.mp3",
+  title: "Episode 1: The Talk",
+  createdAt: new Date('2024-07-10T12:34:56Z'),
+  updatedAt: new Date('2024-07-10T12:34:56Z'),
+  timestamps: [],
+  uploadedImages: [],
+  duration: 1800, // 30 minutes in seconds
+  localPath: "/path/to/local/file", // Optional local file path
+  episodeImage: "", // Optional episode image
+  releaseDate: new Date('2024-07-01'), // Optional release date
+  description: "In this introductory episode, we discuss the basics of podcasting and what to expect in future episodes.",
+  showNotes: "Detailed show notes including key topics discussed, links to resources mentioned, and timestamps for important moments.",
+  tags: ["Podcasting", "Introduction", "Tips"], // Optional tags or categories
+};
+
+/*
 export const exampleEpisodeData: EpisodeData = {
   id: "3",
   episodeNumber: 59,
@@ -230,6 +208,8 @@ export const exampleEpisodeData: EpisodeData = {
   showNotes: "Detailed show notes including key topics discussed, links to resources mentioned, and timestamps for important moments.",
   tags: ["Podcasting", "Introduction", "Tips"], // Optional tags or categories
 };
+
+*/
 
 
 export const defaultExampleTimestamps: Timestamp[] = [

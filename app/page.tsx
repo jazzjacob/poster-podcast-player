@@ -40,8 +40,8 @@ export default function Home() {
 
   const [loading, setLoading] = useState(false);
 
-  const PODCAST_ID = "KqiCQr3O4hucEQvbupKL";
-  const EPISODE_ID = "LynfNei4oTT5RC9tBiou";
+  const PODCAST_ID = "Or17ZeOG5b1VkWZz2mMc";
+  const EPISODE_ID = "DC1zdnuSW9Y7VVSFeDyP";
 
   const episodeData  = useStore((state) => state.currentEpisode);
   const setEpisodeData = useStore((state) => state.setCurrentEpisode);
@@ -63,7 +63,7 @@ export default function Home() {
       setLoading(true);
       try {
         // podcastId, episodeId
-        setGlobalStateFromFirebase("KqiCQr3O4hucEQvbupKL", "LynfNei4oTT5RC9tBiou");
+        setGlobalStateFromFirebase(PODCAST_ID, EPISODE_ID);
       } catch (error) {
         console.error("Error setting global :", error);
       } finally {
@@ -479,9 +479,11 @@ export default function Home() {
           <button onClick={() => setEditMode(!editMode)}>
             {editMode ? "Turn off edit mode" : "Turn on edit mode"}
           </button>
+          <CreatePodcastComponent podcastData={examplePodcastData} />
+          <AddEpisodeComponent podcastId="Or17ZeOG5b1VkWZz2mMc" episodeData={exampleEpisodeData} />
         </div>
       )}
-      {episodeData && episodeData.timestamps && episodeData.timestamps.length > 0 && (
+      {episodeData && (
         <section className={styles.titleSection}>
           <h2>{episodeData.title}</h2>
           {podcastData && podcastData.podcastName && (
@@ -538,7 +540,7 @@ export default function Home() {
                 />
               </section>
             ) : (
-              <p>Loading...</p>
+              <p>Loading images or no images uploaded...</p>
             )}
           </div>
         </div>
@@ -583,6 +585,10 @@ export default function Home() {
                 Delete
               </button >
             </div>
+            <div style={{ margin: "0.5rem", display: "flex", gap: "1rem"}}>
+              <button onClick={() => playFromSpecificTime(currentEditModeData.startTime)}  disabled={!(currentEditModeData.images.length > 0)}>Go to start time</button >
+              <button onClick={() => playFromSpecificTime(currentEditModeData.endTime)}  disabled={!(currentEditModeData.images.length > 0)}>Go to end time</button >
+            </div >
           </div>
             <ImageUploadComponent podcastId={PODCAST_ID} episodeId={EPISODE_ID}  />
           <div>
@@ -590,7 +596,7 @@ export default function Home() {
               <EditModeTimestamps updateEditModeTime={updateEditModeTime} setCurrentEditModeData={setCurrentEditModeData} timestamps={exampleTimestamps}  />
           </div>
           <div>
-            <h3>Gallery</h3>
+            <h3>Gallery / uploaded images</h3>
             {episodeData && (
               <EditModePosterGallery
                 episodeData={episodeData}

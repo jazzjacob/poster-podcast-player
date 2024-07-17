@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
 import { Timestamp, OverlapDetails } from './customTypes';
-import { fetchEpisode, fetchPodcastById } from '../firebase/firestoreOperations';
+import { fetchEpisode, fetchPodcast } from '../firebase/firestoreOperations';
 import useStore from './store';
 
 export const generateId = (): string => {
@@ -78,7 +78,7 @@ export async function setGlobalStateFromFirebase(podcastId: string, episodeId: s
   //const setEpisode = useStore((state) => state.setCurrentEpisode);
 
   try {
-    const podcastDocument = await fetchPodcastById(podcastId);
+    const podcastDocument = await fetchPodcast(podcastId);
     const episodeDocument = await fetchEpisode(podcastId, episodeId);
 
     // const episodeDocument = await readDocument(episodeId);

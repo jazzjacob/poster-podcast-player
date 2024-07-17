@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { fetchAllPodcasts, fetchPodcastById } from '../firebase/firestoreOperations';
+import { fetchAllPodcasts, fetchPodcast } from '../firebase/firestoreOperations';
 import { PodcastData } from '../helpers/customTypes';
 import { create } from 'zustand'
 import useStore from '../helpers/store';
@@ -31,7 +31,7 @@ const ReadDocumentComponent: React.FC<ReadDocumentComponentProps> = ({ idToFetch
     const fetchData = async () => {
       setLoading(true);
       try {
-        const docData = await fetchPodcastById(idToFetch);
+        const docData = await fetchPodcast(idToFetch);
         const allPodcasts = await fetchAllPodcasts();
         setData(docData);
         updatePodcastState(allPodcasts);

@@ -1,6 +1,7 @@
 import { db } from './firebaseConfig';
 import { collection, addDoc, updateDoc, deleteDoc, doc, getDoc, getDocs, query, where, setDoc, arrayUnion } from "firebase/firestore";
 import { PodcastData, EpisodeData, Timestamp, UploadedImage } from '../helpers/customTypes';
+import { createPodcastDirectoryInStorage, createEpisodeDirectoryInStorage } from './storageOperations';
 
 // Create
 export async function createDocument(data: any): Promise<void> {
@@ -13,7 +14,7 @@ export async function createDocument(data: any): Promise<void> {
 }
 
 // Read
-export async function fetchPodcastById(id: string): Promise<PodcastData | null> {
+export async function fetchPodcast(id: string): Promise<PodcastData | null> {
   try {
     const podcastDocRef = doc(db, 'podcasts', id);
     const podcastDocSnap = await getDoc(podcastDocRef);
@@ -34,6 +35,8 @@ export async function fetchPodcastById(id: string): Promise<PodcastData | null> 
 
       // Assign episodes array to podcastData
       podcastData.episodes = episodes;
+      console.log("podcastDocSnap.id: ", podcastDocSnap.id);
+      podcastData.id = podcastDocSnap.id;
 
       // console.log("Document data:", podcastData);
       return podcastData;
@@ -261,6 +264,7 @@ export async function createPodcast(podcast: PodcastData): Promise<void> {
     // Add the podcast document to Firestore without the 'episodes' field
     const docRef = await addDoc(podcastsRef, podcastDataWithoutEpisodes);
     console.log("Podcast document written with ID: ", docRef.id);
+    createPodcastDirectoryInStorage(docRef.id);
 
     // Create an empty 'episodes' sub-collection for the new podcast
     const episodesCollectionRef = collection(doc(db, 'podcasts', docRef.id), 'episodes');
@@ -287,8 +291,7 @@ export async function addEpisode(podcastId: string, episodeData: EpisodeData): P
     //console.log(episodeDataWithoutTimestamps);
     const docRef = await addDoc(episodesRef, episodeDataWithoutTimestamps);
     console.log("Episode document written with ID: ", docRef.id);
-    //console.log("timestamps");
-    //console.log(timestamps);
+    createEpisodeDirectoryInStorage(podcastId, docRef.id);
 
     // Create 'timestamps' sub-collection for the new episode
     if (timestamps && timestamps.length > 0) {
