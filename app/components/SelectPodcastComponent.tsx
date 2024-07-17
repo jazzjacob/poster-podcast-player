@@ -17,7 +17,6 @@ const SelectPodcastComponent: React.FC<CreatePodcastComponentProps> = ({ setPodc
   function handlePodcastClick(podcast: PodcastData) {
     console.log(podcast.podcastName);
     console.log(podcast.id);
-    setPodcastId(podcast.id);
     setPodcast(podcast);
   }
 

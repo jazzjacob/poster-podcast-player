@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { addEpisode } from '../firebase/firestoreOperations';
 import { EpisodeData, PodcastData } from '../helpers/customTypes';
 import useStore from '../helpers/store';
+import { fetchEpisode } from '../firebase/firestoreOperations';
 
 interface CreatePodcastComponentProps {
   podcastId: string;
@@ -9,30 +9,38 @@ interface CreatePodcastComponentProps {
 }
 
 const SelectEpisodeComponent = () => {
-  const [loading, setLoading] = useState<boolean>(false);
-  const [success, setSuccess] = useState<boolean | null>(null);
-  const podcast = useStore((state) => state.podcast);
-  const setEpisode = useStore((state) => state.setCurrentEpisode);
+  const currentPodcast = useStore((state) => state.podcast);
+  const setCurrentEpisode = useStore((state) => state.setCurrentEpisode);
 
-  function handleEpisodeClick(episode: EpisodeData) {
+  async function handleEpisodeClick(episode: EpisodeData) {
     console.log(episode.title);
-    setEpisode(episode);
+    if (currentPodcast) {
+      const episodeData = await fetchEpisode(currentPodcast.id, episode.id);
+      if (episodeData) {
+        setCurrentEpisode(episodeData);
+        console.log("Setting current episode with data: ", episodeData);
+      }
+    }
   }
 
   return (
     <div style={{ margin: "2rem 0" }}>
-      <h2>Select episode</h2>
-      <div style={{ display: "flex", gap: "1rem" }}>
-        {podcast && podcast.episodes && podcast.episodes.map((episode, index) => (
-          <button
-            key={`${episode.id}-${index}`}
-            onClick={() => handleEpisodeClick(episode)}
-          >
-            {episode.title}
-          </button>
-        ))}
-      </div >
-    </div >
+      {currentPodcast && currentPodcast.episodes && (
+      <>
+        <h2>Select episode</h2>
+        <div style={{ display: "flex", gap: "1rem" }}>
+          {currentPodcast.episodes.map((episode, index) => (
+            <button
+              key={`${episode.id}-${index}`}
+              onClick={() => handleEpisodeClick(episode)}
+            >
+              {episode.title}
+            </button>
+          ))}
+          </div>
+        </>
+      )}
+    </div>
   );
 };
 

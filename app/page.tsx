@@ -15,7 +15,7 @@ import ReadDocumentComponent from "./components/ReadDocumentComponent";
 import ImageUploadComponent from "./components/edit-mode/ImageUploadComponent";
 
 import { Timestamp, TimestampImage, EpisodeData, EditModeData, EditModeTime, OverlapDetails, defaultEditModeTime, defaultEditModeData, nullEpisode, defaultExampleTimestamps, examplePodcastData, exampleEpisodeData } from "@/app/helpers/customTypes";
-import { generateId, checkOverlap, removeObjectFromArrayByKey, setGlobalStateFromFirebase } from "@/app/helpers/functions";
+import { generateId, checkOverlap, removeObjectFromArrayByKey, setGlobalStateFromFirebase, fetchAndSetPodcasts } from "@/app/helpers/functions";
 import CreateDocumentComponent from "./components/CreateDocumentComponent";
 import CreatePodcastComponent from "./components/CreatePodcastComponent";
 import AddEpisodeComponent from "./components/AddEpisodeComponent";
@@ -47,9 +47,13 @@ export default function Home() {
   const PODCAST_ID = "Or17ZeOG5b1VkWZz2mMc";
   const EPISODE_ID = "DC1zdnuSW9Y7VVSFeDyP";
 
-  const episodeData = useStore((state) => state.currentEpisode);
+  const currentEpisode = useStore((state) => state.currentEpisode);
   const setEpisodeData = useStore((state) => state.setCurrentEpisode);
-  const podcastData = useStore((state) => state.podcast);
+
+  const podcasts = useStore((state) => state.podcasts);
+  const currentPodcast = useStore((state) => state.podcast);
+
+
   const globalState = useStore((state) => state);
 
 
@@ -57,11 +61,13 @@ export default function Home() {
   // const loaded = usePreload(episodeData ? episodeData : []);
   // const loaded = true;
 
-  const audioRef = useRef<HTMLAudioElement>(null);
+   const audioRef = useRef<HTMLAudioElement | null>(null); // Ensure audioRef is initialized with null
 
   const updatePodcastState = useStore((state) => state.setPodcasts);
   const setCurrentEpisode = useStore((state) => state.setCurrentEpisode);
-  const currentEpisode = useStore((state) => state.currentEpisode);
+  //const currentEpisode = useStore((state) => state.currentEpisode);
+  const clearCurrentEpisode = useStore((state) => state.clearCurrentEpisode);
+
   const user = useStore((state) => state.user);
 
   useEffect(() => {
@@ -81,16 +87,24 @@ export default function Home() {
   }, [podcastId, episodeId]);
 
   useEffect(() => {
-    if (episodeData) {
-      setEpisodeId(episodeData.id);
+    if (currentEpisode) {
+      setEpisodeId(currentEpisode.id);
     }
-  }, [episodeData])
+  }, [currentEpisode])
 
   useEffect(() => {
-    if (podcastData) {
-      setPodcastId(podcastData.id);
+    if (podcasts.length > 0) {
+      console.log("Podcasts are set: ", podcasts);
     }
-  }, [podcastData]);
+  }, [podcasts]);
+
+  useEffect(() => {
+    fetchAndSetPodcasts();
+  }, []);
+
+  useEffect(() => {
+    console.log("current images: ", currentImages);
+  }, [currentImages]);
 
   // FETCH DATA FROM POSTER BOYS RSS FEED
   // Save for possible future use
@@ -163,9 +177,9 @@ export default function Home() {
 
   // Helper function to handle timestamps iteration
   const handleTimestampsIteration = useCallback((currentTime: number) => {
-    episodeData && episodeData.timestamps && episodeData.timestamps.every((timestamp) => {
-      //console.log("timestamp check:");
-      //console.log(timestamp);
+    currentEpisode && currentEpisode.timestamps && currentEpisode.timestamps.every((timestamp) => {
+      console.log("timestamp check:");
+      console.log(timestamp);
       if (timestamp.start <= currentTime && currentTime <= timestamp.end) {
         setCurrentImages(timestamp.images);
         setCurrentStartTime(timestamp.start);
@@ -179,17 +193,39 @@ export default function Home() {
         return true; // Continue the loop
       }
     });
-  }, [episodeData, currentEndTime, currentStartTime, currentImages.length, resetCurrentData]);
+  }, [currentEpisode, currentEndTime, currentStartTime, currentImages.length, resetCurrentData]);
+
+  useEffect(() => {
+    const handleTimeUpdate = () => {
+      if (audioRef.current) {
+        const audioElementTime = Math.floor(audioRef.current.currentTime);
+        if (currentTime !== audioElementTime) {
+          setCurrentTime(audioElementTime);
+        }
+      }
+    };
+
+    const audioElement = audioRef.current;
+    if (audioElement) {
+      audioElement.addEventListener("timeupdate", handleTimeUpdate);
+    }
+
+    return () => {
+      if (audioElement) {
+        audioElement.removeEventListener("timeupdate", handleTimeUpdate);
+      }
+    };
+  }, [currentTime, currentEpisode]); // Include shouldRenderAudio as a dependency
 
   // ON CURRENT TIME UPDATE - EVERY SECOND AUDIO IS PLAYING
   useEffect(() => {
-    //console.log("current time");
-    //console.log(currentTime);
+    console.log("current time");
+    console.log(currentTime);
     if (-1 < currentTime) {
 
       handleEditModeTimes(currentTime);
 
-      if (episodeData) {
+      if (currentEpisode) {
         // Check if currentTime is outside the currentStart and currentEnd times
         if (currentTime < currentStartTime || currentEndTime < currentTime) {
           handleTimestampsIteration(currentTime);
@@ -203,7 +239,7 @@ export default function Home() {
     currentEndTime,
     currentImages.length,
     currentStartTime,
-    episodeData,
+    currentEpisode,
     userIsEditing,
     currentEditModeData.startTimeSaved,
     currentEditModeData.endTimeSaved,
@@ -211,11 +247,12 @@ export default function Home() {
     handleTimestampsIteration
   ]);
 
+  /*
   useEffect(() => {
     const audioElement = audioRef.current;
 
     const handleTimeUpdate = () => {
-      //console.log("Updating time");
+      console.log("Updating time");
       if (audioElement) {
         const audioElementTime = Math.floor(audioElement.currentTime);
         if (currentTime !== audioElementTime) {
@@ -235,7 +272,7 @@ export default function Home() {
         audioElement.removeEventListener("timeupdate", handleTimeUpdate);
       }
     };
-  }, [currentTime]);
+  }, [currentTime]);*/
 
   useEffect(() => {
     async function fetchEpisodeData() {
@@ -268,13 +305,6 @@ export default function Home() {
   }, [exampleTimestamps, episodeData.timestamps]);*/
 
   // USE EFFECTS FOR HELP IN DEVELOPMENT
-
-  useEffect(() => {
-    if (episodeData) {
-      //console.log("Episode data:");
-      //console.log(episodeData);
-    }
-  }, [episodeData]);
 
   useEffect(() => {
     if (currentEditModeData.images.length > 0) {
@@ -359,7 +389,7 @@ export default function Home() {
 
     //console.log("currentEditModeData");
     //console.log(currentEditModeData);
-    const overlapResults = checkOverlap(startTime, endTime, currentEditModeData.timestampId, episodeData?.timestamps || []);
+    const overlapResults = checkOverlap(startTime, endTime, currentEditModeData.timestampId, currentEpisode?.timestamps || []);
     //console.log("overlapResults");
     //console.log(overlapResults);
 
@@ -385,7 +415,7 @@ export default function Home() {
             images: [...currentEditModeData.images]
           }
 
-          if (episodeData && episodeData.timestamps) {
+          if (currentEpisode && currentEpisode.timestamps) {
             // Update a timestamp for real here... in firebase...
             await updateTimestamp(podcastId, episodeId, currentEditModeData.timestampId, updatedTimestamp)
             await setGlobalStateFromFirebase(podcastId, episodeId);
@@ -483,161 +513,188 @@ export default function Home() {
 
   return (
     <main className={styles.main}>
+
+    {/* Admin component below*/}
+    {podcasts && podcasts.length > 0 && user && currentEpisode && (
+        <div style={{backgroundColor: "lightgray", padding: "2rem"}}>
+        <h2>Admin stuff</h2>
+        {podcastId && episodeId && (
+          <button onClick={() => setGlobalStateFromFirebase(podcastId, episodeId)}>Set Global State</button>
+        )}
+        <button onClick={() => setEditMode(!editMode)}>
+          {editMode ? "Turn off edit mode" : "Turn on edit mode"}
+        </button>
+        <CreatePodcastComponent podcastData={examplePodcastData} />
+        {podcastId && (
+          <AddEpisodeComponent podcastId={podcastId} episodeData={exampleEpisodeData} />
+        )}
+      </div >
+    )}
+    {/* Admin component above*/}
+
+
       <p className={styles.greetingText}>
         Hello, this is <b>Poster Podcast Player</b>.
       </p>
       <AuthComponent />
-      <SelectPodcastComponent setPodcastId={setPodcastId} setEpisodeId={setEpisodeId}  />
-      <SelectEpisodeComponent />
-      <p>{ podcastId !== "" ? `Podcast set with id: ${podcastId}` : 'No podcast chosen'}</p>
+
+      {/*PODCASTS ARE DISPLAYED - START*/}
+      {podcasts && podcasts.length > 0 && (
+        <>
+          <SelectPodcastComponent setPodcastId={setPodcastId} setEpisodeId={setEpisodeId}  />
+        </>
+      )}
+      {/*PODCASTS ARE DISPLAYED - END*/}
+
+      {currentPodcast && (
+        <SelectEpisodeComponent />
+      )}
+
+      {currentEpisode && (
+        <div>
+          <p>Current episode is set</p>
+          <button onClick={() => clearCurrentEpisode()}>remove currentEpisode</button>
+          {/* EVERYTHING SHOULD BE BELOW HERE */}
+
+          {/* Title section below */}
+          <section className={styles.titleSection}>
+            <h2>{currentEpisode.title}</h2>
+            {currentPodcast && currentPodcast.podcastName && (
+              <p>{currentPodcast.podcastName}</p>
+            )}
+          </section>
+          {/* Title section above */}
+
+
+          {/* Audio component below */}
+          <audio
+            ref={audioRef}
+            controls
+            src={currentEpisode.url}
+            preload="auto"
+          ></audio>
+          <div className={styles.audioButtonContainer}>
+            <button className={styles.skipButton} onClick={() => timelineJump(-5)}>
+              Back 5 seconds
+            </button>
+            <button className={styles.skipButton} onClick={() => timelineJump(5)}>
+              Skip 5 seconds
+            </button>
+          </div>
+          {/* Audio component above */}
+
+
+          {/* Normal mode below */}
+          {(!editMode || !user) && (
+            <div>
+              <p>fallsmannen was here</p>
+              {/*<button onClick={() => playFromSpecificTime(62)}>Play from 1:02</button>*/}
+              <div className={styles.exampleImageContainer}>
+                {currentEpisode && currentEpisode.timestamps && currentEpisode.timestamps.length > 0 ? (
+                  <section>
+                    <div>
+                      {currentImages.length > 0 ? (
+                        currentImages.map((image) => (
+                          <img
+                            alt={`${image.image}`}
+                            key={image.id}
+                            className={styles.imageStyle}
+                            src={image.image}
+                          />
+                        ))
+                      ) : (
+                        <img
+                          alt={`${currentEpisode.episodeImage}`}
+                          className={styles.imageStyle}
+                          src={currentEpisode.episodeImage}
+                        />
+                      )}
+                    </div>
+                    <PosterGallery
+                      episodeData={currentEpisode}
+                      playFromSpecificTime={playFromSpecificTime}
+                    />
+                  </section>
+                ) : (
+                  <p>Loading images or no images uploaded...</p>
+                )}
+              </div>
+            </div>
+          )}
+          {/* Normal mode above */}
+
+
+          {/* Edit mode below */}
+          {(editMode && user) && (
+            <div className={styles.editModeContainer}>
+              <h2>EDIT MODE</h2>
+              <div>
+                <h3>Poster view</h3>
+                <EditModePosterView episodeData={currentEpisode} currentImages={currentEditModeData.images} currentEditModeData={currentEditModeData} editModeTime={editModeTime} currentTime={currentTime} setEditModeTime={setEditModeTime} setUserIsEditing={setUserIsEditing} />
+                <div>
+                  {/*<EditModeTimeForm timeType="startTime" currentEditModeData={currentEditModeData} editModeTime={editModeTime} currentTime={currentTime} setEditModeTime={setEditModeTime} setUserIsEditing={setUserIsEditing} /> */}
+                  {/*<EditModeTimeForm timeType="endTime" currentEditModeData={currentEditModeData} editModeTime={editModeTime} currentTime={currentTime} setEditModeTime={setEditModeTime} setUserIsEditing={setUserIsEditing} />*/}
+                </div>
+                <div className={styles.editModeButtonContainer}>
+                  <button
+                    disabled={!(currentEditModeData.images.length > 0)}
+                    onClick={handleSave}
+                  >
+                    Save
+                  </button>
+                  <button
+                    disabled={!(currentEditModeData.images.length > 0)}
+                    onClick={() => updateEditModeTime("startTime", currentTime)}
+                  >
+                    Update start time
+                  </button>
+                  <button
+                    disabled={!(currentEditModeData.images.length > 0)}
+                    onClick={() => handleCancel()}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                      disabled={!(currentEditModeData.images.length > 0)}
+                      onClick={handleDelete}
+                  >
+                    Delete
+                  </button>
+                </div>
+                <div style={{ margin: "0.5rem", display: "flex", gap: "1rem"}}>
+                  <button onClick={() => playFromSpecificTime(currentEditModeData.startTime)}  disabled={!(currentEditModeData.images.length > 0)}>Go to start time</button >
+                  <button onClick={() => playFromSpecificTime(currentEditModeData.endTime)}  disabled={!(currentEditModeData.images.length > 0)}>Go to end time</button >
+                </div >
+              </div>
+                <ImageUploadComponent podcastId={podcastId} episodeId={episodeId} />
+              <div>
+                <h3>Timestamps</h3>
+                <EditModeTimestamps updateEditModeTime={updateEditModeTime} setCurrentEditModeData={setCurrentEditModeData} timestamps={exampleTimestamps}  />
+              </div>
+              <div>
+                <h3>Gallery / uploaded images</h3>
+                {currentEpisode && (
+                  <EditModePosterGallery
+                    episodeData={currentEpisode}
+                    currentImages={currentEditModeData.images}
+                    addImage={addEditModeImage}
+                    removeImage={removeEditModeImage}
+                    currentTime={currentTime}
+                  />
+                )}
+              </div>
+            </div>
+          )}
+          {/* Edit mode above */}
+
+
+          {/* EVERYTHING SHOULD BE ABOVE HERE*/ }
+        </div>
+      )}
       {/*<ReadDocumentComponent idToFetch="KqiCQr3O4hucEQvbupKL" />*/}
       {/*<AddTimestampComponent podcastId="KqiCQr3O4hucEQvbupKL" episodeId="LynfNei4oTT5RC9tBiou" />*/}
       {/*<CreatePodcastComponent podcastData={examplePodcastData} />*/}
       {/*<AddEpisodeComponent podcastId="KqiCQr3O4hucEQvbupKL" episodeData={exampleEpisodeData} />*/}
-
-      {user && (
-        <div>
-          <h2>Admin stuff</h2>
-          {podcastId && episodeId && (
-            <button onClick={() => setGlobalStateFromFirebase(podcastId, episodeId)}>Set Global State</button>
-          )}
-          <button onClick={() => setEditMode(!editMode)}>
-            {editMode ? "Turn off edit mode" : "Turn on edit mode"}
-          </button>
-          <CreatePodcastComponent podcastData={examplePodcastData} />
-          {podcastId && (
-            <AddEpisodeComponent podcastId={podcastId} episodeData={exampleEpisodeData} />
-          )}
-        </div>
-      )}
-      {episodeData && (
-        <section className={styles.titleSection}>
-          <h2>{episodeData.title}</h2>
-          {podcastData && podcastData.podcastName && (
-            <p>{podcastData.podcastName}</p>
-          )}
-        </section>
-      )}
-
-      {
-        <audio
-          ref={audioRef}
-          controls
-          src={episodeData ? episodeData.url : ""}
-          preload="auto"
-        ></audio>
-      }
-      <div className={styles.audioButtonContainer}>
-        <button className={styles.skipButton} onClick={() => timelineJump(-5)}>
-          Back 5 seconds
-        </button>
-        <button className={styles.skipButton} onClick={() => timelineJump(5)}>
-          Skip 5 seconds
-        </button>
-      </div>
-
-      {/* NORMAL MODE */}
-      {(!editMode || !user) ? (
-        <div>
-          {/*<button onClick={() => playFromSpecificTime(62)}>Play from 1:02</button>*/}
-          <div className={styles.exampleImageContainer}>
-            {episodeData && episodeData.timestamps && episodeData.timestamps.length > 0 ? (
-              <section>
-                <div>
-                  {currentImages.length > 0 ? (
-                    currentImages.map((image) => (
-                      <img
-                        alt={`${image.image}`}
-                        key={image.id}
-                        className={styles.imageStyle}
-                        src={image.image}
-                      />
-                    ))
-                  ) : (
-                    <img
-                      alt={`${episodeData.episodeImage}`}
-                      className={styles.imageStyle}
-                      src={episodeData.episodeImage}
-                    />
-                  )}
-                </div>
-                <PosterGallery
-                  episodeData={episodeData}
-                  playFromSpecificTime={playFromSpecificTime}
-                />
-              </section>
-            ) : (
-              <p>Loading images or no images uploaded...</p>
-            )}
-          </div>
-        </div>
-      ) : (
-        <div className={styles.editModeContainer}>
-          {/* EDIT MODE */}
-          <h2>EDIT MODE</h2>
-          <div>
-            <h3>Poster view</h3>
-              {
-                episodeData && (
-                   <EditModePosterView episodeData={episodeData} currentImages={currentEditModeData.images} currentEditModeData={currentEditModeData} editModeTime={editModeTime} currentTime={currentTime} setEditModeTime={setEditModeTime} setUserIsEditing={setUserIsEditing} />
-                )
-              }
-            <div>
-              {/*<EditModeTimeForm timeType="startTime" currentEditModeData={currentEditModeData} editModeTime={editModeTime} currentTime={currentTime} setEditModeTime={setEditModeTime} setUserIsEditing={setUserIsEditing} /> */}
-              {/*<EditModeTimeForm timeType="endTime" currentEditModeData={currentEditModeData} editModeTime={editModeTime} currentTime={currentTime} setEditModeTime={setEditModeTime} setUserIsEditing={setUserIsEditing} />*/}
-            </div>
-            <div className={styles.editModeButtonContainer}>
-              <button
-                disabled={!(currentEditModeData.images.length > 0)}
-                onClick={handleSave}
-              >
-                Save
-              </button>
-              <button
-                disabled={!(currentEditModeData.images.length > 0)}
-                onClick={() => updateEditModeTime("startTime", currentTime)}
-              >
-                Update start time
-              </button>
-              <button
-                disabled={!(currentEditModeData.images.length > 0)}
-                onClick={() => handleCancel()}
-              >
-                Cancel
-              </button>
-              <button
-                  disabled={!(currentEditModeData.images.length > 0)}
-                  onClick={handleDelete}
-              >
-                Delete
-              </button>
-            </div>
-            <div style={{ margin: "0.5rem", display: "flex", gap: "1rem"}}>
-              <button onClick={() => playFromSpecificTime(currentEditModeData.startTime)}  disabled={!(currentEditModeData.images.length > 0)}>Go to start time</button >
-              <button onClick={() => playFromSpecificTime(currentEditModeData.endTime)}  disabled={!(currentEditModeData.images.length > 0)}>Go to end time</button >
-            </div >
-          </div>
-            {podcastId && episodeId && (
-              <ImageUploadComponent podcastId={podcastId} episodeId={episodeId}  />
-            )}
-          <div>
-            <h3>Timestamps</h3>
-              <EditModeTimestamps updateEditModeTime={updateEditModeTime} setCurrentEditModeData={setCurrentEditModeData} timestamps={exampleTimestamps}  />
-          </div>
-          <div>
-            <h3>Gallery / uploaded images</h3>
-            {episodeData && (
-              <EditModePosterGallery
-                episodeData={episodeData}
-                currentImages={currentEditModeData.images}
-                addImage={addEditModeImage}
-                removeImage={removeEditModeImage}
-                currentTime={currentTime}
-              />
-            )}
-          </div>
-        </div>
-      )}
     </main>
   );
 }

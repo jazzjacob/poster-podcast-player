@@ -104,3 +104,15 @@ export async function setGlobalStateFromFirebase(podcastId: string, episodeId: s
     console.error("Error fetching data:", error);
   }
 };
+
+
+export async function fetchAndSetPodcasts() {
+  const setPodcasts = useStore.getState().setPodcasts;
+
+  try {
+    const podcastsDocument = await fetchAllPodcasts();
+    setPodcasts(podcastsDocument);
+  } catch (error) {
+    console.error("Error fetching data:", error);
+  }
+}
