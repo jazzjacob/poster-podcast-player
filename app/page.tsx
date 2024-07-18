@@ -15,14 +15,14 @@ import ReadDocumentComponent from "./components/ReadDocumentComponent";
 import ImageUploadComponent from "./components/edit-mode/ImageUploadComponent";
 
 import { Timestamp, TimestampImage, EpisodeData, EditModeData, EditModeTime, OverlapDetails, defaultEditModeTime, defaultEditModeData, nullEpisode, defaultExampleTimestamps, examplePodcastData, exampleEpisodeData } from "@/app/helpers/customTypes";
-import { generateId, checkOverlap, removeObjectFromArrayByKey, setGlobalStateFromFirebase, fetchAndSetPodcasts } from "@/app/helpers/functions";
+import { generateId, checkOverlap, removeObjectFromArrayByKey, setGlobalStateFromFirebase, fetchAndSetPodcasts, updateCurrentEdit } from "@/app/helpers/functions";
 import CreateDocumentComponent from "./components/CreateDocumentComponent";
 import CreatePodcastComponent from "./components/CreatePodcastComponent";
 import AddEpisodeComponent from "./components/AddEpisodeComponent";
 import AuthComponent from "./components/AuthComponent";
 import AddTimestampComponent from "./components/AddTimestampComponent";
 import useStore from "./helpers/store";
-import { updateTimestamp, addTimestampToEpisode, deleteTimestamp } from "./firebase/firestoreOperations";
+import { updateTimestamp, addTimestampToEpisode, deleteTimestamp, addTimestampIdToUploadedImage } from "./firebase/firestoreOperations";
 import SelectPodcastComponent from "./components/SelectPodcastComponent";
 import SelectEpisodeComponent from "./components/SelectEpisodeComponent";
 
@@ -52,6 +52,7 @@ export default function Home() {
 
   const podcasts = useStore((state) => state.podcasts);
   const currentPodcast = useStore((state) => state.podcast);
+  const currentEdit = useStore((state) => state.currentEdit);
 
 
   const globalState = useStore((state) => state);
@@ -69,6 +70,10 @@ export default function Home() {
   const clearCurrentEpisode = useStore((state) => state.clearCurrentEpisode);
 
   const user = useStore((state) => state.user);
+
+  useEffect(() => {
+    console.log("currentEdit: ", currentEdit);
+  }, [currentEdit]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -155,6 +160,11 @@ export default function Home() {
         seconds: timeInSeconds % 60,
       },
     }));
+    updateCurrentEdit('timeDetails', { [field]: {
+      hours: Math.floor(timeInSeconds / 60 / 60) % 24,
+      minutes: Math.floor(timeInSeconds / 60) % 60,
+      seconds: timeInSeconds % 60
+    } });
   }, [])
 
   // Helper function to handle updating edit mode times
@@ -178,8 +188,6 @@ export default function Home() {
   // Helper function to handle timestamps iteration
   const handleTimestampsIteration = useCallback((currentTime: number) => {
     currentEpisode && currentEpisode.timestamps && currentEpisode.timestamps.every((timestamp) => {
-      console.log("timestamp check:");
-      console.log(timestamp);
       if (timestamp.start <= currentTime && currentTime <= timestamp.end) {
         setCurrentImages(timestamp.images);
         setCurrentStartTime(timestamp.start);
@@ -219,8 +227,8 @@ export default function Home() {
 
   // ON CURRENT TIME UPDATE - EVERY SECOND AUDIO IS PLAYING
   useEffect(() => {
-    console.log("current time");
-    console.log(currentTime);
+    //console.log("current time");
+    //console.log(currentTime);
     if (-1 < currentTime) {
 
       handleEditModeTimes(currentTime);
@@ -309,12 +317,16 @@ export default function Home() {
   useEffect(() => {
     if (currentEditModeData.images.length > 0) {
       if (!currentEditModeData.startTimeSaved) {
-        updateEditModeData("startTimeSaved", true);
-        updateEditModeTime("endTime", currentTime);
+        updateEditModeData("startTimeSaved", true); // Old
+        updateCurrentEdit('startTimeSaved', true); // New
+
+        updateEditModeTime("endTime", currentTime); // Old
       }
     } else {
       if (currentEditModeData.startTimeSaved) {
-        updateEditModeData("startTimeSaved", false);
+        updateEditModeData("startTimeSaved", false); // old
+        updateCurrentEdit('startTimeSaved', false) // new
+
         updateEditModeTime("startTime", currentTime);
         updateEditModeTime("endTime", currentTime);
       }
@@ -367,8 +379,12 @@ export default function Home() {
 
   function addEditModeImage(image: string) {
     if (currentEditModeData.images.length == 0) {
-      updateEditModeData("startTime", currentTime);
+      updateEditModeData("startTime", currentTime); // Old
+      updateCurrentEdit('startTime', currentTime) // New
     }
+
+    console.log("LOOK HERE: IMAGE: ", image);
+
     updateEditModeData("images", {
       id: generateId(),
       image: image,
@@ -427,22 +443,36 @@ export default function Home() {
         } else {
           // Creating a new timestamp
           const newTimestamp: Timestamp = {
-            id: generateId(),
+            id: "0",
             start: startTime,
             end: endTime,
             images: [...currentEditModeData.images],
             createdAt: new Date(),
             updatedAt: new Date(),
           };
-          //console.log("newTimestamp:")
-          //console.log(newTimestamp);
 
           const updatedExampleTimestamps = exampleTimestamps.filter(item => item.id !== newTimestamp.id);
           updatedExampleTimestamps.push(newTimestamp);
           setExampleTimestamps(updatedExampleTimestamps);
           // Real save (CREATE TIMESTAMP) should happen here... only logging for now...
           if (currentPodcast && currentEpisode) {
-            await addTimestampToEpisode(currentPodcast.id, currentEpisode.id, newTimestamp);
+            const timestampId = await addTimestampToEpisode(currentPodcast.id, currentEpisode.id, newTimestamp);
+
+            // SET TIMESTAMPID TO UPLOADEDIMAGE.TIMESTAMPIDS[]
+            // Get timestampId
+            // Set timestampId to current uploadedImage.timestampId[]
+            if (timestampId) {
+              console.log("currentEditModeData.images", currentEditModeData.images);
+              /*
+              await addTimestampIdToUploadedImage(
+                currentPodcast.id,
+                currentEpisode.id,
+                timestampId,
+                uploadedImageId
+              )*/
+            }
+            // await addTimestampIdToUploadedImage(currentPodcast.id, currentEpisode.id, timestampId, uploadedImage.id: string);
+
             await setGlobalStateFromFirebase(currentPodcast.id, currentEpisode.id);
           } else {
             console.error("Can't add timestamp to episode: currentPodcast or currentEpisode not saved");

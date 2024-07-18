@@ -1,6 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { TimestampImage, EpisodeData, EditModeTime, EditModeData, OverlapDetails } from '@/app/helpers/customTypes';
-import { checkOverlap, convertEditModeTimeToSeconds } from '@/app/helpers/functions';
+import { checkOverlap, convertEditModeTimeToSeconds, updateCurrentEdit } from '@/app/helpers/functions';
+import useStore from '@/app/helpers/store';
+
 
 import styles from "./EditModeTimeForm.module.css";
 
@@ -16,6 +18,10 @@ interface EditModeTimeFormProps {
 }
 
 const EditModeTimeForm: React.FC<EditModeTimeFormProps> = ({ timeType, editModeTime, setEditModeTime, currentTime, setUserIsEditing, currentEditModeData }) => {
+  const [hours, setHours] = useState(-1);
+  const [minutes, setMinutes] = useState(-1);
+  const [seconds, setSeconds] = useState(-1);
+  const currentEdit = useStore((state) => state.currentEdit);
 
   const handleInputChange = (
       timeType: 'startTime' | 'endTime',
@@ -44,6 +50,15 @@ const EditModeTimeForm: React.FC<EditModeTimeFormProps> = ({ timeType, editModeT
             [field]: value
           }
         }));
+        // Setting to global state
+        if (currentEdit && currentEdit.timeDetails) {
+          updateCurrentEdit('timeDetails', {
+            [timeType]: {
+              ...currentEdit.timeDetails[timeType],
+              [field]: value
+            }
+          });
+        }
         return;
       }
 
@@ -62,6 +77,15 @@ const EditModeTimeForm: React.FC<EditModeTimeFormProps> = ({ timeType, editModeT
             [field]: intValue
           }
         }));
+        // Setting to global state
+        if (currentEdit && currentEdit.timeDetails) {
+          updateCurrentEdit('timeDetails', {
+            [timeType]: {
+              ...currentEdit.timeDetails[timeType],
+              [field]: intValue
+            }
+          });
+        }
       }
     };
 
@@ -75,8 +99,8 @@ const EditModeTimeForm: React.FC<EditModeTimeFormProps> = ({ timeType, editModeT
       //let value = parseInt(prevState[timeType][field], 10);
       let value = prevState[timeType][field];
       if (isNaN(value)) value = 0;
-       if (value > maxValue) value = maxValue;
-       return {
+      if (value > maxValue) value = maxValue;
+      return {
         ...prevState,
         [timeType]: {
           ...prevState[timeType],
@@ -84,6 +108,20 @@ const EditModeTimeForm: React.FC<EditModeTimeFormProps> = ({ timeType, editModeT
         }
       };
     });
+
+    // Setting to global state
+    if (currentEdit && currentEdit.timeDetails) {
+      let value = currentEdit.timeDetails[timeType][field];
+      if (isNaN(value)) value = 0;
+      if (value > maxValue) value = maxValue;
+
+      updateCurrentEdit('timeDetails', {
+        [timeType]: {
+          ...currentEdit.timeDetails[timeType],
+          [field]: value
+        }
+      });
+    }
   };
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
@@ -92,9 +130,18 @@ const EditModeTimeForm: React.FC<EditModeTimeFormProps> = ({ timeType, editModeT
     }
   };
 
+
   const hoursValue = timeType === 'startTime' ? editModeTime.startTime.hours : editModeTime.endTime.hours;
   const minutesValue = timeType === 'startTime' ? editModeTime.startTime.minutes : editModeTime.endTime.minutes;
   const secondsValue = timeType === 'startTime' ? editModeTime.startTime.seconds : editModeTime.endTime.seconds;
+
+  /*
+  if (currentEdit && currentEdit.timeDetails) {
+    setHours(timeType === 'startTime' ? currentEdit.timeDetails.startTime.hours : currentEdit.timeDetails.endTime.hours);
+    setMinutes(timeType === 'startTime' ? currentEdit.timeDetails.startTime.minutes : currentEdit.timeDetails.endTime.minutes);
+    setSeconds(timeType === 'startTime' ? currentEdit.timeDetails.startTime.seconds : currentEdit.timeDetails.endTime.seconds)
+    }*/
+
 
   return (
     <div className={styles.container}>

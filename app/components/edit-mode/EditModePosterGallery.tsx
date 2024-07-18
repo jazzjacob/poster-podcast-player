@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { TimestampImage, Timestamp, UploadedImage, EpisodeData } from '@/app/helpers/customTypes';
 import { deleteImage } from '@/app/firebase/storageOperations';
 import useStore from '@/app/helpers/store';
+import { addImageToCurrentEdit, removeImageFromCurrentEdit } from '@/app/helpers/functions';
 
 
 interface EditModePosterGalleryProps {
@@ -18,6 +19,7 @@ const EditModePosterGallery: React.FC<EditModePosterGalleryProps> = (
 
   const currentPodcast = useStore((state) => state.podcast);
   const currentEpisode = useStore((state) => state.currentEpisode);
+  const currentEdit = useStore((state) => state.currentEdit);
 
   const [selectedIndex, setSelectedIndex] = useState(-1);
   useEffect(() => {
@@ -31,6 +33,17 @@ const EditModePosterGallery: React.FC<EditModePosterGalleryProps> = (
   //console.log(episodeData);
 
   function handleImageClick(uploadedImage: UploadedImage, index: number) {
+    console.log("uploaded image: ", uploadedImage);
+    if (currentEdit && currentEdit.images && (currentEdit.images.find(image => image.uploadedImageId == uploadedImage.id) != undefined)) {
+      console.log("The image is in state, removing image...");
+      removeImageFromCurrentEdit(uploadedImage.id);
+    } else {
+      console.log("The image is not in state, adding image...");
+      addImageToCurrentEdit(uploadedImage);
+    }
+    if (currentEdit) {
+      //console.log("current edit: ", currentEdit);
+    }
     setSelectedIndex(selectedIndex == index ? -1 : index);
     if (currentImages.length < 1) {
       addImage(uploadedImage.url);

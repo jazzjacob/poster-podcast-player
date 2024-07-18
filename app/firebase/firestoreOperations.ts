@@ -1,5 +1,5 @@
 import { db } from './firebaseConfig';
-import { collection, addDoc, updateDoc, deleteDoc, doc, getDoc, getDocs, query, where, setDoc, arrayUnion } from "firebase/firestore";
+import { collection, addDoc, updateDoc, deleteDoc, doc, getDoc, getDocs, query, where, setDoc, arrayUnion, arrayRemove } from "firebase/firestore";
 import { PodcastData, EpisodeData, Timestamp, UploadedImage } from '../helpers/customTypes';
 import { createPodcastDirectoryInStorage, createEpisodeDirectoryInStorage } from './storageOperations';
 
@@ -393,6 +393,7 @@ export async function updateTimestamp(
   }
   }*/
 
+/*
 export async function addTimestampToEpisode(podcastId: string, episodeId: string, timestamp: Timestamp): Promise<void> {
   try {
     console.log("podcastId", podcastId);
@@ -402,4 +403,72 @@ export async function addTimestampToEpisode(podcastId: string, episodeId: string
   } catch (e) {
     console.error('Error adding timestamp: ', e);
   }
-}
+  };*/
+
+  export async function addTimestampToEpisode(
+    podcastId: string,
+    episodeId: string,
+    timestamp: Timestamp
+  ): Promise<string | null> {
+    try {
+      console.log("podcastId", podcastId);
+      const timestampsCollectionRef = collection(db, 'podcasts', podcastId, 'episodes', episodeId, 'timestamps');
+
+      // Add the new timestamp document and get the document reference
+      const docRef = await addDoc(timestampsCollectionRef, {
+        ...timestamp,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      });
+
+      console.log('Timestamp added successfully with ID:', docRef.id);
+      return docRef.id; // Return the ID of the newly added document
+    } catch (e) {
+      console.error('Error adding timestamp: ', e);
+      return null; // Return null in case of an error
+    }
+  };
+
+export async function addTimestampIdToUploadedImage(
+  podcastId: string,
+  episodeId: string,
+  timestampId: string,
+  uploadedImageId: string
+): Promise<void> {
+  try {
+    // Reference to the specific uploadedImage document
+    const uploadedImageRef = doc(db, 'podcasts', podcastId, 'episodes', episodeId, 'uploadedImages', uploadedImageId);
+
+    // Update the document to add the timestampId to the timestampIds array
+    await updateDoc(uploadedImageRef, {
+      timestampIds: arrayUnion(timestampId)
+    });
+
+    console.log('Timestamp ID added successfully to uploaded image.');
+  } catch (error) {
+    console.error('Error adding timestamp ID to uploaded image: ', error);
+    throw error; // Re-throw the error to handle it elsewhere if needed
+  }
+};
+
+export async function removeTimestampIdFromUploadedImage(
+  podcastId: string,
+  episodeId: string,
+  timestampId: string,
+  uploadedImageId: string
+): Promise<void> {
+  try {
+    // Reference to the specific uploadedImage document
+    const uploadedImageRef = doc(db, 'podcasts', podcastId, 'episodes', episodeId, 'uploadedImages', uploadedImageId);
+
+    // Update the document to remove the timestampId from the timestampIds array
+    await updateDoc(uploadedImageRef, {
+      timestampIds: arrayRemove(timestampId)
+    });
+
+    console.log('Timestamp ID removed successfully from uploaded image.');
+  } catch (error) {
+    console.error('Error removing timestamp ID from uploaded image: ', error);
+    throw error; // Re-throw the error to handle it elsewhere if needed
+  }
+};

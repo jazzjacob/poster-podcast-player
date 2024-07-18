@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
-import { Timestamp, OverlapDetails } from './customTypes';
+import { Timestamp, OverlapDetails, UploadedImage, TimestampImage, EditModeData } from './customTypes';
 import { fetchAllPodcasts, fetchEpisode, fetchPodcast } from '../firebase/firestoreOperations';
 import useStore from './store';
 
@@ -77,6 +77,7 @@ export async function setGlobalStateFromFirebase(podcastId: string, episodeId: s
   const setPodcasts = useStore.getState().setPodcasts;
   //const setPodcast = useStore((state) => state.setPodcast);
   //const setEpisode = useStore((state) => state.setCurrentEpisode);
+  const setCurrentEdit = useStore.getState().setCurrentEdit;
 
   try {
     if (podcastId !== "") {
@@ -116,3 +117,100 @@ export async function fetchAndSetPodcasts() {
     console.error("Error fetching data:", error);
   }
 }
+
+export function addImageToCurrentEdit(uploadedImage: UploadedImage) {
+  // Get the current edit state and the setter function
+  const currentEdit = useStore.getState().currentEdit;
+  const setCurrentEdit = useStore.getState().setCurrentEdit;
+
+  console.log("Adding image to current edit: ", uploadedImage);
+
+  // Create a new TimestampImage object
+  const newTimestampImage: TimestampImage = {
+    id: "0", // Consider generating a unique ID if needed
+    description: "",
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    image: uploadedImage.url,
+    uploadedImageId: uploadedImage.id
+  };
+
+  // Initialize the images array
+  let images: TimestampImage[] = [];
+
+  // If currentEdit exists, spread the current images into the new array
+  if (currentEdit && currentEdit.images) {
+    images = [...currentEdit.images];
+  }
+
+  // Add the new image to the images array
+  images.push(newTimestampImage);
+
+  // Update the current edit state with the new images array
+  setCurrentEdit({ ...currentEdit, images } as EditModeData);
+}
+
+export function removeImageFromCurrentEdit(uploadedImageId: string) {
+  // Get the current edit state and the setter function
+  const currentEdit = useStore.getState().currentEdit;
+  const setCurrentEdit = useStore.getState().setCurrentEdit;
+
+  console.log("Removing image with ID from current edit: ", uploadedImageId);
+
+  // If currentEdit exists and has images
+  if (currentEdit && currentEdit.images) {
+    // Filter out the image with the matching uploadedImageId
+    const updatedImages = currentEdit.images.filter(image => image.uploadedImageId !== uploadedImageId);
+
+    // Update the current edit state with the updated images array
+    setCurrentEdit({ ...currentEdit, images: updatedImages });
+  } else {
+    console.error("No current edit or images to remove from");
+  }
+}
+
+/*
+export function updateCurrentEdit(field: keyof EditModeData, value: any) {
+  const currentEdit = useStore.getState().currentEdit;
+  const setCurrentEdit = useStore.getState().setCurrentEdit;
+
+  if (!currentEdit) {
+    console.error('Current edit is undefined or null');
+    return;
+  }
+
+  if (field === 'timeDetails') {
+    setCurrentEdit({ ...currentEdit, timeDetails: { ...(currentEdit.timeDetails || {}), ...value } });
+  } else {
+    setCurrentEdit({ ...currentEdit, [field]: value } as EditModeData);
+  }
+  }*/
+
+  export function updateCurrentEdit(field: keyof EditModeData, value: any) {
+    const currentEdit = useStore.getState().currentEdit;
+    const setCurrentEdit = useStore.getState().setCurrentEdit;
+
+    if (!currentEdit) {
+      console.error('Current edit is undefined or null');
+      return;
+    }
+
+    let updatedEdit: EditModeData;
+
+    if (field === 'timeDetails') {
+      updatedEdit = {
+        ...currentEdit,
+        timeDetails: {
+          ...(currentEdit.timeDetails || {}),
+          ...value
+        }
+      };
+    } else {
+      updatedEdit = {
+        ...currentEdit,
+        [field]: value
+      } as EditModeData;
+    }
+
+    setCurrentEdit(updatedEdit);
+  }
