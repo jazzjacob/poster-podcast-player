@@ -441,8 +441,12 @@ export default function Home() {
           updatedExampleTimestamps.push(newTimestamp);
           setExampleTimestamps(updatedExampleTimestamps);
           // Real save (CREATE TIMESTAMP) should happen here... only logging for now...
-          await addTimestampToEpisode(podcastId, episodeId, newTimestamp);
-          await setGlobalStateFromFirebase(podcastId, episodeId);
+          if (currentPodcast && currentEpisode) {
+            await addTimestampToEpisode(currentPodcast.id, currentEpisode.id, newTimestamp);
+            await setGlobalStateFromFirebase(currentPodcast.id, currentEpisode.id);
+          } else {
+            console.error("Can't add timestamp to episode: currentPodcast or currentEpisode not saved");
+          }
 
           //console.log(convertEditModeTimeToSeconds(editModeTime.startTime));
         }
@@ -550,6 +554,23 @@ export default function Home() {
         <SelectEpisodeComponent />
       )}
 
+      {/* Audio component below */}
+      <audio
+        ref={audioRef}
+        controls
+        src={currentEpisode ? currentEpisode.url : ""}
+        preload="auto"
+      ></audio>
+      <div className={styles.audioButtonContainer}>
+        <button disabled={currentEpisode ? false : true} className={styles.skipButton} onClick={() => timelineJump(-5)}>
+          Back 5 seconds
+        </button >
+        <button  disabled={currentEpisode ? false : true} className={styles.skipButton} onClick={() => timelineJump(5)}>
+          Skip 5 seconds
+        </button >
+      </div>
+      {/* Audio component above */}
+
       {currentEpisode && (
         <div>
           <p>Current episode is set</p>
@@ -564,24 +585,6 @@ export default function Home() {
             )}
           </section>
           {/* Title section above */}
-
-
-          {/* Audio component below */}
-          <audio
-            ref={audioRef}
-            controls
-            src={currentEpisode.url}
-            preload="auto"
-          ></audio>
-          <div className={styles.audioButtonContainer}>
-            <button className={styles.skipButton} onClick={() => timelineJump(-5)}>
-              Back 5 seconds
-            </button>
-            <button className={styles.skipButton} onClick={() => timelineJump(5)}>
-              Skip 5 seconds
-            </button>
-          </div>
-          {/* Audio component above */}
 
 
           {/* Normal mode below */}

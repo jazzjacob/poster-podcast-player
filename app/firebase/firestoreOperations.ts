@@ -395,6 +395,7 @@ export async function updateTimestamp(
 
 export async function addTimestampToEpisode(podcastId: string, episodeId: string, timestamp: Timestamp): Promise<void> {
   try {
+    console.log("podcastId", podcastId);
     const timestampsCollectionRef = collection(db, 'podcasts', podcastId, 'episodes', episodeId, 'timestamps');
     await addDoc(timestampsCollectionRef, { ...timestamp, createdAt: new Date(), updatedAt: new Date() });
     console.log('Timestamp added successfully');
