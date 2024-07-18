@@ -26,7 +26,6 @@ const EditModePosterGallery: React.FC<EditModePosterGalleryProps> = (
   }, [currentTime]);
 
 
-
   //const PosterGallery = ({episodeData, playFromSpecificTime}) => {
   //console.log("episode data from within PosterGallery");
   //console.log(episodeData);
@@ -52,14 +51,14 @@ const EditModePosterGallery: React.FC<EditModePosterGalleryProps> = (
   function handleDeleteImage(podcastId: string, episodeId: string, image: UploadedImage) {
     // How it should work:
     //deleteImage(podcastId, episodeId, image);
-    console.log("Delete image with ID: ", image.id);
+    console.log("Delete image: ", image);
 
   }
 
   return (
      <div>
        {episodeData && episodeData.uploadedImages.length > 0 ? (
-         <div>
+        <div style={{ display: 'flex', flexWrap: 'wrap'}}>
            {currentEpisode && currentPodcast && (
              episodeData.uploadedImages.map((uploadedImage, index) => (
                <div key={`${uploadedImage.id}-${index}`}>
@@ -78,7 +77,7 @@ const EditModePosterGallery: React.FC<EditModePosterGalleryProps> = (
                </div>
              ))
            )}
-         </div>
+         </div >
        ) : (
          <p>No images</p>
        )}
