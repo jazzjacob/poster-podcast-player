@@ -11,13 +11,20 @@ interface CreatePodcastComponentProps {
 const SelectPodcastComponent: React.FC<CreatePodcastComponentProps> = ({ setPodcastId, setEpisodeId }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [success, setSuccess] = useState<boolean | null>(null);
+  const currentEpisode = useStore((state) => state.currentEpisode);
+  const clearCurrentEpisode = useStore((state) => state.clearCurrentEpisode);
   const podcasts = useStore((state) => state.podcasts);
   const setPodcast = useStore((state) => state.setPodcast);
+  const [selectedIndex, setSelectedIndex] = useState(-1);
 
-  function handlePodcastClick(podcast: PodcastData) {
+  function handlePodcastClick(podcast: PodcastData, index: number) {
+    if (currentEpisode) {
+      clearCurrentEpisode();
+    }
     console.log(podcast.podcastName);
     console.log(podcast.id);
     setPodcast(podcast);
+    setSelectedIndex(index);
   }
 
   return (
@@ -27,7 +34,8 @@ const SelectPodcastComponent: React.FC<CreatePodcastComponentProps> = ({ setPodc
         {podcasts && podcasts.map((podcast, index) => (
           <button
             key={`${podcast.id}-${index}`}
-            onClick={() => handlePodcastClick(podcast)}
+            onClick={() => handlePodcastClick(podcast, index)}
+            disabled={selectedIndex == index}
           >
             {podcast.podcastName}
           </button>

@@ -10,11 +10,15 @@ interface CreatePodcastComponentProps {
 
 const SelectEpisodeComponent = () => {
   const currentPodcast = useStore((state) => state.podcast);
+  const currentEpisode = useStore((state) => state.currentEpisode);
   const setCurrentEpisode = useStore((state) => state.setCurrentEpisode);
+  const [selectedIndex, setSelectedIndex] = useState(-1);
 
-  async function handleEpisodeClick(episode: EpisodeData) {
+  async function handleEpisodeClick(episode: EpisodeData, index: number) {
+
     console.log(episode.title);
     if (currentPodcast) {
+      setSelectedIndex(index);
       const episodeData = await fetchEpisode(currentPodcast.id, episode.id);
       if (episodeData) {
         setCurrentEpisode(episodeData);
@@ -32,7 +36,8 @@ const SelectEpisodeComponent = () => {
           {currentPodcast.episodes.map((episode, index) => (
             <button
               key={`${episode.id}-${index}`}
-              onClick={() => handleEpisodeClick(episode)}
+              onClick={() => handleEpisodeClick(episode, index)}
+              disabled={currentEpisode !== null && (selectedIndex == index)}
             >
               {episode.title}
             </button>
