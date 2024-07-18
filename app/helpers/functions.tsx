@@ -16,7 +16,7 @@ export function convertEditModeTimeToSeconds(time: {
     return time.hours * 60 * 60 + time.minutes * 60 + time.seconds;
   }
 
-export function checkOverlap(startTime: number, endTime: number, id: string, existingTimestamps: Timestamp[]) {
+export function checkOverlapWithExisitingTimestamp(startTime: number, endTime: number, id: string, existingTimestamps: Timestamp[]) {
   let overlapDetails = {
     isOverlap: false,
     startTimeOverlap: false,
@@ -36,6 +36,8 @@ export function checkOverlap(startTime: number, endTime: number, id: string, exi
       (timestamp.start <= endTime && endTime <= timestamp.end) ||
       (startTime <= timestamp.start && timestamp.end <= endTime)
     ) {
+      // Checks that it is not self-overlapping
+      // Self overlapping leads to isOverlap = false;
       if (id !== timestamp.id) {
         overlapDetails.isOverlap = true;
         overlapDetails.overlapId = timestamp.id;
@@ -56,6 +58,46 @@ export function checkOverlap(startTime: number, endTime: number, id: string, exi
 
         break; // Stop checking further if overlap is found
       }
+    }
+  }
+
+  return overlapDetails;
+}
+
+export function checkOverlapWithNewTimestamp(startTime: number, endTime: number, existingTimestamps: Timestamp[]) {
+  let overlapDetails = {
+    isOverlap: false,
+    startTimeOverlap: false,
+    endTimeOverlap: false,
+    closestStartTime: -1,
+    closestEndTime: -1,
+  };
+
+  for (let timestamp of existingTimestamps) {
+    //console.log(timestamp);
+    //console.log(id);
+
+    // Check if there is an overlap
+    if (
+      (timestamp.start <= startTime && startTime <= timestamp.end) ||
+      (timestamp.start <= endTime && endTime <= timestamp.end) ||
+      (startTime <= timestamp.start && timestamp.end <= endTime)
+    ) {
+      overlapDetails.isOverlap = true;
+
+      // Check if start time is overlapping
+      if (startTime >= timestamp.start && startTime <= timestamp.end) {
+        overlapDetails.startTimeOverlap = true;
+        overlapDetails.closestStartTime = timestamp.start;
+      }
+
+      // Check if end time is overlapping
+      if (endTime >= timestamp.start && endTime <= timestamp.end) {
+        overlapDetails.endTimeOverlap = true;
+        overlapDetails.closestEndTime = timestamp.end;
+      }
+
+      break; // Stop checking further if overlap is found
     }
   }
 

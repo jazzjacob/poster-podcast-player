@@ -15,7 +15,7 @@ import ReadDocumentComponent from "./components/ReadDocumentComponent";
 import ImageUploadComponent from "./components/edit-mode/ImageUploadComponent";
 
 import { Timestamp, TimestampImage, EpisodeData, EditModeData, EditModeTime, OverlapDetails, defaultEditModeTime, defaultEditModeData, nullEpisode, defaultExampleTimestamps, examplePodcastData, exampleEpisodeData } from "@/app/helpers/customTypes";
-import { generateId, checkOverlap, removeObjectFromArrayByKey, setGlobalStateFromFirebase, fetchAndSetPodcasts, updateCurrentEdit } from "@/app/helpers/functions";
+import { generateId, checkOverlapWithExisitingTimestamp, checkOverlapWithNewTimestamp, removeObjectFromArrayByKey, setGlobalStateFromFirebase, fetchAndSetPodcasts, updateCurrentEdit } from "@/app/helpers/functions";
 import CreateDocumentComponent from "./components/CreateDocumentComponent";
 import CreatePodcastComponent from "./components/CreatePodcastComponent";
 import AddEpisodeComponent from "./components/AddEpisodeComponent";
@@ -403,9 +403,30 @@ export default function Home() {
     const startTime = convertEditModeTimeToSeconds(editModeTime.startTime);
     const endTime = convertEditModeTimeToSeconds(editModeTime.endTime);
 
-    //console.log("currentEditModeData");
-    //console.log(currentEditModeData);
-    const overlapResults = checkOverlap(startTime, endTime, currentEditModeData.timestampId, currentEpisode?.timestamps || []);
+    console.log("currentEditModeData");
+    console.log(currentEditModeData);
+
+    let overlapResults = {
+      isOverlap: false,
+      startTimeOverlap: false,
+      endTimeOverlap: false,
+      closestStartTime: -1,
+      closestEndTime: -1,
+    };
+    // Check if timestamp is a new timestamp
+    // It will not have an overlap
+    if (!currentEditModeData.timestampId || currentEditModeData.timestampId == "") {
+      // Check overlap without ID
+      overlapResults = checkOverlapWithNewTimestamp(startTime, endTime, currentEpisode?.timestamps || []);
+
+    // Timestamp exists already
+    } else {
+        overlapResults = checkOverlapWithExisitingTimestamp(startTime, endTime, currentEditModeData.timestampId, currentEpisode?.timestamps || []);
+    }
+
+
+
+
     //console.log("overlapResults");
     //console.log(overlapResults);
 
@@ -431,10 +452,13 @@ export default function Home() {
             images: [...currentEditModeData.images]
           }
 
-          if (currentEpisode && currentEpisode.timestamps) {
+          if (currentEpisode && currentEpisode.timestamps && currentEditModeData.timestampId) {
             // Update a timestamp for real here... in firebase...
-            await updateTimestamp(podcastId, episodeId, currentEditModeData.timestampId, updatedTimestamp)
-            await setGlobalStateFromFirebase(podcastId, episodeId);
+
+            if (currentPodcast && currentEpisode) {
+              await updateTimestamp(currentPodcast.id, currentEpisode.id, currentEditModeData.timestampId, updatedTimestamp)
+              await setGlobalStateFromFirebase(currentPodcast.id, currentEpisode.id);
+            }
           }
           const updatedExampleTimestamps = exampleTimestamps.filter(item => item.id !== updatedTimestamp.id);
           // updatedExampleTimestamps.push(updatedTimestamp);
@@ -528,7 +552,7 @@ export default function Home() {
   async function handleDelete() {
     const timestampId = currentEditModeData.timestampId;
     console.log("Delete timestamp with id: ", timestampId);
-    if (podcastId) {
+    if (podcastId && timestampId) {
       const deleted = await deleteTimestamp(podcastId, episodeId, timestampId);
       if (deleted) {
         setGlobalStateFromFirebase(podcastId, episodeId);

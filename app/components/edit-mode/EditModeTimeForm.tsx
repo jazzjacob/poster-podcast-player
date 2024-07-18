@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { TimestampImage, EpisodeData, EditModeTime, EditModeData, OverlapDetails } from '@/app/helpers/customTypes';
-import { checkOverlap, convertEditModeTimeToSeconds, updateCurrentEdit } from '@/app/helpers/functions';
+import { convertEditModeTimeToSeconds, updateCurrentEdit } from '@/app/helpers/functions';
 import useStore from '@/app/helpers/store';
 
 
