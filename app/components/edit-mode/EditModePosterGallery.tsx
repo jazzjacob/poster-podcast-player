@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { TimestampImage, Timestamp, UploadedImage, EpisodeData } from '@/app/helpers/customTypes';
 import { deleteImage } from '@/app/firebase/storageOperations';
+import { addTimestampIdToUploadedImage } from '@/app/firebase/firestoreOperations';
 import useStore from '@/app/helpers/store';
 import { addImageToCurrentEdit, removeImageFromCurrentEdit } from '@/app/helpers/functions';
 
@@ -40,6 +41,7 @@ const EditModePosterGallery: React.FC<EditModePosterGalleryProps> = (
     } else {
       console.log("The image is not in state, adding image...");
       addImageToCurrentEdit(uploadedImage);
+      //addTimestampIdToUploadedImage(currentEpisode.id, currentPodcast.id, );
     }
     if (currentEdit) {
       //console.log("current edit: ", currentEdit);
@@ -78,7 +80,7 @@ const EditModePosterGallery: React.FC<EditModePosterGalleryProps> = (
                  <img
                    alt={`Episode image ${uploadedImage.url}`}
                    onClick={() => handleImageClick(uploadedImage, index)}
-                   style={{ height: '100px', cursor: 'pointer', margin: '8px' }}
+                   style={{ height: '100px', cursor: 'pointer', margin: '8px', outline: uploadedImage.timestampIds.length > 0 ? '2px solid red': 'none'}}
                    src={uploadedImage.url}
                  />
                  {selectedIndex === index && (

@@ -64,7 +64,7 @@ export interface EditModeData {
   images: TimestampImage[],
   startTimeSaved: boolean,
   endTimeSaved: boolean,
-  timestampId?: string
+  timestampId?: string,
   timeDetails?: {
     startTime: {
       hours: number,

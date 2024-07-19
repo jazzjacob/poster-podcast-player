@@ -22,7 +22,7 @@ import AddEpisodeComponent from "./components/AddEpisodeComponent";
 import AuthComponent from "./components/AuthComponent";
 import AddTimestampComponent from "./components/AddTimestampComponent";
 import useStore from "./helpers/store";
-import { updateTimestamp, addTimestampToEpisode, deleteTimestamp, addTimestampIdToUploadedImage } from "./firebase/firestoreOperations";
+import { updateTimestamp, addTimestampToEpisode, deleteTimestamp, addTimestampIdToUploadedImage, addTimestamp } from "./firebase/firestoreOperations";
 import SelectPodcastComponent from "./components/SelectPodcastComponent";
 import SelectEpisodeComponent from "./components/SelectEpisodeComponent";
 
@@ -480,13 +480,15 @@ export default function Home() {
           setExampleTimestamps(updatedExampleTimestamps);
           // Real save (CREATE TIMESTAMP) should happen here... only logging for now...
           if (currentPodcast && currentEpisode) {
-            const timestampId = await addTimestampToEpisode(currentPodcast.id, currentEpisode.id, newTimestamp);
 
+            //const timestampId = await addTimestampToEpisode(currentPodcast.id, currentEpisode.id, newTimestamp);
+            await addTimestamp(currentPodcast.id, currentEpisode.id, newTimestamp, currentEdit);
+            console.log("It seems to have worked.... a miracle");
             // SET TIMESTAMPID TO UPLOADEDIMAGE.TIMESTAMPIDS[]
             // Get timestampId
             // Set timestampId to current uploadedImage.timestampId[]
-            if (timestampId) {
-              console.log("currentEditModeData.images", currentEditModeData.images);
+            //if (timestampId) {
+              //console.log("currentEditModeData.images", currentEditModeData.images);
               /*
               await addTimestampIdToUploadedImage(
                 currentPodcast.id,
@@ -494,7 +496,7 @@ export default function Home() {
                 timestampId,
                 uploadedImageId
               )*/
-            }
+              //}
             // await addTimestampIdToUploadedImage(currentPodcast.id, currentEpisode.id, timestampId, uploadedImage.id: string);
 
             await setGlobalStateFromFirebase(currentPodcast.id, currentEpisode.id);
