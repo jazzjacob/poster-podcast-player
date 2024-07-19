@@ -18,6 +18,7 @@ const EditModeTimestamps: React.FC <EditModeTimestampsProps> = ({ timestamps, se
   //console.log(episodeData);
 
   const timestampState = useStore((state) => state?.currentEpisode?.timestamps);
+  const setInitialEdit = useStore((state) => state.setInitialEdit);
 
   useEffect(() => {
     if (timestampState) {
@@ -29,16 +30,19 @@ const EditModeTimestamps: React.FC <EditModeTimestampsProps> = ({ timestamps, se
 
   function handleBoxClick(timestamp: Timestamp) {
 
-    setCurrentEditModeData({
+    const currentData = {
       startTime: timestamp.start,
       endTime: timestamp.end,
       images: timestamp.images,
       startTimeSaved: true,
       endTimeSaved: true,
       timestampId: timestamp.id
-    });
+    };
+
+    setCurrentEditModeData(currentData);
     updateEditModeTime('startTime', timestamp.start);
     updateEditModeTime('endTime', timestamp.end);
+    setInitialEdit(currentData);
     /*startTime: number,
     endTime: number,
     images: TimestampImage[],

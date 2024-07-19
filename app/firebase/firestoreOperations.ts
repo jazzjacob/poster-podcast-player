@@ -328,6 +328,7 @@ export async function addEpisode(podcastId: string, episodeData: EpisodeData): P
  * @param newData - The new data to update the timestamp with.
  */
 
+ /*
  export async function updateTimestamp(
    podcastId: string,
    episodeId: string,
@@ -358,7 +359,7 @@ export async function addEpisode(podcastId: string, episodeData: EpisodeData): P
    } catch (error) {
      console.error('Error updating timestamp: ', error);
    }
- }
+ }*/
 
 /*
 export async function updateTimestamp(
@@ -405,6 +406,10 @@ export async function addTimestampToEpisode(podcastId: string, episodeId: string
   }
   };*/
 
+
+
+  // TIMESTAMP HANDLING
+
   export async function addTimestamp(podcastId: string, episodeId: string, timestamp: Timestamp, currentEdit: EditModeData) {
     if (!podcastId || !episodeId) {
       throw new Error('Podcast ID and Episode ID must be provided');
@@ -440,6 +445,8 @@ export async function addTimestampToEpisode(podcastId: string, episodeId: string
       console.error("Transaction failed: ", error);
     }
   }
+
+
 
   export async function addTimestampToEpisode(
     podcastId: string,

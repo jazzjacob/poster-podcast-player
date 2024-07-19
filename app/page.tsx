@@ -22,7 +22,7 @@ import AddEpisodeComponent from "./components/AddEpisodeComponent";
 import AuthComponent from "./components/AuthComponent";
 import AddTimestampComponent from "./components/AddTimestampComponent";
 import useStore from "./helpers/store";
-import { updateTimestamp, addTimestampToEpisode, deleteTimestamp, addTimestampIdToUploadedImage, addTimestamp } from "./firebase/firestoreOperations";
+import { addTimestampToEpisode, deleteTimestamp, addTimestampIdToUploadedImage, addTimestamp } from "./firebase/firestoreOperations";
 import SelectPodcastComponent from "./components/SelectPodcastComponent";
 import SelectEpisodeComponent from "./components/SelectEpisodeComponent";
 
@@ -53,6 +53,9 @@ export default function Home() {
   const podcasts = useStore((state) => state.podcasts);
   const currentPodcast = useStore((state) => state.podcast);
   const currentEdit = useStore((state) => state.currentEdit);
+  const initialEdit = useStore((state) => state.initialEdit);
+  const setInitialEdit = useStore((state) => state.setInitialEdit);
+  const clearInitialEdit = useStore((state) => state.clearInitialEdit);
 
 
   const globalState = useStore((state) => state);
@@ -71,9 +74,22 @@ export default function Home() {
 
   const user = useStore((state) => state.user);
 
+/*
   useEffect(() => {
-    console.log("currentEdit: ", currentEdit);
+    console.log("currentEditModeData: ", currentEditModeData);
+    if (currentEditModeData && currentEditModeData.startTime !== -1 && initialEdit && initialEdit.startTime === -1) {
+      console.log("SOMETHING HAS STARTED EDITING");
+      setInitialEdit(currentEdit);
+    } else if (currentEditModeData && currentEditModeData.startTime === -1 && initialEdit && initialEdit.startTime !== -1) {
+      console.log("Nothing is editing anymore...");
+      clearInitialEdit();
+    }
   }, [currentEdit]);
+*/
+
+  useEffect(() => {
+    console.log("initialEdit", initialEdit);
+  }, [initialEdit]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -315,6 +331,10 @@ export default function Home() {
   // USE EFFECTS FOR HELP IN DEVELOPMENT
 
   useEffect(() => {
+    if (currentEditModeData.images.length === 0) {
+      setCurrentEditModeData(defaultEditModeData);
+    }
+
     if (currentEditModeData.images.length > 0) {
       if (!currentEditModeData.startTimeSaved) {
         updateEditModeData("startTimeSaved", true); // Old
@@ -396,6 +416,7 @@ export default function Home() {
 
   function removeEditModeImage(image: string) {
     removeEditModeData(image);
+    // CLEAR EDIT MODE DATA HERE
   }
 
   // Save new timestamp in Edit Mode
@@ -456,8 +477,9 @@ export default function Home() {
             // Update a timestamp for real here... in firebase...
 
             if (currentPodcast && currentEpisode) {
-              await updateTimestamp(currentPodcast.id, currentEpisode.id, currentEditModeData.timestampId, updatedTimestamp)
-              await setGlobalStateFromFirebase(currentPodcast.id, currentEpisode.id);
+              console.log("Yeah bitch I'm gonna update a timestamp here mate");
+              //await updateTimestamp(currentPodcast.id, currentEpisode.id, currentEditModeData.timestampId, updatedTimestamp)
+              //await setGlobalStateFromFirebase(currentPodcast.id, currentEpisode.id);
             }
           }
           const updatedExampleTimestamps = exampleTimestamps.filter(item => item.id !== updatedTimestamp.id);
@@ -513,6 +535,7 @@ export default function Home() {
         setCurrentEditModeData(defaultEditModeData);
         updateEditModeTime("startTime", currentTime);
         updateEditModeTime("endTime", currentTime);
+        clearInitialEdit();
       } else {
         console.error("Something went wrong with saving!");
       }
@@ -549,6 +572,7 @@ export default function Home() {
     updateEditModeTime('startTime', currentTime);
     updateEditModeTime('endTime', currentTime);
     setCurrentEditModeData(defaultEditModeData);
+    clearInitialEdit();
   };
 
   async function handleDelete() {

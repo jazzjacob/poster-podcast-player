@@ -34,7 +34,13 @@ interface CurrentEditState {
   clearCurrentEdit: () => void;
 }
 
-const useStore = create<AuthState & PodcastState & CurrentPodcastState & CurrentEpisodeState & CurrentEditState>((set) => ({
+interface InitialEditState {
+  initialEdit: EditModeData;
+  setInitialEdit: (initialEdit: EditModeData) => void;
+  clearInitialEdit: () => void;
+}
+
+const useStore = create<AuthState & PodcastState & CurrentPodcastState & CurrentEpisodeState & CurrentEditState & InitialEditState>((set) => ({
   user: null,
   setUser: (user) => set({ user }),
   clearUser: () => set({ user: null }),
@@ -55,6 +61,10 @@ const useStore = create<AuthState & PodcastState & CurrentPodcastState & Current
   currentEdit: defaultEditModeData,
   setCurrentEdit: (currentEdit) => set({ currentEdit }),
   clearCurrentEdit: () => set({ currentEdit: defaultEditModeData }),
+
+  initialEdit: defaultEditModeData,
+  setInitialEdit: (initialEdit) => set({ initialEdit }),
+  clearInitialEdit: () => set({ initialEdit: defaultEditModeData }),
 }));
 
 export default useStore;
