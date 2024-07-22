@@ -230,19 +230,6 @@ export async function deleteDocument(id: string): Promise<void> {
   }
 }
 
-export async function deleteTimestamp(podcastId: string, episodeId: string, timestampId: string): Promise<boolean> {
-  try {
-    const timestampRef = doc(db, 'podcasts', podcastId, 'episodes', episodeId, 'timestamps', timestampId);
-    await deleteDoc(timestampRef);
-    console.log("Timestamp deleted");
-    return true;
-  } catch (error) {
-    console.log("Error deleting timestamp: ", error);
-    return false;
-  }
-}
-
-
 export async function createPodcast(podcast: PodcastData): Promise<void> {
   try {
     // Check if a podcast with the same name already exists
@@ -449,6 +436,44 @@ export async function addTimestampToEpisode(podcastId: string, episodeId: string
       console.error("Transaction failed: ", error);
     }
   }
+
+  export async function deleteTimestamp(
+    podcastId: string,
+    episodeId: string,
+    timestampId: string,
+    images: TimestampImage[]
+  ) {
+    if (!podcastId || !episodeId || !timestampId) {
+      throw new Error('Podcast ID, Episode ID, and Timestamp ID must be provided');
+    }
+
+    const timestampDocRef = doc(db, 'podcasts', podcastId, 'episodes', episodeId, 'timestamps', timestampId);
+
+    try {
+      await runTransaction(db, async (transaction) => {
+        // Delete the timestamp document
+        transaction.delete(timestampDocRef);
+
+        // Remove the timestamp ID from each associated image's timestampIds array
+        if (images.length > 0) {
+          images.forEach((image) => {
+            if (!image.id) {
+              throw new Error('UploadedImageId must be provided for each image');
+            }
+            const uploadedImageRef = doc(db, 'podcasts', podcastId, 'episodes', episodeId, 'uploadedImages', image.id);
+            transaction.update(uploadedImageRef, {
+              timestampIds: arrayRemove(timestampId)
+            });
+          });
+        }
+      });
+
+      console.log("Timestamp deleted and associated images updated successfully!");
+    } catch (error) {
+      console.error("Transaction failed: ", error);
+    }
+  }
+
 
   export async function updateTimestamp(
     podcastId: string,

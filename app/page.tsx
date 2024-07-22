@@ -596,12 +596,21 @@ export default function Home() {
   async function handleDelete() {
     const timestampId = currentEditModeData.timestampId;
     console.log("Delete timestamp with id: ", timestampId);
-    if (podcastId && timestampId) {
-      const deleted = await deleteTimestamp(podcastId, episodeId, timestampId);
-      if (deleted) {
+    if (currentPodcast && currentEpisode && initialEdit && timestampId) {
+      console.log("Ready to delete here");
+      deleteTimestamp(
+        currentPodcast.id,
+        currentEpisode.id,
+        timestampId,
+        initialEdit.images
+      );
+      setGlobalStateFromFirebase(currentPodcast.id, currentEpisode.id);
+      handleCancel();
+      //const deleted = await deleteTimestamp(podcastId, episodeId, timestampId);
+      /*if (deleted) {
         setGlobalStateFromFirebase(podcastId, episodeId);
         handleCancel();
-      }
+      }*/
     }
 
     /*
