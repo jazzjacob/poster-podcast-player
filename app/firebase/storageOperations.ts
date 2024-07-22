@@ -27,10 +27,10 @@ export async function getImageURL(filePath: string): Promise<string | null> {
   }
 }
 
-export async function deleteImage(podcastId: string, episodeId: string, image: UploadedImage): Promise<void> {
+export async function deleteUploadedImage(podcastId: string, episodeId: string, image: UploadedImage): Promise<void> {
   try {
     // Get a reference to the image in Firebase Storage
-    const imageRef = ref(storage, `podcasts/${podcastId}/episodes/${episodeId}/${image.name}`);
+    const imageRef = ref(storage, `podcasts/${podcastId}/episodes/${episodeId}/uploadedImages/${image.name}`);
 
     // Delete the image from Firebase Storage
     await deleteObject(imageRef);

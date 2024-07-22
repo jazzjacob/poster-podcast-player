@@ -797,6 +797,7 @@ export default function Home() {
                     addImage={addEditModeImage}
                     removeImage={removeEditModeImage}
                     currentTime={currentTime}
+                    handleCancel={handleCancel}
                   />
                 )}
               </div>
