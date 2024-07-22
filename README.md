@@ -6,7 +6,7 @@ This is an ongoing project developed by me during the summer course "Applied Pro
 
 ## The idea, simply
 
-A podcast player that can sync images (and more) with the audio.
+A podcast player that can sync images with the audio.
 
 ---
 
