@@ -8,7 +8,7 @@ import { addImageToCurrentEdit, removeImageFromCurrentEdit } from '@/app/helpers
 
 interface EditModePosterGalleryProps {
   episodeData: EpisodeData;
-  addImage: (image: string) => void;
+  addImage: (image: UploadedImage) => void;
   removeImage: (image: string) => void;
   currentImages: TimestampImage[];
   currentTime: number;
@@ -48,7 +48,7 @@ const EditModePosterGallery: React.FC<EditModePosterGalleryProps> = (
     }
     setSelectedIndex(selectedIndex == index ? -1 : index);
     if (currentImages.length < 1) {
-      addImage(uploadedImage.url);
+      addImage(uploadedImage);
     } else {
       let imageIsRemoved = false;
       currentImages.forEach((currentImage) => {
@@ -58,7 +58,7 @@ const EditModePosterGallery: React.FC<EditModePosterGalleryProps> = (
         }
       })
       if (!imageIsRemoved) {
-        addImage(uploadedImage.url);
+        addImage(uploadedImage);
       }
     }
   }

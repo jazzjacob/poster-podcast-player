@@ -14,7 +14,7 @@ import EditModeTimestamps from "./components/edit-mode/EditModeTimestamps";
 import ReadDocumentComponent from "./components/ReadDocumentComponent";
 import ImageUploadComponent from "./components/edit-mode/ImageUploadComponent";
 
-import { Timestamp, TimestampImage, EpisodeData, EditModeData, EditModeTime, OverlapDetails, defaultEditModeTime, defaultEditModeData, nullEpisode, defaultExampleTimestamps, examplePodcastData, exampleEpisodeData } from "@/app/helpers/customTypes";
+import { Timestamp, TimestampImage, EpisodeData, EditModeData, EditModeTime, OverlapDetails, defaultEditModeTime, defaultEditModeData, nullEpisode, defaultExampleTimestamps, examplePodcastData, exampleEpisodeData, UploadedImage } from "@/app/helpers/customTypes";
 import { generateId, checkOverlapWithExisitingTimestamp, checkOverlapWithNewTimestamp, removeObjectFromArrayByKey, setGlobalStateFromFirebase, fetchAndSetPodcasts, updateCurrentEdit } from "@/app/helpers/functions";
 import CreateDocumentComponent from "./components/CreateDocumentComponent";
 import CreatePodcastComponent from "./components/CreatePodcastComponent";
@@ -22,7 +22,7 @@ import AddEpisodeComponent from "./components/AddEpisodeComponent";
 import AuthComponent from "./components/AuthComponent";
 import AddTimestampComponent from "./components/AddTimestampComponent";
 import useStore from "./helpers/store";
-import { addTimestampToEpisode, deleteTimestamp, addTimestampIdToUploadedImage, addTimestamp } from "./firebase/firestoreOperations";
+import { addTimestampToEpisode, deleteTimestamp, addTimestampIdToUploadedImage, addTimestamp, updateTimestamp } from "./firebase/firestoreOperations";
 import SelectPodcastComponent from "./components/SelectPodcastComponent";
 import SelectEpisodeComponent from "./components/SelectEpisodeComponent";
 
@@ -88,7 +88,7 @@ export default function Home() {
 */
 
   useEffect(() => {
-    console.log("initialEdit", initialEdit);
+    console.log("initialEdit in useEffect", initialEdit);
   }, [initialEdit]);
 
   useEffect(() => {
@@ -397,7 +397,7 @@ export default function Home() {
     }
   }
 
-  function addEditModeImage(image: string) {
+  function addEditModeImage(image: UploadedImage) {
     if (currentEditModeData.images.length == 0) {
       updateEditModeData("startTime", currentTime); // Old
       updateCurrentEdit('startTime', currentTime) // New
@@ -406,8 +406,8 @@ export default function Home() {
     console.log("LOOK HERE: IMAGE: ", image);
 
     updateEditModeData("images", {
-      id: generateId(),
-      image: image,
+      id: image.id,
+      image: image.url,
       description: "",
       createdAt: new Date(),
       updatedAt: new Date()
@@ -478,6 +478,8 @@ export default function Home() {
 
             if (currentPodcast && currentEpisode) {
               console.log("Yeah bitch I'm gonna update a timestamp here mate");
+              console.log("initialEdit: ", initialEdit);
+              handleUpdateTimestamp(updatedTimestamp);
               //await updateTimestamp(currentPodcast.id, currentEpisode.id, currentEditModeData.timestampId, updatedTimestamp)
               //await setGlobalStateFromFirebase(currentPodcast.id, currentEpisode.id);
             }
@@ -521,7 +523,6 @@ export default function Home() {
               //}
             // await addTimestampIdToUploadedImage(currentPodcast.id, currentEpisode.id, timestampId, uploadedImage.id: string);
 
-            await setGlobalStateFromFirebase(currentPodcast.id, currentEpisode.id);
           } else {
             console.error("Can't add timestamp to episode: currentPodcast or currentEpisode not saved");
           }
@@ -532,6 +533,9 @@ export default function Home() {
         pauseAudio();
 
         // Reset relevant states
+        if (currentPodcast && currentEpisode) {
+          await setGlobalStateFromFirebase(currentPodcast.id, currentEpisode.id);
+        }
         setCurrentEditModeData(defaultEditModeData);
         updateEditModeTime("startTime", currentTime);
         updateEditModeTime("endTime", currentTime);
@@ -540,6 +544,29 @@ export default function Home() {
         console.error("Something went wrong with saving!");
       }
     }
+  }
+
+  async function handleUpdateTimestamp(updatedTimestamp: Partial<Timestamp>) {
+    console.log("handling updating timestamp...");
+    console.log("currentEditModeData: ", currentEditModeData);
+
+    const removedImages = initialEdit.images.filter(initialEditImage => !currentEditModeData.images.some(currentEditImage => currentEditImage.id === initialEditImage.id));
+    const addedImages = currentEditModeData.images.filter(currentEditImage => !initialEdit.images.some(initialEditImage => currentEditImage.id === initialEditImage.id));
+
+    console.log("removedImages:", removedImages);
+    console.log("addedImages:", addedImages);
+
+    if (currentPodcast && currentEpisode) {
+      const podcastId = currentPodcast.id;
+      const episodeId = currentEpisode.id;
+      const timestampId = currentEditModeData.timestampId;
+      if (timestampId) {
+        await updateTimestamp(podcastId, episodeId, timestampId, updatedTimestamp, removedImages, addedImages);
+      }
+      console.log("update complete, I guess...?");
+    }
+
+
   }
 
   // Function to update a specific field in the currentEditModeData object

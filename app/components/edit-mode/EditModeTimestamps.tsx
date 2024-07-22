@@ -42,6 +42,7 @@ const EditModeTimestamps: React.FC <EditModeTimestampsProps> = ({ timestamps, se
     setCurrentEditModeData(currentData);
     updateEditModeTime('startTime', timestamp.start);
     updateEditModeTime('endTime', timestamp.end);
+    console.log("Setting initial edit: ", currentData);
     setInitialEdit(currentData);
     /*startTime: number,
     endTime: number,
