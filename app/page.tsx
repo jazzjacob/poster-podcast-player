@@ -71,6 +71,7 @@ export default function Home() {
   const setCurrentEpisode = useStore((state) => state.setCurrentEpisode);
   //const currentEpisode = useStore((state) => state.currentEpisode);
   const clearCurrentEpisode = useStore((state) => state.clearCurrentEpisode);
+  const clearCurrentEdit = useStore((state) => state.clearCurrentEdit);
 
   const user = useStore((state) => state.user);
 
@@ -527,10 +528,12 @@ export default function Home() {
         if (currentPodcast && currentEpisode) {
           await setGlobalStateFromFirebase(currentPodcast.id, currentEpisode.id);
         }
+
         setCurrentEditModeData(defaultEditModeData);
         updateEditModeTime("startTime", currentTime);
         updateEditModeTime("endTime", currentTime);
         clearInitialEdit();
+        clearCurrentEdit();
       } else {
         console.error("Something went wrong with saving!");
       }
