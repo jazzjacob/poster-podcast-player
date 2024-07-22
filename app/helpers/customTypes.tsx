@@ -145,12 +145,12 @@ export const nullEpisode: EpisodeData = {
 
 export const examplePodcastData: PodcastData = {
   id: "0",
-  podcastName: "Lilla Rummet",
-  description: "A podcast by two men",
+  podcastName: "The Poster Boys",
+  description: "A podcast about movie posters and shit",
   image: "",
   year: 2024,
   category: "Talking",
-  host: "Nemo and Jacob",
+  host: "",
   totalEpisodes: 10,
   website: "http://example.com",
   episodes: [],

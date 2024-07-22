@@ -155,15 +155,6 @@ export default function Home() {
   }, []);
   */
 
-  /*async function fetchData() {
-    const data = await GET();
-    console.log(data);
-  }
-
-  useEffect(() => {
-    fetchData();
-  }, []);*/
-
   const updateEditModeTime = useCallback((
     field: keyof EditModeTime,
     timeInSeconds: number,
@@ -626,6 +617,9 @@ export default function Home() {
     <main className={styles.main}>
 
     {/* Admin component below*/}
+    {user && currentPodcast && (
+      <AddEpisodeComponent podcastId={currentPodcast.id} episodeData={exampleEpisodeData} />
+    )}
     {podcasts && podcasts.length > 0 && user && currentEpisode && (
         <div style={{backgroundColor: "lightgray", padding: "2rem"}}>
         <h2>Admin stuff</h2>
@@ -776,7 +770,11 @@ export default function Home() {
                   <button onClick={() => playFromSpecificTime(currentEditModeData.endTime)}  disabled={!(currentEditModeData.images.length > 0)}>Go to end time</button >
                 </div >
               </div>
-                <ImageUploadComponent podcastId={podcastId} episodeId={episodeId} />
+                {
+                  currentPodcast && currentEpisode && (
+                    <ImageUploadComponent podcastId={currentPodcast.id} episodeId={currentEpisode.id} />
+                  )
+                }
               <div>
                 <h3>Timestamps</h3>
                 <EditModeTimestamps updateEditModeTime={updateEditModeTime} setCurrentEditModeData={setCurrentEditModeData} timestamps={exampleTimestamps}  />

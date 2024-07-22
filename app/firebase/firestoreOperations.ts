@@ -428,12 +428,16 @@ export async function addTimestampToEpisode(podcastId: string, episodeId: string
         });
         const timestampDocumentId = timestampDocRef.id;
 
+        console.log("LOOK! CURRENT EDIT:", currentEdit)
+        console.log(timestamp.images);
         // Update each image in the currentEdit with the new timestamp ID
-        currentEdit.images.forEach((image) => {
-          if (!image.uploadedImageId) {
+        timestamp.images.forEach((image) => {
+          if (!image.id) {
             throw new Error('UploadedImageId must be provided for each image');
           }
-          const uploadedImageRef = doc(db, 'podcasts', podcastId, 'episodes', episodeId, 'uploadedImages', image.uploadedImageId);
+          const uploadedImageRef = doc(db, 'podcasts', podcastId, 'episodes', episodeId, 'uploadedImages', image.id);
+          console.log("UploadedImageId", image.id)
+          console.log("TimestampDocId", timestampDocumentId);
           transaction.update(uploadedImageRef, {
             timestampIds: arrayUnion(timestampDocumentId)
           });
