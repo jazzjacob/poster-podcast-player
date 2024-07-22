@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { examplePodcastData, PodcastData, nullEpisode, EpisodeData } from "./customTypes";
+import { examplePodcastData, PodcastData, nullEpisode, EpisodeData, EditModeData, TimestampImage, defaultEditModeData } from "./customTypes";
 
 export const usePodcastStore = create<PodcastData[]>()((set) => ([examplePodcastData]));
 
@@ -28,7 +28,19 @@ interface CurrentEpisodeState {
   clearCurrentEpisode: () => void;
 }
 
-const useStore = create<AuthState & PodcastState & CurrentPodcastState & CurrentEpisodeState>((set) => ({
+interface CurrentEditState {
+  currentEdit: EditModeData;
+  setCurrentEdit: (currentEdit: EditModeData) => void;
+  clearCurrentEdit: () => void;
+}
+
+interface InitialEditState {
+  initialEdit: EditModeData;
+  setInitialEdit: (initialEdit: EditModeData) => void;
+  clearInitialEdit: () => void;
+}
+
+const useStore = create<AuthState & PodcastState & CurrentPodcastState & CurrentEpisodeState & CurrentEditState & InitialEditState>((set) => ({
   user: null,
   setUser: (user) => set({ user }),
   clearUser: () => set({ user: null }),
@@ -45,6 +57,14 @@ const useStore = create<AuthState & PodcastState & CurrentPodcastState & Current
   currentEpisode: null,
   setCurrentEpisode: (currentEpisode) => set({ currentEpisode }),
   clearCurrentEpisode: () => set({ currentEpisode: null }),
+
+  currentEdit: defaultEditModeData,
+  setCurrentEdit: (currentEdit) => set({ currentEdit }),
+  clearCurrentEdit: () => set({ currentEdit: defaultEditModeData }),
+
+  initialEdit: defaultEditModeData,
+  setInitialEdit: (initialEdit) => set({ initialEdit }),
+  clearInitialEdit: () => set({ initialEdit: defaultEditModeData }),
 }));
 
 export default useStore;

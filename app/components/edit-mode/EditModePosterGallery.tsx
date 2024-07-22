@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { TimestampImage, Timestamp, UploadedImage, EpisodeData } from '@/app/helpers/customTypes';
 import { deleteImage } from '@/app/firebase/storageOperations';
+import { addTimestampIdToUploadedImage } from '@/app/firebase/firestoreOperations';
 import useStore from '@/app/helpers/store';
+import { addImageToCurrentEdit, removeImageFromCurrentEdit } from '@/app/helpers/functions';
 
 
 interface EditModePosterGalleryProps {
   episodeData: EpisodeData;
-  addImage: (image: string) => void;
+  addImage: (image: UploadedImage) => void;
   removeImage: (image: string) => void;
   currentImages: TimestampImage[];
   currentTime: number;
@@ -18,6 +20,7 @@ const EditModePosterGallery: React.FC<EditModePosterGalleryProps> = (
 
   const currentPodcast = useStore((state) => state.podcast);
   const currentEpisode = useStore((state) => state.currentEpisode);
+  const currentEdit = useStore((state) => state.currentEdit);
 
   const [selectedIndex, setSelectedIndex] = useState(-1);
   useEffect(() => {
@@ -26,15 +29,26 @@ const EditModePosterGallery: React.FC<EditModePosterGalleryProps> = (
   }, [currentTime]);
 
 
-
   //const PosterGallery = ({episodeData, playFromSpecificTime}) => {
   //console.log("episode data from within PosterGallery");
   //console.log(episodeData);
 
   function handleImageClick(uploadedImage: UploadedImage, index: number) {
+    console.log("uploaded image: ", uploadedImage);
+    if (currentEdit && currentEdit.images && (currentEdit.images.find(image => image.uploadedImageId == uploadedImage.id) != undefined)) {
+      console.log("The image is in state, removing image...");
+      removeImageFromCurrentEdit(uploadedImage.id);
+    } else {
+      console.log("The image is not in state, adding image...");
+      addImageToCurrentEdit(uploadedImage);
+      //addTimestampIdToUploadedImage(currentEpisode.id, currentPodcast.id, );
+    }
+    if (currentEdit) {
+      //console.log("current edit: ", currentEdit);
+    }
     setSelectedIndex(selectedIndex == index ? -1 : index);
     if (currentImages.length < 1) {
-      addImage(uploadedImage.url);
+      addImage(uploadedImage);
     } else {
       let imageIsRemoved = false;
       currentImages.forEach((currentImage) => {
@@ -44,7 +58,7 @@ const EditModePosterGallery: React.FC<EditModePosterGalleryProps> = (
         }
       })
       if (!imageIsRemoved) {
-        addImage(uploadedImage.url);
+        addImage(uploadedImage);
       }
     }
   }
@@ -52,21 +66,21 @@ const EditModePosterGallery: React.FC<EditModePosterGalleryProps> = (
   function handleDeleteImage(podcastId: string, episodeId: string, image: UploadedImage) {
     // How it should work:
     //deleteImage(podcastId, episodeId, image);
-    console.log("Delete image with ID: ", image.id);
+    console.log("Delete image: ", image);
 
   }
 
   return (
      <div>
        {episodeData && episodeData.uploadedImages.length > 0 ? (
-         <div>
+        <div style={{ display: 'flex', flexWrap: 'wrap'}}>
            {currentEpisode && currentPodcast && (
              episodeData.uploadedImages.map((uploadedImage, index) => (
                <div key={`${uploadedImage.id}-${index}`}>
                  <img
                    alt={`Episode image ${uploadedImage.url}`}
                    onClick={() => handleImageClick(uploadedImage, index)}
-                   style={{ height: '100px', cursor: 'pointer', margin: '8px' }}
+                   style={{ height: '100px', cursor: 'pointer', margin: '8px', outline: uploadedImage.timestampIds.length > 0 ? '2px solid red': 'none'}}
                    src={uploadedImage.url}
                  />
                  {selectedIndex === index && (
@@ -78,7 +92,7 @@ const EditModePosterGallery: React.FC<EditModePosterGalleryProps> = (
                </div>
              ))
            )}
-         </div>
+         </div >
        ) : (
          <p>No images</p>
        )}

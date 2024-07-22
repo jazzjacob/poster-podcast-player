@@ -13,6 +13,7 @@ export interface TimestampImage {
   description: string;
   createdAt: Date;
   updatedAt: Date;
+  uploadedImageId?: string;
 }
 
 export interface UploadedImage {
@@ -63,7 +64,19 @@ export interface EditModeData {
   images: TimestampImage[],
   startTimeSaved: boolean,
   endTimeSaved: boolean,
-  timestampId: string
+  timestampId?: string,
+  timeDetails?: {
+    startTime: {
+      hours: number,
+      minutes: number,
+      seconds: number
+    },
+    endTime: {
+      hours: number,
+      minutes: number,
+      seconds: number
+    }
+  }
 }
 
 export interface EditModeTime {
@@ -111,7 +124,8 @@ export const defaultEditModeData: EditModeData = {
   images: [],
   startTimeSaved: false,
   endTimeSaved: false,
-  timestampId: ""
+  timestampId: "",
+  timeDetails: defaultEditModeTime,
 };
 
 // Default value for episodeData
@@ -131,12 +145,12 @@ export const nullEpisode: EpisodeData = {
 
 export const examplePodcastData: PodcastData = {
   id: "0",
-  podcastName: "Lilla Rummet",
-  description: "A podcast by two men",
+  podcastName: "The Poster Boys",
+  description: "A podcast about movie posters and shit",
   image: "",
   year: 2024,
   category: "Talking",
-  host: "Nemo and Jacob",
+  host: "",
   totalEpisodes: 10,
   website: "http://example.com",
   episodes: [],
