@@ -701,7 +701,6 @@ export default function Home() {
           {/* Normal mode below */}
           {(!editMode || !user) && (
             <div>
-              <p>fallsmannen was here</p>
               {/*<button onClick={() => playFromSpecificTime(62)}>Play from 1:02</button>*/}
               <div className={styles.exampleImageContainer}>
                 {currentEpisode && currentEpisode.timestamps && currentEpisode.timestamps.length > 0 ? (
