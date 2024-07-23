@@ -650,18 +650,18 @@ export default function Home() {
     {/* Admin component above*/}
 
 
-      <p className={styles.greetingText}>
-        Hello, this is <b>Poster Podcast Player</b>.
-      </p>
-      <AuthComponent />
+    <p className={styles.greetingText}>
+      Hello, this is <b>Poster Podcast Player</b>.
+    </p>
+    <AuthComponent />
 
-      {/*PODCASTS ARE DISPLAYED - START*/}
-      {podcasts && podcasts.length > 0 && (
-        <>
-          <SelectPodcastComponent setPodcastId={setPodcastId} setEpisodeId={setEpisodeId}  />
-        </>
-      )}
-      {/*PODCASTS ARE DISPLAYED - END*/}
+    {/*PODCASTS ARE DISPLAYED - START*/}
+    {podcasts && podcasts.length > 0 && (
+      <>
+        <SelectPodcastComponent setPodcastId={setPodcastId} setEpisodeId={setEpisodeId}  />
+      </>
+    )}
+    {/*PODCASTS ARE DISPLAYED - END*/}
 
       {currentPodcast && (
         <SelectEpisodeComponent />
@@ -686,8 +686,6 @@ export default function Home() {
 
       {currentEpisode && (
         <div>
-          <p>Current episode is set</p>
-          <button onClick={() => clearCurrentEpisode()}>remove currentEpisode</button>
           {/* EVERYTHING SHOULD BE BELOW HERE */}
 
           {/* Title section below */}
