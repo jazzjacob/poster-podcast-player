@@ -105,10 +105,6 @@ const AuthComponent: React.FC = () => {
 
         {/*<button onClick={handleCheckAuth}>Check Auth State</button>*/}
         {user ? <p>✅ Logged in! Welcome, {user.email}</p> : <p>😢 Not logged in...</p>}
-        { podcastState && podcastState[0] && (
-          <p>Data from global state: {podcastState[0].podcastName}</p>
-        )
-        }
 
     </div >
   );
