@@ -169,12 +169,11 @@ export function addImageToCurrentEdit(uploadedImage: UploadedImage) {
 
   // Create a new TimestampImage object
   const newTimestampImage: TimestampImage = {
-    id: "0", // Consider generating a unique ID if needed
     description: "",
     createdAt: new Date(),
     updatedAt: new Date(),
     image: uploadedImage.url,
-    uploadedImageId: uploadedImage.id
+    id: uploadedImage.id
   };
 
   // Initialize the images array
@@ -202,7 +201,7 @@ export function removeImageFromCurrentEdit(uploadedImageId: string) {
   // If currentEdit exists and has images
   if (currentEdit && currentEdit.images) {
     // Filter out the image with the matching uploadedImageId
-    const updatedImages = currentEdit.images.filter(image => image.uploadedImageId !== uploadedImageId);
+    const updatedImages = currentEdit.images.filter(image => image.id !== uploadedImageId);
 
     // Update the current edit state with the updated images array
     setCurrentEdit({ ...currentEdit, images: updatedImages });

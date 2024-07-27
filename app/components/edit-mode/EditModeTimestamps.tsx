@@ -19,6 +19,7 @@ const EditModeTimestamps: React.FC <EditModeTimestampsProps> = ({ timestamps, se
 
   const timestampState = useStore((state) => state?.currentEpisode?.timestamps);
   const setInitialEdit = useStore((state) => state.setInitialEdit);
+  const setCurrentEdit = useStore((state) => state.setCurrentEdit);
 
   useEffect(() => {
     if (timestampState) {
@@ -44,6 +45,7 @@ const EditModeTimestamps: React.FC <EditModeTimestampsProps> = ({ timestamps, se
     updateEditModeTime('endTime', timestamp.end);
     console.log("Setting initial edit: ", currentData);
     setInitialEdit(currentData);
+    setCurrentEdit(currentData);
     /*startTime: number,
     endTime: number,
     images: TimestampImage[],

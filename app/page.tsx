@@ -175,6 +175,10 @@ export default function Home() {
     } });
   }, [])
 
+  useEffect(() => {
+    console.log("currentEdit: ", currentEdit)
+  }, [currentEdit]);
+
   // Helper function to handle updating edit mode times
   const handleEditModeTimes = useCallback((currentTime: number) => {
     if (!currentEditModeData.startTimeSaved) {
@@ -594,6 +598,7 @@ export default function Home() {
     updateEditModeTime('endTime', currentTime);
     setCurrentEditModeData(defaultEditModeData);
     clearInitialEdit();
+    clearCurrentEdit();
   };
 
   async function handleDelete() {

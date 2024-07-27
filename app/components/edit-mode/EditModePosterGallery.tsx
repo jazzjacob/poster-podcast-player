@@ -35,7 +35,7 @@ const EditModePosterGallery: React.FC<EditModePosterGalleryProps> = ({
 
   function handleImageClick(uploadedImage: UploadedImage, index: number) {
     console.log("uploaded image: ", uploadedImage);
-    if (currentEdit && currentEdit.images && currentEdit.images.some(image => image.uploadedImageId === uploadedImage.id)) {
+    if (currentEdit && currentEdit.images && currentEdit.images.some(image => image.id === uploadedImage.id)) {
       console.log("The image is in state, removing image...");
       removeImageFromCurrentEdit(uploadedImage.id);
       setAddedIndex(null);
@@ -90,7 +90,7 @@ const EditModePosterGallery: React.FC<EditModePosterGalleryProps> = ({
                     height: '100px',
                     cursor: 'pointer',
                     outline: uploadedImage.timestampIds.length > 0 ? '2px solid red' : 'none',
-                    border: currentEdit && currentEdit.images.some(image => image.uploadedImageId === uploadedImage.id) ? '4px solid lightgreen' : 'none'
+                    border: currentEdit && currentEdit.images.some(image => image.id === uploadedImage.id) ? '4px solid lightgreen' : 'none'
                   }}
                   src={uploadedImage.url}
                 />
