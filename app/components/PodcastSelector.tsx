@@ -1,5 +1,5 @@
-import React from 'react';
-import {  fetchAllPodcasts } from '../firebase/firestoreOperations';
+import React, { Suspense } from 'react';
+import { fetchAllPodcasts } from '../firebase/firestoreOperations';
 import SelectPodcastButton from './SelectPodcastButton';
 
 async function PodcastSelector() {
@@ -10,9 +10,9 @@ async function PodcastSelector() {
       <h2>New Select podcast</h2>
       <div style={{ display: "flex", gap: "1rem" }}>
         {podcasts && podcasts.map((podcast, index) => (
-          <>
+          <Suspense key={podcast.id}>
             <SelectPodcastButton podcast={podcast} />
-          </>
+          </Suspense>
         ))}
       </div >
     </div >

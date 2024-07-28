@@ -3,14 +3,12 @@
 import React from 'react';
 import { PodcastData } from '../helpers/customTypes';
 import { useSearchParams, usePathname } from 'next/navigation'
-import { useRouter } from 'next/navigation'
 import Link from 'next/link';
-import { useCallback } from 'react';
+import { useCallback, Suspense } from 'react';
 
 function SelectPodcastButton({ podcast }: { podcast: PodcastData }) {
 
   const searchParams = useSearchParams();
-  const router = useRouter();
   const pathname = usePathname()
 
   // Get a new searchParams string by merging the current
@@ -26,7 +24,7 @@ function SelectPodcastButton({ podcast }: { podcast: PodcastData }) {
   )
 
   // Get the current podcast ID from the URL query parameters
-  const currentPodcastId = searchParams.get('podcast');
+  //const currentPodcastId = searchParams.get('podcast');
 
   const style = {
     textDecoration: 'underline'
