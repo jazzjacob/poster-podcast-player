@@ -3,7 +3,7 @@ import React from 'react';
 //import db from '@/db/db';
 import ClientPage from '@/app/components/ClientPage';
 import TitleSection from './components/TitleSection';
-import NewSelectPodcastComponent from './components/NewSelectPodcastComponent';
+import PodcastSelector from './components/PodcastSelector';
 
 export const metadata = {
   title: 'Main Page',
@@ -16,7 +16,7 @@ export default async function Page() {
   return (
     <>
       <TitleSection />
-      <NewSelectPodcastComponent />
+      <PodcastSelector />
       <ClientPage />
     </>
   );
