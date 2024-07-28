@@ -45,9 +45,6 @@ export default function Home() {
   const [podcastId, setPodcastId] = useState<string>("");
   const [episodeId, setEpisodeId] = useState<string>("");
 
-  const PODCAST_ID = "Or17ZeOG5b1VkWZz2mMc";
-  const EPISODE_ID = "DC1zdnuSW9Y7VVSFeDyP";
-
   const currentEpisode = useStore((state) => state.currentEpisode);
   const setEpisodeData = useStore((state) => state.setCurrentEpisode);
 
@@ -55,22 +52,13 @@ export default function Home() {
   const currentPodcast = useStore((state) => state.podcast);
   const currentEdit = useStore((state) => state.currentEdit);
   const initialEdit = useStore((state) => state.initialEdit);
-  const setInitialEdit = useStore((state) => state.setInitialEdit);
   const clearInitialEdit = useStore((state) => state.clearInitialEdit);
 
 
-  const globalState = useStore((state) => state);
-
-
-  // const loaded = usePreload(episodeData);
-  // const loaded = usePreload(episodeData ? episodeData : []);
-  // const loaded = true;
-
-   const audioRef = useRef<HTMLAudioElement | null>(null); // Ensure audioRef is initialized with null
+  const audioRef = useRef<HTMLAudioElement | null>(null); // Ensure audioRef is initialized with null
 
   const updatePodcastState = useStore((state) => state.setPodcasts);
   const setCurrentEpisode = useStore((state) => state.setCurrentEpisode);
-  //const currentEpisode = useStore((state) => state.currentEpisode);
   const clearCurrentEpisode = useStore((state) => state.clearCurrentEpisode);
   const clearCurrentEdit = useStore((state) => state.clearCurrentEdit);
 
