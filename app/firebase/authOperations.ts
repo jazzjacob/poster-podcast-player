@@ -5,7 +5,22 @@ import { auth } from './firebaseConfig';
 export const signInUser = async (email: string, password: string): Promise<User> => {
   try {
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
-    return userCredential.user;
+    const user = userCredential.user;
+
+    // Get ID token
+    const idToken = await user.getIdToken();
+
+    // Send the token to your server
+    const response = await fetch('/api/set-token', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ token: idToken }),
+    });
+
+    const data = await response.json();
+    console.log('Token successfully set:', data);
+
+    return user;
   } catch (error) {
     console.error("Error signing in:", error);
     throw error;

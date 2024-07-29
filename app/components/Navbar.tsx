@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 const Navbar = () => {
 
   const style = {
@@ -10,6 +12,7 @@ const Navbar = () => {
   return (
     <nav style={style}>
       <h1>My Navbar</h1>
+      <Link href="/">Home</Link >
       {/* Add your navigation links here */}
     </nav >
   );

@@ -34,7 +34,7 @@ function SelectPodcastButton({ podcast }: { podcast: PodcastData }) {
     <>
       <Link
         style={style}
-        href={pathname + '?' + createQueryString('podcast', podcast.id)}
+        href={`/podcasts/${podcast.id}`}
         scroll={false}
       >
         {podcast.podcastName}

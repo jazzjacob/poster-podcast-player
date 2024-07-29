@@ -76,7 +76,10 @@ export async function fetchEpisodes(podcastId: string): Promise<EpisodeData[]> {
 
     const episodes: EpisodeData[] = [];
     episodesQuerySnapshot.forEach((episodeDoc) => {
-      episodes.push(episodeDoc.data() as EpisodeData);
+      const episodeData = episodeDoc.data() as EpisodeData;
+      episodeData.id = episodeDoc.id; // Set the id to the document ID
+      console.log("EpisodeDoc.id", episodeDoc.id);
+      episodes.push(episodeData);
     });
 
     return episodes;
@@ -84,7 +87,7 @@ export async function fetchEpisodes(podcastId: string): Promise<EpisodeData[]> {
     console.error("Error fetching episodes: ", e);
     return [];
   }
-};
+}
 
 export async function fetchEpisode(podcastId: string, episodeId: string): Promise<EpisodeData | null> {
   try {

@@ -5,6 +5,7 @@ import "./globals.css";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import AdminToolsBanner from "./components/AdminToolsBanner";
+import { AuthProvider } from "@/context/AuthContext";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -19,13 +20,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={inter.className}>
-        <Navbar />
-          {children}
-        <Footer />
-        <AdminToolsBanner />
-      </body>
-    </html>
+      <html lang="en">
+        <body className={inter.className}>
+          <Navbar />
+          <main>
+            {children}
+          </main>
+          <Footer />
+          <AuthProvider>
+            <AdminToolsBanner />
+          </AuthProvider>
+        </body>
+      </html>
   );
 }

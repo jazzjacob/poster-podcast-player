@@ -286,8 +286,8 @@ export default function Home() {
   useEffect(() => {
     async function fetchEpisodeData() {
       try {
-        const response = await fetch("/episodes.json");
-        const data = await response.json();
+        //const response = await fetch("/episodes.json");
+        //const data = await response.json();
         //console.log("Data from the new fetch:");
         //console.log(data);
 
