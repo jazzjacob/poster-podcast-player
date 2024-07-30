@@ -1,11 +1,14 @@
 'use client'
 
-import { useRef } from 'react';
+import { useRef, useEffect } from 'react';
 import useStore from '../helpers/store';
 
 const AudioPlayer = ({ src }: { src: string }) => {
   const currentTime = useStore((state) => state.currentTime);
   const setCurrentTime = useStore((state) => state.setCurrentTime);
+  const playFromTime = useStore((state) => state.playFromTime);
+  const clearPlayFromTime = useStore((state) => state.clearPlayFromTime);
+  const audioRef = useRef<HTMLAudioElement | null>(null); // Ensure audioRef is initialized with null
 
   const handleTimeUpdate = (event: React.SyntheticEvent<HTMLAudioElement>) => {
     const updatedTime = Math.floor(event.currentTarget.currentTime);
@@ -15,13 +18,44 @@ const AudioPlayer = ({ src }: { src: string }) => {
     }
   };
 
+  useEffect(() => {
+    console.log("Play from time: ", playFromTime);
+    if (-1 < playFromTime) {
+      playFromSpecificTime(playFromTime);
+      clearPlayFromTime();
+    }
+  }, [playFromTime, clearPlayFromTime]);
+
+  const playFromSpecificTime = (time: number) => {
+    if (audioRef.current) {
+      audioRef.current.currentTime = time;
+      audioRef.current.play();
+    }
+  };
+
+  function timelineJump(addedTime: number) {
+    if (audioRef.current) {
+      audioRef.current.currentTime = currentTime + addedTime;
+      audioRef.current.play();
+    }
+  }
+
   return (
     <div>
       <audio
+        ref={audioRef}
         src={src}
         controls
         onTimeUpdate={handleTimeUpdate}
       />
+      <div>
+        <button onClick={() => timelineJump(-5)}>
+          Back 5 seconds
+        </button >
+        <button onClick={() => timelineJump(5)}>
+          Skip 5 seconds
+        </button >
+      </div>
     </div>
   );
 };

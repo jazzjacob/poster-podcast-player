@@ -46,7 +46,13 @@ interface CurrentTimeState {
   clearCurrentTime: () => void;
 }
 
-const useStore = create<AuthState & PodcastState & CurrentPodcastState & CurrentEpisodeState & CurrentEditState & InitialEditState & CurrentTimeState>((set) => ({
+interface PlayFromTimeState {
+  playFromTime: number;
+  setPlayFromTime: (playFromTime: number) => void;
+  clearPlayFromTime: () => void;
+}
+
+const useStore = create<AuthState & PodcastState & CurrentPodcastState & CurrentEpisodeState & CurrentEditState & InitialEditState & CurrentTimeState & PlayFromTimeState>((set) => ({
   user: null,
   setUser: (user) => set({ user }),
   clearUser: () => set({ user: null }),
@@ -75,6 +81,10 @@ const useStore = create<AuthState & PodcastState & CurrentPodcastState & Current
   currentTime: 0,
   setCurrentTime: (currentTime) => set({ currentTime }),
   clearCurrentTime: () => set({ currentTime: 0 }),
+
+  playFromTime: -1,
+  setPlayFromTime: (playFromTime) => set({ playFromTime }),
+  clearPlayFromTime: () => set({ playFromTime: -1 }),
 }));
 
 export default useStore;

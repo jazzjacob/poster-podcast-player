@@ -2,6 +2,7 @@ import React from 'react';
 import styles from "./PosterGallery.module.css"
 import { fetchEpisode } from '../firebase/firestoreOperations';
 import CurrentTimeComponent from './CurrentTimeComponent';
+import GalleryTimestamp from './GalleryTimestamp';
 
 async function PosterGallery({ podcastId, episodeId }: {podcastId: string, episodeId: string}) {
    const episode = await fetchEpisode(podcastId, episodeId);
@@ -17,14 +18,15 @@ async function PosterGallery({ podcastId, episodeId }: {podcastId: string, episo
            {sortedTimestamps.map((timestamp, timestampIndex) => (
              timestamp.images && timestamp.images.length > 0 && (
                <div key={timestamp.id} className={styles.posterGroup}>
-                 {timestamp.images.map((image, imageIndex) => (
+                 <GalleryTimestamp timestamp={JSON.parse(JSON.stringify(timestamp))} />
+                 {/*timestamp.images.map((image, imageIndex) => (
                    <img
                     key={`${timestampIndex}-${imageIndex}`}
                     style={{ width: "100px", cursor: "pointer" }}
                     src={image.image}
                     alt={`Episode image ${image.image}`}
                    />
-                 ))}
+                 ))*/}
                </div>
              )
            ))}
