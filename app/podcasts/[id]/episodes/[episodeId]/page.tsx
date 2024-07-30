@@ -3,6 +3,7 @@
 import { notFound } from 'next/navigation';
 import { fetchEpisode, fetchPodcast } from '@/app/firebase/firestoreOperations';
 import Link from 'next/link';
+import PosterGallery from '@/app/components/NewPosterGallery';
 
 export default async function EpisodePage({ params }: { params: { id: string, episodeId: string } }) {
   const podcast = await fetchPodcast(params.id);
@@ -10,6 +11,10 @@ export default async function EpisodePage({ params }: { params: { id: string, ep
 
   if (!episode) {
     notFound(); // Handle 404 if the episode is not found
+  }
+
+  async function playFromSpecificTime() {
+    'use server';
   }
 
   return (
@@ -22,6 +27,10 @@ export default async function EpisodePage({ params }: { params: { id: string, ep
         src={episode.url}
         preload="auto"
       ></audio>
+      <PosterGallery
+        podcastId={params.id}
+        episodeId={params.episodeId}
+      />
     </div>
   );
 }
