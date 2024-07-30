@@ -54,21 +54,19 @@ function PosterView({ episode }: { episode: EpisodeData }) {
 
   return (
     <div style={{ minHeight: "25rem" }}>
-      <p>This is PosterView</p>
-      <p>Current time: {currentTime}</p>
       {currentTimestamp.images.length > 0 ? (
         currentTimestamp.images.map((image) => (
           <img
             alt={`${image.image}`}
             key={image.id}
-            style={{ height: "200px" }}
+            style={{ height: "200px", border: "1px solid lightgray" }}
             src={image.image}
           />
         ))
       ) : (
         <img
           alt={`${episode.episodeImage}`}
-          style={{ height: "200px" }}
+          style={{ height: "200px", border: "1px solid lightgray" }}
           src={episode.episodeImage}
         />
       )}

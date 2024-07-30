@@ -15,10 +15,6 @@ export default async function EpisodePage({ params }: { params: { id: string, ep
     notFound(); // Handle 404 if the episode is not found
   }
 
-  async function playFromSpecificTime() {
-    'use server';
-  }
-
   return (
     <div>
       <Link href={`/podcasts/${params.id}`}>{podcast?.podcastName}</Link>

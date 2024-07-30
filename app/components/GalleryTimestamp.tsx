@@ -11,7 +11,6 @@ function GalleryTimestamp({ timestamp }: { timestamp: Timestamp }) {
   function handleTimestampClick() {
     console.log(timestamp);
     setPlayFromTime(timestamp.start);
-    // Call function to play from specific time in audio player
   }
 
   return (

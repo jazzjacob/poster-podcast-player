@@ -11,7 +11,6 @@ async function PosterGallery({ podcastId, episodeId }: {podcastId: string, episo
    return (
      <div>
        <h2>This is the poster gallery</h2>
-       <CurrentTimeComponent />
        {/* USING  DATA FROM DATABASE BELOW */}
        {sortedTimestamps && sortedTimestamps.length > 0 ? (
          <div className={styles.imagesContainer}>
@@ -19,14 +18,6 @@ async function PosterGallery({ podcastId, episodeId }: {podcastId: string, episo
              timestamp.images && timestamp.images.length > 0 && (
                <div key={timestamp.id} className={styles.posterGroup}>
                  <GalleryTimestamp timestamp={JSON.parse(JSON.stringify(timestamp))} />
-                 {/*timestamp.images.map((image, imageIndex) => (
-                   <img
-                    key={`${timestampIndex}-${imageIndex}`}
-                    style={{ width: "100px", cursor: "pointer" }}
-                    src={image.image}
-                    alt={`Episode image ${image.image}`}
-                   />
-                 ))*/}
                </div>
              )
            ))}

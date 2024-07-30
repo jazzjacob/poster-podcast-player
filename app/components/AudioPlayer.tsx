@@ -19,7 +19,6 @@ const AudioPlayer = ({ src }: { src: string }) => {
   };
 
   useEffect(() => {
-    console.log("Play from time: ", playFromTime);
     if (-1 < playFromTime) {
       playFromSpecificTime(playFromTime);
       clearPlayFromTime();
