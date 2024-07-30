@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation';
 import { fetchEpisode, fetchPodcast } from '@/app/firebase/firestoreOperations';
 import Link from 'next/link';
 import PosterGallery from '@/app/components/NewPosterGallery';
+import AudioPlayer from '@/app/components/AudioPlayer';
 
 export default async function EpisodePage({ params }: { params: { id: string, episodeId: string } }) {
   const podcast = await fetchPodcast(params.id);
@@ -27,6 +28,7 @@ export default async function EpisodePage({ params }: { params: { id: string, ep
         src={episode.url}
         preload="auto"
       ></audio>
+      <AudioPlayer src={episode.url} />
       <PosterGallery
         podcastId={params.id}
         episodeId={params.episodeId}

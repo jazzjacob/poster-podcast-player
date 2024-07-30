@@ -1,6 +1,7 @@
 import React from 'react';
 import styles from "./PosterGallery.module.css"
 import { fetchEpisode } from '../firebase/firestoreOperations';
+import CurrentTimeComponent from './CurrentTimeComponent';
 
 async function PosterGallery({ podcastId, episodeId }: {podcastId: string, episodeId: string}) {
    const episode = await fetchEpisode(podcastId, episodeId);
@@ -9,6 +10,7 @@ async function PosterGallery({ podcastId, episodeId }: {podcastId: string, episo
    return (
      <div>
        <h2>This is the poster gallery</h2>
+       <CurrentTimeComponent />
        {/* USING  DATA FROM DATABASE BELOW */}
        {sortedTimestamps && sortedTimestamps.length > 0 ? (
          <div className={styles.imagesContainer}>
