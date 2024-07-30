@@ -14,9 +14,8 @@ const defaultTimestamp: Timestamp = {
   updatedAt: new Date()
 };
 
-function PosterView({ podcastId, episodeId }: { podcastId: string, episodeId: string }) {
+function PosterView({ episode }: { episode: EpisodeData }) {
   const currentTime = useStore((store) => store.currentTime);
-  const [episode, setEpisode] = useState<EpisodeData>(nullEpisode);
   const [currentTimestamp, setCurrentTimestamp] = useState<Timestamp>(defaultTimestamp);
 
   const resetCurrentData = useCallback(() => {
@@ -52,17 +51,6 @@ function PosterView({ podcastId, episodeId }: { podcastId: string, episodeId: st
       console.warn("Current time is not set or invalid:", currentTime);
     }
   }, [currentTime, episode, currentTimestamp, handleTimestampsIteration]);
-
-  useEffect(() => {
-    async function fetchTimestamps() {
-      const fetchedEpisode = await fetchEpisode(podcastId, episodeId);
-      if (fetchedEpisode) {
-        setEpisode(fetchedEpisode);
-      }
-    }
-
-    fetchTimestamps();
-  }, [podcastId, episodeId]);
 
   return (
     <div style={{ minHeight: "25rem" }}>

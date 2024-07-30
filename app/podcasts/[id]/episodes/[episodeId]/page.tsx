@@ -25,8 +25,7 @@ export default async function EpisodePage({ params }: { params: { id: string, ep
       <h1>{episode.title}</h1>
       <AudioPlayer src={episode.url} />
       <PosterView
-        podcastId={params.id}
-        episodeId={params.episodeId}
+        episode={JSON.parse(JSON.stringify(episode))}
       />
       <PosterGallery
         podcastId={params.id}
