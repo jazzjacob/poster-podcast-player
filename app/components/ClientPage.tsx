@@ -19,7 +19,6 @@ import { generateId, checkOverlapWithExisitingTimestamp, checkOverlapWithNewTime
 import CreateDocumentComponent from "./CreateDocumentComponent";
 import CreatePodcastComponent from "./CreatePodcastComponent";
 import AddEpisodeComponent from "./AddEpisodeComponent";
-import AuthComponent from "./AuthComponent";
 import AddTimestampComponent from "./AddTimestampComponent";
 import useStore from "../helpers/store";
 import { addTimestampToEpisode, deleteTimestamp, addTimestampIdToUploadedImage, addTimestamp, updateTimestamp } from "@/app/firebase/firestoreOperations";
@@ -647,7 +646,6 @@ export default function Home() {
     <p className={styles.greetingText}>
       Hello, this is <b>Poster Podcast Player</b>.
     </p>
-    <AuthComponent />
 
     {/*PODCASTS ARE DISPLAYED - START*/}
     {podcasts && podcasts.length > 0 && (

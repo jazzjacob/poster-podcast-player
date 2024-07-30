@@ -20,6 +20,10 @@ function AdminToolsBanner() {
     zIndex: '1000'
   }
 
+  if (!user) {
+    return;
+  }
+
   return (
     <div style={style}>
       <p>This is the admin tools banner</p>
