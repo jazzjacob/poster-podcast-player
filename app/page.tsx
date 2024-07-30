@@ -22,10 +22,9 @@ export default async function Page({
 
   return (
     <>
-      <TitleSection />
       <PodcastSelector />
       <div>
-        <ClientPage />
+        {/*<ClientPage />*/}
       </div>
     </>
   );

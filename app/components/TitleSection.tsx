@@ -7,9 +7,7 @@ async function TitleSection() {
 
   return (
     <>
-      <p>This a test for TitleSection</p>
       <p>Podcast name: {podcast.podcastName}</p>
-      <p>This is a successful test!</p>
     </>
   );
 }

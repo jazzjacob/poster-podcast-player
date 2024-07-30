@@ -11,7 +11,7 @@ async function PodcastSelector() {
       <div style={{ display: "flex", gap: "1rem" }}>
         {podcasts && podcasts.map((podcast, index) => (
           <Suspense key={podcast.id}>
-            <SelectPodcastButton podcast={podcast} />
+            <SelectPodcastButton podcast={ JSON.parse(JSON.stringify(podcast))} />
           </Suspense>
         ))}
       </div >
