@@ -1,3 +1,5 @@
+'use client'
+
 import React, { useState } from 'react';
 import { addEpisode } from '../firebase/firestoreOperations';
 import { EpisodeData } from '../helpers/customTypes';

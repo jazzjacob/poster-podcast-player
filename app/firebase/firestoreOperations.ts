@@ -276,14 +276,17 @@ export async function addEpisode(podcastId: string, episodeData: EpisodeData): P
     const episodesRef = collection(db, "podcasts", podcastId, "episodes");
 
     // Remove timestamps array before adding the episode
-    const { timestamps, ...episodeDataWithoutTimestamps } = episodeData;
+    //const { timestamps, ...episodeDataWithoutTimestamps } = episodeData;
     //console.log("episodeDataWithoutTimestamps");
     //console.log(episodeDataWithoutTimestamps);
-    const docRef = await addDoc(episodesRef, episodeDataWithoutTimestamps);
+    //const docRef = await addDoc(episodesRef, episodeDataWithoutTimestamps);
+    const docRef = await addDoc(episodesRef, episodeData);
     console.log("Episode document written with ID: ", docRef.id);
     createEpisodeDirectoryInStorage(podcastId, docRef.id);
 
     // Create 'timestamps' sub-collection for the new episode
+    //
+    /*
     if (timestamps && timestamps.length > 0) {
       const timestampsRef = collection(doc(db, "podcasts", podcastId, "episodes", docRef.id), "timestamps");
       timestamps.map(async (timestamp) => {
@@ -299,7 +302,9 @@ export async function addEpisode(podcastId: string, episodeData: EpisodeData): P
         await addDoc(timestampsRef, timestamp);
         console.log("timestamp added")
       }*/
+      /*
     }
+    */
 
   } catch (e) {
     console.error("Error adding episode document: ", e);
