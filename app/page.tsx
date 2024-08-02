@@ -23,9 +23,6 @@ export default async function Page({
   return (
     <>
       <PodcastSelector />
-      <div>
-        {/*<ClientPage />*/}
-      </div>
     </>
   );
 }

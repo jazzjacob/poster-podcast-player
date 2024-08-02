@@ -17,6 +17,7 @@ const Navbar = () => {
       <h1>My Navbar</h1>
       <Link href="/">Home</Link >
       <Link href='/login'>Login</Link>
+      <Link href='/old'>Old</Link>
       {/* Add your navigation links here */}
     </nav >
   );

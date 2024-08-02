@@ -1,5 +1,5 @@
 import { db } from './firebaseConfig';
-import { collection, addDoc, updateDoc, deleteDoc, doc, getDoc, getDocs, query, where, setDoc, arrayUnion, arrayRemove, runTransaction } from "firebase/firestore";
+import { collection, addDoc, updateDoc, deleteDoc, doc, getDoc, getDocs, query, where, setDoc, arrayUnion, arrayRemove, runTransaction, Timestamp as FirebaseTimestamp } from "firebase/firestore";
 import { PodcastData, EpisodeData, Timestamp, UploadedImage, EditModeData, TimestampImage } from '../helpers/customTypes';
 import { createPodcastDirectoryInStorage, createEpisodeDirectoryInStorage } from './storageOperations';
 
@@ -100,6 +100,8 @@ export async function fetchEpisode(podcastId: string, episodeId: string): Promis
 
       // Fetch timestamps sub-collection
       //console.log("Fetching the timestamps...");
+
+      /*
       const timestampsRef = collection(db, 'podcasts', podcastId, 'episodes', episodeId, 'timestamps');
       const timestampsQuerySnapshot = await getDocs(timestampsRef);
 
@@ -128,7 +130,7 @@ export async function fetchEpisode(podcastId: string, episodeId: string): Promis
 
       // Add uploadedImages to episode data
       episodeData.uploadedImages = uploadedImages;
-
+      */
       episodeData.id = episodeDocSnap.id; // Store the episode ID
       return episodeData;
     } else {
@@ -405,7 +407,7 @@ export async function addTimestampToEpisode(podcastId: string, episodeId: string
 
   // TIMESTAMP HANDLING
 
-  export async function addTimestamp(podcastId: string, episodeId: string, timestamp: Timestamp, currentEdit: EditModeData) {
+  /*export async function addTimestamp(podcastId: string, episodeId: string, timestamp: Timestamp, currentEdit: EditModeData) {
     if (!podcastId || !episodeId) {
       throw new Error('Podcast ID and Episode ID must be provided');
     }
@@ -443,7 +445,47 @@ export async function addTimestampToEpisode(podcastId: string, episodeId: string
     } catch (error) {
       console.error("Transaction failed: ", error);
     }
+  }*/
+
+  export async function addTimestamp(podcastId: string, episodeId: string, timestamp: Timestamp, currentEdit: EditModeData) {
+    console.log('EpisodeID: ', episodeId);
+
+    if (!podcastId || !episodeId) {
+      throw new Error('Podcast ID and Episode ID must be provided');
+    }
+
+    const episodeDocRef = doc(db, 'podcasts', podcastId, 'episodes', episodeId);
+
+    try {
+      await runTransaction(db, async (transaction) => {
+
+        // Update the episode document by adding the new timestamp to the timestamps array
+        transaction.update(episodeDocRef, {
+          timestamps: arrayUnion(timestamp)
+        });
+
+        /*
+        // Update each image in the currentEdit with the new timestamp
+        timestamp.images.forEach(async (image) => {
+          if (!image.id) {
+            throw new Error('UploadedImageId must be provided for each image');
+          }
+          const episodeDocRef = doc(db, 'podcasts', podcastId, 'episodes', episodeId);
+          await updateDoc(episodeDocRef, {
+            uploadedImages.timestampIds: arrayUnion(imageData)
+          });
+          transaction.update(uploadedImageRef, {
+            timestampIds: arrayUnion(timestamp.id)
+          });
+        });*/
+      });
+
+      console.log("Both writes were successful!");
+    } catch (error) {
+      console.error("Transaction failed: ", error);
+    }
   }
+
 
   export async function deleteTimestamp(
     podcastId: string,

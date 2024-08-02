@@ -53,7 +53,6 @@ export default function Home() {
   const initialEdit = useStore((state) => state.initialEdit);
   const clearInitialEdit = useStore((state) => state.clearInitialEdit);
 
-
   const audioRef = useRef<HTMLAudioElement | null>(null); // Ensure audioRef is initialized with null
 
   const updatePodcastState = useStore((state) => state.setPodcasts);
@@ -475,7 +474,7 @@ export default function Home() {
         } else {
           // Creating a new timestamp
           const newTimestamp: Timestamp = {
-            id: "0",
+            id: generateId(),
             start: startTime,
             end: endTime,
             images: [...currentEditModeData.images],
@@ -488,7 +487,7 @@ export default function Home() {
           setExampleTimestamps(updatedExampleTimestamps);
           // Real save (CREATE TIMESTAMP) should happen here... only logging for now...
           if (currentPodcast && currentEpisode) {
-
+            console.log("currentEpisode.id: ", currentEpisode.id);
             //const timestampId = await addTimestampToEpisode(currentPodcast.id, currentEpisode.id, newTimestamp);
             await addTimestamp(currentPodcast.id, currentEpisode.id, newTimestamp, currentEdit);
             console.log("It seems to have worked.... a miracle");
@@ -680,7 +679,7 @@ export default function Home() {
         <div>
           {/* EVERYTHING SHOULD BE BELOW HERE */}
 
-          <TitleSection />
+          {/*<TitleSection />*/}
           {/* Title section below */}
           <section className={styles.titleSection}>
             <h2>{currentEpisode.title}</h2>
