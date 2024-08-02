@@ -1,9 +1,7 @@
 'use client';
 
 import { getAuth } from "firebase/auth";
-import { AuthProvider, useAuth } from "@/context/AuthContext";
-import useStore from "../helpers/store";
-import AddEpisodeComponent from "./AddEpisodeComponent";
+import { useAuth } from "@/context/AuthContext";
 import { usePathname } from 'next/navigation';
 import Link from "next/link";
 
