@@ -1,3 +1,30 @@
 .posterGroup {
     /*margin: 1rem;*/
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.2rem;
+}
+
+
+.image {
+    max-height: 100%;
+	max-width: 100%;
+	object-fit: contain;
+}
+
+.image:hover {
+    cursor: pointer;
+}
+
+.imageContainer {
+    height: fit-content;
+	padding-bottom: 0px;
+	width: 200px;
+	max-height: 200px;
+	display: flex;
+	justify-content: center;
+}
+
+.imageContainer:hover {
 }

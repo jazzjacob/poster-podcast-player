@@ -16,9 +16,9 @@ async function PosterGallery({ podcastId, episodeId }: {podcastId: string, episo
          <div className={styles.imagesContainer}>
            {sortedTimestamps.map((timestamp, timestampIndex) => (
              timestamp.images && timestamp.images.length > 0 && (
-               <div key={timestamp.id} className={styles.posterGroup}>
-                 <GalleryTimestamp timestamp={JSON.parse(JSON.stringify(timestamp))} />
-               </div>
+               /*<div key={timestamp.id} className={styles.posterGroup}>*/
+               <GalleryTimestamp key={timestamp.id} timestamp={ JSON.parse(JSON.stringify(timestamp)) } />
+               /*</div>*/
              )
            ))}
          </div>

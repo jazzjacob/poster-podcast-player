@@ -2,8 +2,25 @@
     margin-bottom: 1rem;
 }
 
+.container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
 .imagesContainer {
+    width: fit-content;
     display: flex;
     flex-wrap: wrap;
-    gap: 2rem;
+    gap: 0rem;
+    row-gap: 3rem;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto;
+}
+
+.posterGroup {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
 }

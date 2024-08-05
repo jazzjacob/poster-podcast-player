@@ -15,16 +15,18 @@ function GalleryTimestamp({ timestamp }: { timestamp: Timestamp }) {
 
   return (
     <>
-      <div key={timestamp.id} className={styles.posterGroup} onClick={handleTimestampClick}>
+      {/*<div key={timestamp.id} className={styles.posterGroup} onClick={handleTimestampClick}>*/}
       {timestamp.images.map((image, imageIndex) => (
-        <img
-         key={`${image.id}`}
-         style={{ width: "100px", cursor: "pointer" }}
-         src={image.image}
-         alt={`Episode image ${image.image}`}
-        />
+        <div className={styles.imageContainer}  key={`${image.id}`}>
+          <img
+          className={styles.image}
+          src={image.image}
+          alt={`Episode image ${image.image}`}
+          onClick={handleTimestampClick}
+          />
+        </div >
       ))}
-    </div>
+      {/*</div>*/}
     </>
   );
 }
