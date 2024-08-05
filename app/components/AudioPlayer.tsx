@@ -49,7 +49,6 @@ const AudioPlayer = ({ src }: { src: string }) => {
         onTimeUpdate={handleTimeUpdate}
       />
       <div style={{ margin: '1rem 0', width: '100%', display: 'flex', justifyContent: 'center', gap: '1rem' }}>
-        <button>Play</button>
         <button onClick={() => timelineJump(-5)}>
           Back 5 seconds
         </button>
