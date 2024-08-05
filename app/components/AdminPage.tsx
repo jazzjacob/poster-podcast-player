@@ -701,6 +701,9 @@ export default function Home() {
     handleCancel();
     */
   }
+  if (!user) {
+    return;
+  }
 
   return (
     <main className={styles.main}>
