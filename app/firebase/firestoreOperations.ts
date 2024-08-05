@@ -1,5 +1,5 @@
 import { db } from './firebaseConfig';
-import { collection, addDoc, updateDoc, deleteDoc, doc, getDoc, getDocs, query, where, setDoc, arrayUnion, arrayRemove, runTransaction } from "firebase/firestore";
+import { collection, addDoc, updateDoc, deleteDoc, doc, getDoc, getDocs, query, where, setDoc, arrayUnion, arrayRemove, runTransaction, Timestamp as FirebaseTimestamp } from "firebase/firestore";
 import { PodcastData, EpisodeData, Timestamp, UploadedImage, EditModeData, TimestampImage } from '../helpers/customTypes';
 import { createPodcastDirectoryInStorage, createEpisodeDirectoryInStorage } from './storageOperations';
 
@@ -76,7 +76,10 @@ export async function fetchEpisodes(podcastId: string): Promise<EpisodeData[]> {
 
     const episodes: EpisodeData[] = [];
     episodesQuerySnapshot.forEach((episodeDoc) => {
-      episodes.push(episodeDoc.data() as EpisodeData);
+      const episodeData = episodeDoc.data() as EpisodeData;
+      episodeData.id = episodeDoc.id; // Set the id to the document ID
+      console.log("EpisodeDoc.id", episodeDoc.id);
+      episodes.push(episodeData);
     });
 
     return episodes;
@@ -84,7 +87,7 @@ export async function fetchEpisodes(podcastId: string): Promise<EpisodeData[]> {
     console.error("Error fetching episodes: ", e);
     return [];
   }
-};
+}
 
 export async function fetchEpisode(podcastId: string, episodeId: string): Promise<EpisodeData | null> {
   try {
@@ -97,6 +100,8 @@ export async function fetchEpisode(podcastId: string, episodeId: string): Promis
 
       // Fetch timestamps sub-collection
       //console.log("Fetching the timestamps...");
+
+      /*
       const timestampsRef = collection(db, 'podcasts', podcastId, 'episodes', episodeId, 'timestamps');
       const timestampsQuerySnapshot = await getDocs(timestampsRef);
 
@@ -125,7 +130,7 @@ export async function fetchEpisode(podcastId: string, episodeId: string): Promis
 
       // Add uploadedImages to episode data
       episodeData.uploadedImages = uploadedImages;
-
+      */
       episodeData.id = episodeDocSnap.id; // Store the episode ID
       return episodeData;
     } else {
@@ -273,14 +278,17 @@ export async function addEpisode(podcastId: string, episodeData: EpisodeData): P
     const episodesRef = collection(db, "podcasts", podcastId, "episodes");
 
     // Remove timestamps array before adding the episode
-    const { timestamps, ...episodeDataWithoutTimestamps } = episodeData;
+    //const { timestamps, ...episodeDataWithoutTimestamps } = episodeData;
     //console.log("episodeDataWithoutTimestamps");
     //console.log(episodeDataWithoutTimestamps);
-    const docRef = await addDoc(episodesRef, episodeDataWithoutTimestamps);
+    //const docRef = await addDoc(episodesRef, episodeDataWithoutTimestamps);
+    const docRef = await addDoc(episodesRef, episodeData);
     console.log("Episode document written with ID: ", docRef.id);
     createEpisodeDirectoryInStorage(podcastId, docRef.id);
 
     // Create 'timestamps' sub-collection for the new episode
+    //
+    /*
     if (timestamps && timestamps.length > 0) {
       const timestampsRef = collection(doc(db, "podcasts", podcastId, "episodes", docRef.id), "timestamps");
       timestamps.map(async (timestamp) => {
@@ -296,7 +304,9 @@ export async function addEpisode(podcastId: string, episodeData: EpisodeData): P
         await addDoc(timestampsRef, timestamp);
         console.log("timestamp added")
       }*/
+      /*
     }
+    */
 
   } catch (e) {
     console.error("Error adding episode document: ", e);
@@ -397,7 +407,7 @@ export async function addTimestampToEpisode(podcastId: string, episodeId: string
 
   // TIMESTAMP HANDLING
 
-  export async function addTimestamp(podcastId: string, episodeId: string, timestamp: Timestamp, currentEdit: EditModeData) {
+  /*export async function addTimestamp(podcastId: string, episodeId: string, timestamp: Timestamp, currentEdit: EditModeData) {
     if (!podcastId || !episodeId) {
       throw new Error('Podcast ID and Episode ID must be provided');
     }
@@ -435,42 +445,74 @@ export async function addTimestampToEpisode(podcastId: string, episodeId: string
     } catch (error) {
       console.error("Transaction failed: ", error);
     }
+  }*/
+
+  export async function addTimestamp(podcastId: string, episodeId: string, timestamp: Timestamp) {
+    console.log('EpisodeID: ', episodeId);
+
+    if (!podcastId || !episodeId) {
+      throw new Error('Podcast ID and Episode ID must be provided');
+    }
+
+    const episodeDocRef = doc(db, 'podcasts', podcastId, 'episodes', episodeId);
+
+    try {
+      await runTransaction(db, async (transaction) => {
+
+        // Update the episode document by adding the new timestamp to the timestamps array
+        transaction.update(episodeDocRef, {
+          timestamps: arrayUnion(timestamp)
+        });
+      });
+
+      console.log("Both writes were successful!");
+    } catch (error) {
+      console.error("Transaction failed: ", error);
+    }
   }
+
 
   export async function deleteTimestamp(
     podcastId: string,
     episodeId: string,
-    timestampId: string,
-    images: TimestampImage[]
+    timestampId: string
   ) {
     if (!podcastId || !episodeId || !timestampId) {
       throw new Error('Podcast ID, Episode ID, and Timestamp ID must be provided');
     }
 
-    const timestampDocRef = doc(db, 'podcasts', podcastId, 'episodes', episodeId, 'timestamps', timestampId);
+    const episodeDocRef = doc(db, 'podcasts', podcastId, 'episodes', episodeId);
 
     try {
       await runTransaction(db, async (transaction) => {
-        // Delete the timestamp document
-        transaction.delete(timestampDocRef);
+        // Get the episode document
+        const episodeDoc = await transaction.get(episodeDocRef);
 
-        // Remove the timestamp ID from each associated image's timestampIds array
-        if (images.length > 0) {
-          images.forEach((image) => {
-            if (!image.id) {
-              throw new Error('UploadedImageId must be provided for each image');
-            }
-            const uploadedImageRef = doc(db, 'podcasts', podcastId, 'episodes', episodeId, 'uploadedImages', image.id);
-            transaction.update(uploadedImageRef, {
-              timestampIds: arrayRemove(timestampId)
-            });
-          });
+        if (!episodeDoc.exists()) {
+          throw new Error("Episode document does not exist!");
         }
+
+        const episodeData = episodeDoc.data();
+        const timestamps = episodeData.timestamps || [];
+
+        // Find the index of the timestamp to delete
+        const timestampIndex = timestamps.findIndex((timestamp: Timestamp) => timestamp.id === timestampId);
+
+        if (timestampIndex === -1) {
+          throw new Error("Timestamp not found!");
+        }
+
+        // Remove the timestamp from the array
+        timestamps.splice(timestampIndex, 1);
+
+        // Update the timestamps array in the Firestore document
+        transaction.update(episodeDocRef, { timestamps });
       });
 
       console.log("Timestamp deleted and associated images updated successfully!");
     } catch (error) {
       console.error("Transaction failed: ", error);
+      throw error; // Re-throw the error to handle it elsewhere if needed
     }
   }
 
@@ -479,64 +521,48 @@ export async function addTimestampToEpisode(podcastId: string, episodeId: string
     podcastId: string,
     episodeId: string,
     timestampId: string,
-    updatedTimestamp: Partial<Timestamp>,
-    removedImages: TimestampImage[],
-    addedImages: TimestampImage[]
+    updatedTimestamp: Partial<Timestamp>
   ) {
     if (!podcastId || !episodeId) {
       throw new Error('Podcast ID and Episode ID must be provided');
     }
 
     try {
-      const timestampsCollectionRef = collection(db, 'podcasts', podcastId, 'episodes', episodeId, 'timestamps');
-      console.log("Timestamps Collection Reference:", timestampsCollectionRef);
+      const episodeDocRef = doc(db, 'podcasts', podcastId, 'episodes', episodeId);
+      console.log("Episode Doc Reference:", episodeDocRef);
 
       await runTransaction(db, async (transaction) => {
-        // Update the timestamp document
-        const timestampDocRef = doc(timestampsCollectionRef, timestampId);
-        console.log("Timestamp Document Reference:", timestampDocRef);
+        // Get the episode document
+        const episodeDoc = await transaction.get(episodeDocRef);
 
-        transaction.update(timestampDocRef, {
+        if (!episodeDoc.exists()) {
+          throw new Error("Episode document does not exist!");
+        }
+
+        const episodeData = episodeDoc.data();
+        const timestamps = episodeData.timestamps || [];
+
+        // Find the index of the timestamp to update
+        const timestampIndex = timestamps.findIndex((timestamp: Timestamp) => timestamp.id === timestampId);
+
+        if (timestampIndex === -1) {
+          throw new Error("Timestamp not found!");
+        }
+
+        // Update the timestamp
+        timestamps[timestampIndex] = {
+          ...timestamps[timestampIndex],
           ...updatedTimestamp,
           updatedAt: new Date(),
-        });
-        const timestampDocumentId = timestampId;
+        };
 
-        // Remove timestamp ID from removed images
-        if (removedImages.length > 0) {
-          removedImages.forEach((removedImage) => {
-            try {
-              const uploadedImageRef = doc(db, 'podcasts', podcastId, 'episodes', episodeId, 'uploadedImages', removedImage.id);
-              console.log("Removing timestamp from image:", uploadedImageRef);
-              transaction.update(uploadedImageRef, {
-                timestampIds: arrayRemove(timestampDocumentId)
-              });
-            } catch (error) {
-              console.error(`Error updating removed image ${removedImage.id}:`, error);
-            }
-          });
-        }
+        // Write the updated timestamps array back to Firestore
+        transaction.update(episodeDocRef, { timestamps });
 
-        // Add timestamp ID to added images
-        if (addedImages.length > 0) {
-          console.log("Adding timestamps...");
-          console.log();
-          addedImages.forEach((addedImage) => {
-            try {
-              const uploadedImageRef = doc(db, 'podcasts', podcastId, 'episodes', episodeId, 'uploadedImages', addedImage.id);
-              console.log("Adding timestamp to image:", uploadedImageRef);
-              transaction.update(uploadedImageRef, {
-                timestampIds: arrayUnion(timestampDocumentId)
-              });
-            } catch (error) {
-              console.error(`Error updating added image ${addedImage.id}:`, error);
-            }
-          });
-          console.log("Timestamps added!");
-        }
+        console.log("Timestamp updated!");
       });
 
-      console.log("Both writes were successful!");
+      console.log("Transaction successful!");
     } catch (error) {
       console.error("Transaction failed: ", error);
       throw error;

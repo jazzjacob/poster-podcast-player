@@ -1,3 +1,5 @@
+'use client'
+
  import React, {useEffect, useState} from 'react';
  import Image from 'next/image';
  import { EpisodeData, Timestamp } from '../helpers/customTypes';
@@ -29,7 +31,7 @@
 
    return (
      <div>
-       <h2>This is the poster gallery</h2>
+       <h2>Poster gallery</h2>
        {/*episodeData && episodeData.timestamps && episodeData.timestamps.length > 0 ? (
          <div className={styles.imagesContainer}>
            {episodeData.timestamps.map((timestamp, timestampIndex) => (

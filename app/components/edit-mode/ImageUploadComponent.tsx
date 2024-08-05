@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { storage, db } from '@/app/firebase/firebaseConfig';
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
-import { collection, addDoc, doc, updateDoc } from 'firebase/firestore';
+import { collection, addDoc, doc, updateDoc, arrayUnion } from 'firebase/firestore';
 import useStore from '@/app/helpers/store';
 import { UploadedImage } from '@/app/helpers/customTypes';
-import { setGlobalStateFromFirebase } from '@/app/helpers/functions';
+import { generateId, setGlobalStateFromFirebase } from '@/app/helpers/functions';
 
 interface ImageUploadComponentProps {
   podcastId: string;
@@ -45,7 +45,7 @@ const ImageUploadComponent: React.FC<ImageUploadComponentProps> = ({ podcastId, 
       async () => {
         const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
         const imageData: UploadedImage = {
-          id: "",
+          id: generateId(),
           timestampIds: [],
           name: file.name,
           url: downloadURL,
@@ -55,9 +55,12 @@ const ImageUploadComponent: React.FC<ImageUploadComponentProps> = ({ podcastId, 
 
         try {
           // Add the image data to the uploadedImages sub-collection
-          const imagesRef = collection(db, 'podcasts', podcastId, 'episodes', episodeId, 'uploadedImages');
-          const imageDocRef = await addDoc(imagesRef, imageData);
-          imageData.id = imageDocRef.id;
+          //const imagesRef = collection(db, 'podcasts', podcastId, 'episodes', episodeId, 'uploadedImages');
+          //const imageDocRef = await addDoc(imagesRef, imageData);
+          const episodeDocRef = doc(db, 'podcasts', podcastId, 'episodes', episodeId);
+          await updateDoc(episodeDocRef, {
+            uploadedImages: arrayUnion(imageData)
+          });
 
           // Update the current episode in the global state
           await setGlobalStateFromFirebase(podcastId, episodeId);

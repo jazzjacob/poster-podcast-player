@@ -1,0 +1,70 @@
+.main {
+  display: flex;
+  flex-direction: column;
+  padding: 2rem;
+  min-height: 100vh;
+}
+
+.greetingText {
+	color: dogerblue;
+}
+
+.exampleImageContainer {
+	padding: 1rem 0;
+}
+
+.exampleImageContainer p {
+	margin-bottom: 8px;
+	width: 400px;
+}
+
+.exampleImage {
+	height: 100px;
+	width: 100px;
+	background-color: lightgray;
+}
+
+.blueExampleImage {
+	height: 200px;
+	width: 100px;
+	background-color: dodgerblue;
+}
+
+.goldExampleImage {
+	height: 120px;
+	width: 200px;
+	background-color: gold;
+}
+
+.imageStyle {
+	height: 400px;
+}
+
+.posterPlaceholder {
+	height: 200px;
+	width: 120px;
+	background-color: gray;
+}
+
+.titleSection {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+}
+
+.editModeContainer {
+    outline: 2px solid dodgerblue;
+}
+
+.skipButton {
+    width: fit-content;
+}
+
+.audioButtonContainer {
+    margin-bottom: 2rem;
+}
+
+.editModeButtonContainer {
+    display: flex;
+    gap: 8px;
+    margin: 8px;
+}
