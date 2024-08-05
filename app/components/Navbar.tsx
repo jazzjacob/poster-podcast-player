@@ -16,8 +16,7 @@ const Navbar = () => {
     <nav style={style}>
       <h1>My Navbar</h1>
       <Link href="/">Home</Link >
-      <Link href='/login'>Login</Link>
-      <Link href='/old'>Old</Link>
+      <Link href='/admin'>Admin</Link>
       {/* Add your navigation links here */}
     </nav >
   );

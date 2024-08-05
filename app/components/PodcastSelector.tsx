@@ -7,7 +7,7 @@ async function PodcastSelector() {
 
   return (
     <div style={{ margin: "2rem 0" }}>
-      <h2>New Select podcast</h2>
+      <h2>Select podcast</h2>
       <div style={{ display: "flex", gap: "1rem" }}>
         {podcasts && podcasts.map((podcast, index) => (
           <Suspense key={podcast.id}>

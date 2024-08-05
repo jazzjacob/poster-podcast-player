@@ -1,6 +1,7 @@
-import ClientPage from '../components/ClientPage';
 import DataDownloader from '../components/DataDownloader';
 import LocalEpisodeUploader from '../components/LocalEpisodeUploader';
+import AdminPage from '../components/AdminPage'
+import AuthComponent from '../components/AuthComponent';
 
 function OldSolutionPage() {
   return (
@@ -13,7 +14,8 @@ function OldSolutionPage() {
         <DataDownloader />
         */
       }
-      <ClientPage />
+      <AuthComponent />
+      <AdminPage />
     </>
   );
 }

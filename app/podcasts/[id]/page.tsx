@@ -3,8 +3,6 @@
 import { notFound } from 'next/navigation';
 import { fetchPodcast, fetchEpisodes } from '@/app/firebase/firestoreOperations';
 import EpisodeList from '@/app/components/EpisodeList';
-import AddEpisodeComponent from '@/app/components/AddEpisodeComponent';
-import { exampleEpisodeData } from '@/app/helpers/customTypes';
 
 export default async function PodcastPage({ params }: { params: { id: string } }) {
   console.log(params.id);
@@ -21,7 +19,6 @@ export default async function PodcastPage({ params }: { params: { id: string } }
     <div>
       <h1>{podcast.podcastName}</h1>
       <EpisodeList podcast={convertedPodcast} episodes={convertedEpisodes} />
-      <AddEpisodeComponent podcastId={params.id} episodeData={exampleEpisodeData} />
     </div>
   );
 }
