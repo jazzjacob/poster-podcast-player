@@ -14,14 +14,42 @@ import EditModeTimestamps from "./edit-mode/EditModeTimestamps";
 import ReadDocumentComponent from "./ReadDocumentComponent";
 import ImageUploadComponent from "./edit-mode/ImageUploadComponent";
 
-import { Timestamp, TimestampImage, EpisodeData, EditModeData, EditModeTime, OverlapDetails, defaultEditModeTime, defaultEditModeData, nullEpisode, defaultExampleTimestamps, examplePodcastData, exampleEpisodeData, UploadedImage } from "@/app/helpers/customTypes";
-import { generateId, checkOverlapWithExisitingTimestamp, checkOverlapWithNewTimestamp, removeObjectFromArrayByKey, setGlobalStateFromFirebase, fetchAndSetPodcasts, updateCurrentEdit } from "@/app/helpers/functions";
+import {
+  Timestamp,
+  TimestampImage,
+  EpisodeData,
+  EditModeData,
+  EditModeTime,
+  OverlapDetails,
+  defaultEditModeTime,
+  defaultEditModeData,
+  nullEpisode,
+  defaultExampleTimestamps,
+  examplePodcastData,
+  exampleEpisodeData,
+  UploadedImage,
+} from "@/app/helpers/customTypes";
+import {
+  generateId,
+  checkOverlapWithExisitingTimestamp,
+  checkOverlapWithNewTimestamp,
+  removeObjectFromArrayByKey,
+  setGlobalStateFromFirebase,
+  fetchAndSetPodcasts,
+  updateCurrentEdit,
+} from "@/app/helpers/functions";
 import CreateDocumentComponent from "./CreateDocumentComponent";
 import CreatePodcastComponent from "./CreatePodcastComponent";
 import AddEpisodeComponent from "./AddEpisodeComponent";
 import AddTimestampComponent from "./AddTimestampComponent";
 import useStore from "../helpers/store";
-import { addTimestampToEpisode, deleteTimestamp, addTimestampIdToUploadedImage, addTimestamp, updateTimestamp } from "@/app/firebase/firestoreOperations";
+import {
+  addTimestampToEpisode,
+  deleteTimestamp,
+  addTimestampIdToUploadedImage,
+  addTimestamp,
+  updateTimestamp,
+} from "@/app/firebase/firestoreOperations";
 import SelectPodcastComponent from "./SelectPodcastComponent";
 import SelectEpisodeComponent from "./SelectEpisodeComponent";
 import TitleSection from "./TitleSection";
@@ -34,11 +62,14 @@ export default function Home() {
   const [currentImages, setCurrentImages] = useState<TimestampImage[]>([]);
   // const [episodeData, setEpisodeData] = useState<EpisodeData>(nullEpisode);
   const [editMode, setEditMode] = useState(false);
-  const [currentEditModeData, setCurrentEditModeData] = useState<EditModeData>(defaultEditModeData);
+  const [currentEditModeData, setCurrentEditModeData] =
+    useState<EditModeData>(defaultEditModeData);
   const [userIsEditing, setUserIsEditing] = useState(false);
   const [editModeTime, setEditModeTime] = useState(defaultEditModeTime);
 
-  const [exampleTimestamps, setExampleTimestamps] = useState(defaultExampleTimestamps);
+  const [exampleTimestamps, setExampleTimestamps] = useState(
+    defaultExampleTimestamps,
+  );
 
   const [loading, setLoading] = useState(false);
   const [podcastId, setPodcastId] = useState<string>("");
@@ -62,7 +93,7 @@ export default function Home() {
 
   const user = useStore((state) => state.user);
 
-/*
+  /*
   useEffect(() => {
     console.log("currentEditModeData: ", currentEditModeData);
     if (currentEditModeData && currentEditModeData.startTime !== -1 && initialEdit && initialEdit.startTime === -1) {
@@ -99,7 +130,7 @@ export default function Home() {
     if (currentEpisode) {
       setEpisodeId(currentEpisode.id);
     }
-  }, [currentEpisode])
+  }, [currentEpisode]);
 
   useEffect(() => {
     if (podcasts.length > 0) {
@@ -143,39 +174,44 @@ export default function Home() {
   }, []);
   */
 
-  const updateEditModeTime = useCallback((
-    field: keyof EditModeTime,
-    timeInSeconds: number,
-    ) => {
-    setEditModeTime((prevData) => ({
-      ...prevData,
-      [field]: {
-        hours: Math.floor(timeInSeconds / 60 / 60) % 24,
-        minutes: Math.floor(timeInSeconds / 60) % 60,
-        seconds: timeInSeconds % 60,
-      },
-    }));
-    updateCurrentEdit('timeDetails', { [field]: {
-      hours: Math.floor(timeInSeconds / 60 / 60) % 24,
-      minutes: Math.floor(timeInSeconds / 60) % 60,
-      seconds: timeInSeconds % 60
-    } });
-  }, [])
+  const updateEditModeTime = useCallback(
+    (field: keyof EditModeTime, timeInSeconds: number) => {
+      setEditModeTime((prevData) => ({
+        ...prevData,
+        [field]: {
+          hours: Math.floor(timeInSeconds / 60 / 60) % 24,
+          minutes: Math.floor(timeInSeconds / 60) % 60,
+          seconds: timeInSeconds % 60,
+        },
+      }));
+      updateCurrentEdit("timeDetails", {
+        [field]: {
+          hours: Math.floor(timeInSeconds / 60 / 60) % 24,
+          minutes: Math.floor(timeInSeconds / 60) % 60,
+          seconds: timeInSeconds % 60,
+        },
+      });
+    },
+    [],
+  );
 
   useEffect(() => {
-    console.log("currentEdit: ", currentEdit)
+    console.log("currentEdit: ", currentEdit);
   }, [currentEdit]);
 
   // Helper function to handle updating edit mode times
-  const handleEditModeTimes = useCallback((currentTime: number) => {
-    if (!currentEditModeData.startTimeSaved) {
-      updateEditModeTime("startTime", currentTime);
-      updateEditModeTime("endTime", currentTime);
-    }
-    if (!currentEditModeData.endTimeSaved) {
-      updateEditModeTime('endTime', currentTime);
-    }
-  }, [currentEditModeData, updateEditModeTime]);
+  const handleEditModeTimes = useCallback(
+    (currentTime: number) => {
+      if (!currentEditModeData.startTimeSaved) {
+        updateEditModeTime("startTime", currentTime);
+        updateEditModeTime("endTime", currentTime);
+      }
+      if (!currentEditModeData.endTimeSaved) {
+        updateEditModeTime("endTime", currentTime);
+      }
+    },
+    [currentEditModeData, updateEditModeTime],
+  );
 
   // Helper function to reset current data to default values
   const resetCurrentData = useCallback(() => {
@@ -185,22 +221,37 @@ export default function Home() {
   }, [setCurrentEndTime, setCurrentStartTime, setCurrentImages]);
 
   // Helper function to handle timestamps iteration
-  const handleTimestampsIteration = useCallback((currentTime: number) => {
-    currentEpisode && currentEpisode.timestamps && currentEpisode.timestamps.every((timestamp) => {
-      if (timestamp.start <= currentTime && currentTime <= timestamp.end) {
-        setCurrentImages(timestamp.images);
-        setCurrentStartTime(timestamp.start);
-        setCurrentEndTime(timestamp.end);
-        return false; // Break the loop
-      } else {
-        if (currentEndTime !== -1 || currentStartTime !== -1 || currentImages.length > 0) {
-          resetCurrentData();
-          return false; // Break the loop
-        }
-        return true; // Continue the loop
-      }
-    });
-  }, [currentEpisode, currentEndTime, currentStartTime, currentImages.length, resetCurrentData]);
+  const handleTimestampsIteration = useCallback(
+    (currentTime: number) => {
+      currentEpisode &&
+        currentEpisode.timestamps &&
+        currentEpisode.timestamps.every((timestamp) => {
+          if (timestamp.start <= currentTime && currentTime <= timestamp.end) {
+            setCurrentImages(timestamp.images);
+            setCurrentStartTime(timestamp.start);
+            setCurrentEndTime(timestamp.end);
+            return false; // Break the loop
+          } else {
+            if (
+              currentEndTime !== -1 ||
+              currentStartTime !== -1 ||
+              currentImages.length > 0
+            ) {
+              resetCurrentData();
+              return false; // Break the loop
+            }
+            return true; // Continue the loop
+          }
+        });
+    },
+    [
+      currentEpisode,
+      currentEndTime,
+      currentStartTime,
+      currentImages.length,
+      resetCurrentData,
+    ],
+  );
 
   useEffect(() => {
     const handleTimeUpdate = () => {
@@ -229,7 +280,6 @@ export default function Home() {
     //console.log("current time");
     //console.log(currentTime);
     if (-1 < currentTime) {
-
       handleEditModeTimes(currentTime);
 
       if (currentEpisode) {
@@ -251,7 +301,7 @@ export default function Home() {
     currentEditModeData.startTimeSaved,
     currentEditModeData.endTimeSaved,
     handleEditModeTimes,
-    handleTimestampsIteration
+    handleTimestampsIteration,
   ]);
 
   /*
@@ -288,9 +338,7 @@ export default function Home() {
         //const data = await response.json();
         //console.log("Data from the new fetch:");
         //console.log(data);
-
         //setEpisodeData(data.episodes[0]);
-
         // Set timestamps from edit mode to episodeData
       } catch (error) {
         console.error("Failed to fetch episode data:", error);
@@ -298,7 +346,6 @@ export default function Home() {
     }
 
     fetchEpisodeData();
-
   }, []);
 
   /*useEffect(() => {
@@ -321,14 +368,14 @@ export default function Home() {
     if (currentEditModeData.images.length > 0) {
       if (!currentEditModeData.startTimeSaved) {
         updateEditModeData("startTimeSaved", true); // Old
-        updateCurrentEdit('startTimeSaved', true); // New
+        updateCurrentEdit("startTimeSaved", true); // New
 
         updateEditModeTime("endTime", currentTime); // Old
       }
     } else {
       if (currentEditModeData.startTimeSaved) {
         updateEditModeData("startTimeSaved", false); // old
-        updateCurrentEdit('startTimeSaved', false) // new
+        updateCurrentEdit("startTimeSaved", false); // new
 
         updateEditModeTime("startTime", currentTime);
         updateEditModeTime("endTime", currentTime);
@@ -338,15 +385,16 @@ export default function Home() {
     currentEditModeData.images,
     currentEditModeData.startTimeSaved,
     currentTime,
-    updateEditModeTime
+    updateEditModeTime,
   ]);
 
   useEffect(() => {
     //console.log("Sorting the timestamps...");
-    const sortedTimestamps = exampleTimestamps.sort((a, b) => a.start - b.start);
+    const sortedTimestamps = exampleTimestamps.sort(
+      (a, b) => a.start - b.start,
+    );
     setExampleTimestamps(sortedTimestamps);
   }, [exampleTimestamps]);
-
 
   // FUNCTIONS
 
@@ -383,7 +431,7 @@ export default function Home() {
   function addEditModeImage(image: UploadedImage) {
     if (currentEditModeData.images.length == 0) {
       updateEditModeData("startTime", currentTime); // Old
-      updateCurrentEdit('startTime', currentTime) // New
+      updateCurrentEdit("startTime", currentTime); // New
     }
 
     console.log("LOOK HERE: IMAGE: ", image);
@@ -393,7 +441,7 @@ export default function Home() {
       image: image.url,
       description: "",
       createdAt: new Date(),
-      updatedAt: new Date()
+      updatedAt: new Date(),
     });
   }
 
@@ -419,17 +467,26 @@ export default function Home() {
     };
     // Check if timestamp is a new timestamp
     // It will not have an overlap
-    if (!currentEditModeData.timestampId || currentEditModeData.timestampId == "") {
+    if (
+      !currentEditModeData.timestampId ||
+      currentEditModeData.timestampId == ""
+    ) {
       // Check overlap without ID
-      overlapResults = checkOverlapWithNewTimestamp(startTime, endTime, currentEpisode?.timestamps || []);
+      overlapResults = checkOverlapWithNewTimestamp(
+        startTime,
+        endTime,
+        currentEpisode?.timestamps || [],
+      );
 
-    // Timestamp exists already
+      // Timestamp exists already
     } else {
-        overlapResults = checkOverlapWithExisitingTimestamp(startTime, endTime, currentEditModeData.timestampId, currentEpisode?.timestamps || []);
+      overlapResults = checkOverlapWithExisitingTimestamp(
+        startTime,
+        endTime,
+        currentEditModeData.timestampId,
+        currentEpisode?.timestamps || [],
+      );
     }
-
-
-
 
     //console.log("overlapResults");
     //console.log(overlapResults);
@@ -453,10 +510,14 @@ export default function Home() {
           const updatedTimestamp: Partial<Timestamp> = {
             start: startTime,
             end: endTime,
-            images: [...currentEditModeData.images]
-          }
+            images: [...currentEditModeData.images],
+          };
 
-          if (currentEpisode && currentEpisode.timestamps && currentEditModeData.timestampId) {
+          if (
+            currentEpisode &&
+            currentEpisode.timestamps &&
+            currentEditModeData.timestampId
+          ) {
             // Update a timestamp for real here... in firebase...
 
             if (currentPodcast && currentEpisode) {
@@ -467,10 +528,11 @@ export default function Home() {
               //await setGlobalStateFromFirebase(currentPodcast.id, currentEpisode.id);
             }
           }
-          const updatedExampleTimestamps = exampleTimestamps.filter(item => item.id !== updatedTimestamp.id);
+          const updatedExampleTimestamps = exampleTimestamps.filter(
+            (item) => item.id !== updatedTimestamp.id,
+          );
           // updatedExampleTimestamps.push(updatedTimestamp);
           setExampleTimestamps(updatedExampleTimestamps);
-
         } else {
           // Creating a new timestamp
           const newTimestamp: Timestamp = {
@@ -482,32 +544,40 @@ export default function Home() {
             updatedAt: new Date(),
           };
 
-          const updatedExampleTimestamps = exampleTimestamps.filter(item => item.id !== newTimestamp.id);
+          const updatedExampleTimestamps = exampleTimestamps.filter(
+            (item) => item.id !== newTimestamp.id,
+          );
           updatedExampleTimestamps.push(newTimestamp);
           setExampleTimestamps(updatedExampleTimestamps);
           // Real save (CREATE TIMESTAMP) should happen here... only logging for now...
           if (currentPodcast && currentEpisode) {
             console.log("currentEpisode.id: ", currentEpisode.id);
             //const timestampId = await addTimestampToEpisode(currentPodcast.id, currentEpisode.id, newTimestamp);
-            await addTimestamp(currentPodcast.id, currentEpisode.id, newTimestamp, currentEdit);
+            await addTimestamp(
+              currentPodcast.id,
+              currentEpisode.id,
+              newTimestamp,
+              currentEdit,
+            );
             console.log("It seems to have worked.... a miracle");
             // SET TIMESTAMPID TO UPLOADEDIMAGE.TIMESTAMPIDS[]
             // Get timestampId
             // Set timestampId to current uploadedImage.timestampId[]
             //if (timestampId) {
-              //console.log("currentEditModeData.images", currentEditModeData.images);
-              /*
+            //console.log("currentEditModeData.images", currentEditModeData.images);
+            /*
               await addTimestampIdToUploadedImage(
                 currentPodcast.id,
                 currentEpisode.id,
                 timestampId,
                 uploadedImageId
               )*/
-              //}
+            //}
             // await addTimestampIdToUploadedImage(currentPodcast.id, currentEpisode.id, timestampId, uploadedImage.id: string);
-
           } else {
-            console.error("Can't add timestamp to episode: currentPodcast or currentEpisode not saved");
+            console.error(
+              "Can't add timestamp to episode: currentPodcast or currentEpisode not saved",
+            );
           }
 
           //console.log(convertEditModeTimeToSeconds(editModeTime.startTime));
@@ -517,7 +587,10 @@ export default function Home() {
 
         // Reset relevant states
         if (currentPodcast && currentEpisode) {
-          await setGlobalStateFromFirebase(currentPodcast.id, currentEpisode.id);
+          await setGlobalStateFromFirebase(
+            currentPodcast.id,
+            currentEpisode.id,
+          );
         }
 
         setCurrentEditModeData(defaultEditModeData);
@@ -535,8 +608,18 @@ export default function Home() {
     console.log("handling updating timestamp...");
     console.log("currentEditModeData: ", currentEditModeData);
 
-    const removedImages = initialEdit.images.filter(initialEditImage => !currentEditModeData.images.some(currentEditImage => currentEditImage.id === initialEditImage.id));
-    const addedImages = currentEditModeData.images.filter(currentEditImage => !initialEdit.images.some(initialEditImage => currentEditImage.id === initialEditImage.id));
+    const removedImages = initialEdit.images.filter(
+      (initialEditImage) =>
+        !currentEditModeData.images.some(
+          (currentEditImage) => currentEditImage.id === initialEditImage.id,
+        ),
+    );
+    const addedImages = currentEditModeData.images.filter(
+      (currentEditImage) =>
+        !initialEdit.images.some(
+          (initialEditImage) => currentEditImage.id === initialEditImage.id,
+        ),
+    );
 
     console.log("removedImages:", removedImages);
     console.log("addedImages:", addedImages);
@@ -546,12 +629,17 @@ export default function Home() {
       const episodeId = currentEpisode.id;
       const timestampId = currentEditModeData.timestampId;
       if (timestampId) {
-        await updateTimestamp(podcastId, episodeId, timestampId, updatedTimestamp, removedImages, addedImages);
+        await updateTimestamp(
+          podcastId,
+          episodeId,
+          timestampId,
+          updatedTimestamp,
+          removedImages,
+          addedImages,
+        );
       }
       console.log("update complete, I guess...?");
     }
-
-
   }
 
   // Function to update a specific field in the currentEditModeData object
@@ -581,23 +669,24 @@ export default function Home() {
   };
 
   function handleCancel() {
-    updateEditModeTime('startTime', currentTime);
-    updateEditModeTime('endTime', currentTime);
+    updateEditModeTime("startTime", currentTime);
+    updateEditModeTime("endTime", currentTime);
     setCurrentEditModeData(defaultEditModeData);
     clearInitialEdit();
     clearCurrentEdit();
-  };
+  }
 
   async function handleDelete() {
     const timestampId = currentEditModeData.timestampId;
     console.log("Delete timestamp with id: ", timestampId);
+
     if (currentPodcast && currentEpisode && initialEdit && timestampId) {
       console.log("Ready to delete here");
       deleteTimestamp(
         currentPodcast.id,
         currentEpisode.id,
         timestampId,
-        initialEdit.images
+        initialEdit.images,
       );
       setGlobalStateFromFirebase(currentPodcast.id, currentEpisode.id);
       handleCancel();
@@ -619,44 +708,53 @@ export default function Home() {
 
   return (
     <main className={styles.main}>
-
-    {/* Admin component below*/}
-    {user && currentPodcast && (
-      <AddEpisodeComponent podcastId={currentPodcast.id} episodeData={exampleEpisodeData} />
-    )}
-    {podcasts && podcasts.length > 0 && user && currentEpisode && (
-        <div style={{backgroundColor: "lightgray", padding: "2rem"}}>
-        <h2>Admin stuff</h2>
-        {podcastId && episodeId && (
-          <button onClick={() => setGlobalStateFromFirebase(podcastId, episodeId)}>Set Global State</button>
-        )}
-        <button onClick={() => setEditMode(!editMode)}>
-          {editMode ? "Turn off edit mode" : "Turn on edit mode"}
-        </button>
-        <CreatePodcastComponent podcastData={examplePodcastData} />
-        {podcastId && (
-          <AddEpisodeComponent podcastId={podcastId} episodeData={exampleEpisodeData} />
-        )}
-      </div >
-    )}
-    {/* Admin component above*/}
-
-
-    <p className={styles.greetingText}>
-      Hello, this is <b>Poster Podcast Player</b>.
-    </p>
-
-    {/*PODCASTS ARE DISPLAYED - START*/}
-    {podcasts && podcasts.length > 0 && (
-      <>
-        <SelectPodcastComponent setPodcastId={setPodcastId} setEpisodeId={setEpisodeId}  />
-      </>
-    )}
-    {/*PODCASTS ARE DISPLAYED - END*/}
-
-      {currentPodcast && (
-        <SelectEpisodeComponent />
+      {/* Admin component below*/}
+      {user && currentPodcast && (
+        <AddEpisodeComponent
+          podcastId={currentPodcast.id}
+          episodeData={exampleEpisodeData}
+        />
       )}
+      {podcasts && podcasts.length > 0 && user && currentEpisode && (
+        <div style={{ backgroundColor: "lightgray", padding: "2rem" }}>
+          <h2>Admin stuff</h2>
+          {podcastId && episodeId && (
+            <button
+              onClick={() => setGlobalStateFromFirebase(podcastId, episodeId)}
+            >
+              Set Global State
+            </button>
+          )}
+          <button onClick={() => setEditMode(!editMode)}>
+            {editMode ? "Turn off edit mode" : "Turn on edit mode"}
+          </button>
+          <CreatePodcastComponent podcastData={examplePodcastData} />
+          {podcastId && (
+            <AddEpisodeComponent
+              podcastId={podcastId}
+              episodeData={exampleEpisodeData}
+            />
+          )}
+        </div>
+      )}
+      {/* Admin component above*/}
+
+      <p className={styles.greetingText}>
+        Hello, this is <b>Poster Podcast Player</b>.
+      </p>
+
+      {/*PODCASTS ARE DISPLAYED - START*/}
+      {podcasts && podcasts.length > 0 && (
+        <>
+          <SelectPodcastComponent
+            setPodcastId={setPodcastId}
+            setEpisodeId={setEpisodeId}
+          />
+        </>
+      )}
+      {/*PODCASTS ARE DISPLAYED - END*/}
+
+      {currentPodcast && <SelectEpisodeComponent />}
 
       {/* Audio component below */}
       <audio
@@ -666,12 +764,20 @@ export default function Home() {
         preload="auto"
       ></audio>
       <div className={styles.audioButtonContainer}>
-        <button disabled={currentEpisode ? false : true} className={styles.skipButton} onClick={() => timelineJump(-5)}>
+        <button
+          disabled={currentEpisode ? false : true}
+          className={styles.skipButton}
+          onClick={() => timelineJump(-5)}
+        >
           Back 5 seconds
-        </button >
-        <button  disabled={currentEpisode ? false : true} className={styles.skipButton} onClick={() => timelineJump(5)}>
+        </button>
+        <button
+          disabled={currentEpisode ? false : true}
+          className={styles.skipButton}
+          onClick={() => timelineJump(5)}
+        >
           Skip 5 seconds
-        </button >
+        </button>
       </div>
       {/* Audio component above */}
 
@@ -689,13 +795,14 @@ export default function Home() {
           </section>
           {/* Title section above */}
 
-
           {/* Normal mode below */}
           {(!editMode || !user) && (
             <div>
               {/*<button onClick={() => playFromSpecificTime(62)}>Play from 1:02</button>*/}
               <div className={styles.exampleImageContainer}>
-                {currentEpisode && currentEpisode.timestamps && currentEpisode.timestamps.length > 0 ? (
+                {currentEpisode &&
+                currentEpisode.timestamps &&
+                currentEpisode.timestamps.length > 0 ? (
                   <section>
                     <div>
                       {currentImages.length > 0 ? (
@@ -728,14 +835,21 @@ export default function Home() {
           )}
           {/* Normal mode above */}
 
-
           {/* Edit mode below */}
-          {(editMode && user) && (
+          {editMode && user && (
             <div className={styles.editModeContainer}>
               <h2>EDIT MODE</h2>
               <div>
                 <h3>Poster view</h3>
-                <EditModePosterView episodeData={currentEpisode} currentImages={currentEditModeData.images} currentEditModeData={currentEditModeData} editModeTime={editModeTime} currentTime={currentTime} setEditModeTime={setEditModeTime} setUserIsEditing={setUserIsEditing} />
+                <EditModePosterView
+                  episodeData={currentEpisode}
+                  currentImages={currentEditModeData.images}
+                  currentEditModeData={currentEditModeData}
+                  editModeTime={editModeTime}
+                  currentTime={currentTime}
+                  setEditModeTime={setEditModeTime}
+                  setUserIsEditing={setUserIsEditing}
+                />
                 <div>
                   {/*<EditModeTimeForm timeType="startTime" currentEditModeData={currentEditModeData} editModeTime={editModeTime} currentTime={currentTime} setEditModeTime={setEditModeTime} setUserIsEditing={setUserIsEditing} /> */}
                   {/*<EditModeTimeForm timeType="endTime" currentEditModeData={currentEditModeData} editModeTime={editModeTime} currentTime={currentTime} setEditModeTime={setEditModeTime} setUserIsEditing={setUserIsEditing} />*/}
@@ -760,25 +874,44 @@ export default function Home() {
                     Cancel
                   </button>
                   <button
-                      disabled={!(currentEditModeData.images.length > 0)}
-                      onClick={handleDelete}
+                    disabled={!(currentEditModeData.images.length > 0)}
+                    onClick={handleDelete}
                   >
                     Delete
                   </button>
                 </div>
-                <div style={{ margin: "0.5rem", display: "flex", gap: "1rem"}}>
-                  <button onClick={() => playFromSpecificTime(currentEditModeData.startTime)}  disabled={!(currentEditModeData.images.length > 0)}>Go to start time</button >
-                  <button onClick={() => playFromSpecificTime(currentEditModeData.endTime)}  disabled={!(currentEditModeData.images.length > 0)}>Go to end time</button >
-                </div >
+                <div style={{ margin: "0.5rem", display: "flex", gap: "1rem" }}>
+                  <button
+                    onClick={() =>
+                      playFromSpecificTime(currentEditModeData.startTime)
+                    }
+                    disabled={!(currentEditModeData.images.length > 0)}
+                  >
+                    Go to start time
+                  </button>
+                  <button
+                    onClick={() =>
+                      playFromSpecificTime(currentEditModeData.endTime)
+                    }
+                    disabled={!(currentEditModeData.images.length > 0)}
+                  >
+                    Go to end time
+                  </button>
+                </div>
               </div>
-                {
-                  currentPodcast && currentEpisode && (
-                    <ImageUploadComponent podcastId={currentPodcast.id} episodeId={currentEpisode.id} />
-                  )
-                }
+              {currentPodcast && currentEpisode && (
+                <ImageUploadComponent
+                  podcastId={currentPodcast.id}
+                  episodeId={currentEpisode.id}
+                />
+              )}
               <div>
                 <h3>Timestamps</h3>
-                <EditModeTimestamps updateEditModeTime={updateEditModeTime} setCurrentEditModeData={setCurrentEditModeData} timestamps={exampleTimestamps}  />
+                <EditModeTimestamps
+                  updateEditModeTime={updateEditModeTime}
+                  setCurrentEditModeData={setCurrentEditModeData}
+                  timestamps={exampleTimestamps}
+                />
               </div>
               <div>
                 <h3>Gallery / uploaded images</h3>
@@ -797,8 +930,7 @@ export default function Home() {
           )}
           {/* Edit mode above */}
 
-
-          {/* EVERYTHING SHOULD BE ABOVE HERE*/ }
+          {/* EVERYTHING SHOULD BE ABOVE HERE*/}
         </div>
       )}
       {/*<ReadDocumentComponent idToFetch="KqiCQr3O4hucEQvbupKL" />*/}

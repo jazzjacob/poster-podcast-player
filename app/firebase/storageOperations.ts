@@ -1,7 +1,7 @@
 import { storage, db } from './firebaseConfig';
 import { ref, uploadBytes, getDownloadURL, deleteObject } from "firebase/storage";
 import { UploadedImage } from '../helpers/customTypes';
-import { doc, updateDoc, arrayRemove, deleteDoc } from 'firebase/firestore';
+import { doc, updateDoc, arrayRemove, deleteDoc, runTransaction } from 'firebase/firestore';
 
 // Upload Image
 export async function uploadImage(file: File): Promise<void> {
@@ -27,6 +27,7 @@ export async function getImageURL(filePath: string): Promise<string | null> {
   }
 }
 
+/*
 export async function deleteUploadedImage(podcastId: string, episodeId: string, image: UploadedImage): Promise<void> {
   try {
     // Get a reference to the image in Firebase Storage
@@ -40,6 +41,36 @@ export async function deleteUploadedImage(podcastId: string, episodeId: string, 
     const imageDocRef = doc(db, 'podcasts', podcastId, 'episodes', episodeId, 'uploadedImages', image.id);
     await deleteDoc(imageDocRef);
     console.log('Image reference removed from Firestore.');
+  } catch (error) {
+    console.error('Error deleting image:', error);
+    throw error; // Re-throw the error to handle it elsewhere if needed
+  }
+}*/
+
+export async function deleteUploadedImage(podcastId: string, episodeId: string, image: UploadedImage): Promise<void> {
+  const episodeDocRef = doc(db, 'podcasts', podcastId, 'episodes', episodeId);
+
+  try {
+    // Run the transaction
+    await runTransaction(db, async (transaction) => {
+      // Get the episode document
+      const episodeDoc = await transaction.get(episodeDocRef);
+
+      if (!episodeDoc.exists()) {
+        throw new Error("Episode document does not exist!");
+      }
+
+      // Delete the image from Firebase Storage
+      const imageRef = ref(storage, `podcasts/${podcastId}/episodes/${episodeId}/uploadedImages/${image.name}`);
+      await deleteObject(imageRef);
+      console.log('Image deleted successfully from storage.');
+
+      // Remove the image reference from the uploadedImages array in the episode document
+      transaction.update(episodeDocRef, {
+        uploadedImages: arrayRemove(image)
+      });
+      console.log('Image reference removed from Firestore.');
+    });
   } catch (error) {
     console.error('Error deleting image:', error);
     throw error; // Re-throw the error to handle it elsewhere if needed
