@@ -1,10 +1,5 @@
-// pages/page.tsx
 import React from 'react';
-//import db from '@/db/db';
-import ClientPage from '@/app/components/ClientPage';
-import TitleSection from './components/TitleSection';
 import PodcastSelector from './components/PodcastSelector';
-import EpisodeSelector from './components/EpisodeSelector';
 
 export const metadata = {
   title: 'Main Page',
