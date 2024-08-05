@@ -22,7 +22,9 @@ const containerStyle = {
   marginBottom: '2rem',
   backgroundColor: '#363636',
   display: 'flex',
-  justifyContent: 'center'
+  flexWrap: 'wrap',
+  justifyContent: 'center',
+  gap: '1rem'
 };
 
 function PosterView({ episode }: { episode: EpisodeData }) {
