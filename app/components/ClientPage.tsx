@@ -556,8 +556,7 @@ export default function Home() {
             await addTimestamp(
               currentPodcast.id,
               currentEpisode.id,
-              newTimestamp,
-              currentEdit,
+              newTimestamp
             );
             console.log("It seems to have worked.... a miracle");
             // SET TIMESTAMPID TO UPLOADEDIMAGE.TIMESTAMPIDS[]
@@ -633,9 +632,7 @@ export default function Home() {
           podcastId,
           episodeId,
           timestampId,
-          updatedTimestamp,
-          removedImages,
-          addedImages,
+          updatedTimestamp
         );
       }
       console.log("update complete, I guess...?");
@@ -685,8 +682,7 @@ export default function Home() {
       deleteTimestamp(
         currentPodcast.id,
         currentEpisode.id,
-        timestampId,
-        initialEdit.images,
+        timestampId
       );
       setGlobalStateFromFirebase(currentPodcast.id, currentEpisode.id);
       handleCancel();

@@ -1,10 +1,18 @@
 import ClientPage from '../components/ClientPage';
 import DataDownloader from '../components/DataDownloader';
+import LocalEpisodeUploader from '../components/LocalEpisodeUploader';
 
 function OldSolutionPage() {
   return (
     <>
-      <DataDownloader />
+      {
+        /*
+        COMPONENTS USED FOR REPLACING OLD EPISODE WITH THE NEW FIREBASE DATA STRUCTURE
+
+        <LocalEpisodeUploader />
+        <DataDownloader />
+        */
+      }
       <ClientPage />
     </>
   );
