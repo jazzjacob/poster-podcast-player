@@ -14,6 +14,17 @@ const defaultTimestamp: Timestamp = {
   updatedAt: new Date()
 };
 
+const containerStyle = {
+  minHeight: "300px",
+  width: "100%",
+  border: '1px solid lightgray',
+  padding: '1rem',
+  marginBottom: '2rem',
+  backgroundColor: '#363636',
+  display: 'flex',
+  justifyContent: 'center'
+};
+
 function PosterView({ episode }: { episode: EpisodeData }) {
   const currentTime = useStore((store) => store.currentTime);
   const [currentTimestamp, setCurrentTimestamp] = useState<Timestamp>(defaultTimestamp);
@@ -53,20 +64,20 @@ function PosterView({ episode }: { episode: EpisodeData }) {
   }, [currentTime, episode, currentTimestamp, handleTimestampsIteration]);
 
   return (
-    <div style={{ minHeight: "25rem" }}>
+    <div style={containerStyle}>
       {currentTimestamp.images.length > 0 ? (
         currentTimestamp.images.map((image) => (
           <img
             alt={`${image.image}`}
             key={image.id}
-            style={{ height: "200px", border: "1px solid lightgray" }}
+            style={{ height: "500px", border: "1px solid #e3e3e3" }}
             src={image.image}
           />
         ))
       ) : (
         <img
           alt={`${episode.episodeImage}`}
-          style={{ height: "200px", border: "1px solid lightgray" }}
+          style={{ height: "300px", border: "1px solid #e3e3e3" }}
           src={episode.episodeImage}
         />
       )}

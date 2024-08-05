@@ -16,9 +16,9 @@ export default async function PodcastPage({ params }: { params: { id: string } }
   }
 
   return (
-    <div>
-      <h1>{podcast.podcastName}</h1>
+    <div style={{ padding: '1rem' }}>
+      <h1 style={{ marginBottom: '0.5rem' }}>{podcast.podcastName}</h1 >
       <EpisodeList podcast={convertedPodcast} episodes={convertedEpisodes} />
-    </div>
+    </div >
   );
 }

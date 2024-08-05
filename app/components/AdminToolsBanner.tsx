@@ -35,22 +35,21 @@ function AdminToolsBanner() {
 
   return (
     <div style={style}>
-      <p>This is the admin tools banner</p>
       {loading ? (
         <p>Loading...</p> // Display a loading message if the authentication state is still being determined
       ) : (
         <>
           <p>User logged in: {user.email}</p>
-          {isPodcastEpisodePage && (
+          {/*isPodcastEpisodePage && (
             <Link style={{ textDecoration: 'underline' }} href={pathname + '/edit-mode'}>
               Turn on edit mode
             </Link>
-          )}
-          {isEditModePage && (
+          )*/}
+          {/*isEditModePage && (
             <Link style={{ textDecoration: 'underline' }} href={pathname.replace('/edit-mode', '')}>
               Turn off edit mode
             </Link>
-          )}
+          )*/}
         </>
       )}
     </div>
