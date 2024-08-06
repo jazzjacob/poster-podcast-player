@@ -1,14 +1,13 @@
-import { fetchAllPodcasts } from "../firebase/firestoreOperations";
+import Link from "next/link";
+import styles from './TitleSection.module.css';
 
-async function TitleSection() {
-  const allPodcasts = await fetchAllPodcasts();
-  const podcast = allPodcasts[0];
-  console.log(podcast.podcastName);
+async function TitleSection({ podcastName, podcastId, episodeTitle }: { podcastName: string, podcastId: string, episodeTitle: string }) {
 
   return (
-    <>
-      <p>Podcast name: {podcast.podcastName}</p>
-    </>
+    <div className={styles.container}>
+      <Link className={styles.podcastName} href={`/podcasts/${podcastId}`}>{podcastName}</Link>
+      <h1>{episodeTitle}</h1>
+    </div >
   );
 }
 

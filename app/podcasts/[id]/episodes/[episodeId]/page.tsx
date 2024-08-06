@@ -6,6 +6,7 @@ import Link from 'next/link';
 import PosterGallery from '@/app/components/NewPosterGallery';
 import AudioPlayer from '@/app/components/AudioPlayer';
 import PosterView from '@/app/components/PosterView';
+import TitleSection from '@/app/components/TitleSection';
 
 export default async function EpisodePage({ params }: { params: { id: string, episodeId: string } }) {
   const podcast = await fetchPodcast(params.id);
@@ -17,8 +18,7 @@ export default async function EpisodePage({ params }: { params: { id: string, ep
 
   return (
     <div style={{ padding: '1rem', backgroundColor: '#fafafa' }}>
-      <Link href={`/podcasts/${params.id}`}>{podcast?.podcastName}</Link>
-      <h1 style={{ marginBottom: '2rem' }}>{episode.title}</h1>
+      <TitleSection podcastName={podcast?.podcastName || ""} podcastId={params.episodeId}  episodeTitle={episode.title} />
       <AudioPlayer src={episode.url} />
       <PosterView
         episode={JSON.parse(JSON.stringify(episode))}

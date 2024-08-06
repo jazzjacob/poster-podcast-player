@@ -1,0 +1,17 @@
+.container {
+    display: flex;
+    font-size: 1rem;
+    gap: 0.6rem;
+    margin-bottom: 2rem;
+    margin-top: 1rem;
+}
+
+.podcastName {
+    color: #909090;
+    font-weight: 650;
+}
+
+.container h1 {
+    font-size: 1rem;
+    font-weight: normal;
+}
