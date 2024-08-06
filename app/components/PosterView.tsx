@@ -57,12 +57,13 @@ function PosterView({ episode }: { episode: EpisodeData }) {
     <div className={styles.container}>
       {currentTimestamp.images.length > 0 ? (
         currentTimestamp.images.map((image) => (
+          <div className={styles.posterContainer} key={image.id}>
           <img
             alt={`${image.image}`}
-            key={image.id}
-            style={{ height: "500px", border: "1px solid #e3e3e3" }}
+            className={styles.poster}
             src={image.image}
           />
+        </div >
         ))
       ) : (
         <img

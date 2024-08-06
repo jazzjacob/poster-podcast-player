@@ -6,7 +6,7 @@ async function TitleSection({ podcastName, podcastId, episodeTitle }: { podcastN
   return (
     <div className={styles.container}>
       <Link className={styles.podcastName} href={`/podcasts/${podcastId}`}>{podcastName}</Link>
-      <h1>{episodeTitle}</h1>
+      <h1 className={styles.episodeTitle}>{episodeTitle}</h1>
     </div >
   );
 }
