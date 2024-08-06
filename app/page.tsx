@@ -1,5 +1,6 @@
 import React from 'react';
 import PodcastSelector from './components/PodcastSelector';
+import Hero from './components/Hero';
 
 export const metadata = {
   title: 'Main Page',
@@ -17,6 +18,7 @@ export default async function Page({
 
   return (
     <>
+      <Hero />
       <PodcastSelector />
     </>
   );

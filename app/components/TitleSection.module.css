@@ -11,14 +11,15 @@
 }
 
 .podcastName {
-    color: #949494;
-    font-weight: 600;
+    /*color: #5E5E5E;*/
+    font-weight: bold;
 }
 
 .podcastName:hover {
-    color: #5E5E5E;
+    color: #949494;
 }
 
 .episodeTitle {
     font-weight: normal;
+    color: #5E5E5E;
 }

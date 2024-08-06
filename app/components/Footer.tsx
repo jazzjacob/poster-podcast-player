@@ -1,21 +1,12 @@
-  const style = {
-    width: "100%",
-    height: 'fit-content',
-    padding: '1rem 2rem 4rem 2rem',
-    borderTop: '1px solid lightgray',
-  };
-
-  const textStyle = {
-    marginTop: '1rem',
-    color: '#a4a5a6',
-    fontSize: '0.8rem'
-  }
+import Link from "next/link";
+import styles from './Footer.module.css';
 
 const Footer = () => {
 
   return (
-    <footer style={style}>
-      <p style={textStyle}>Poster Podcast Player - Made by Jacob Reinikainen Lindström</p  >
+    <footer className={styles.container}>
+      <p className={styles.text}>Poster Podcast Player - Made by Jacob Reinikainen Lindström</p>
+      <Link className={[styles.text, styles.link].join(' ')} href='/admin'>Admin</Link >
       {/* Add your footer content here */}
     </footer >
   );

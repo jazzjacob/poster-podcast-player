@@ -1,0 +1,25 @@
+.container {
+    width: 100%;
+    height: fit-content;
+    padding: 1rem 1rem;
+    display: flex;
+    gap: 1rem;
+    align-items: end;
+    justify-content: space-between;
+    color: #000000ff;
+}
+
+.title {
+    font-weight: 500;
+    font-size: 0.9rem;
+    /*letter-spacing: -0.5px;*/
+}
+
+.link {
+    font-size: 0.9rem;
+}
+
+.link:hover {
+    color: gray;
+    text-decoration: underline;
+}

@@ -1,0 +1,26 @@
+.container {
+    width: 100%;
+    height: 400px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    color: white;
+}
+
+.photo {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    object-fit: cover;
+    z-index: -999;
+}
+
+.mainHeading {
+    font-size: 2.5rem;
+}
+
+.subHeading {
+    font-size: 2rem;
+}

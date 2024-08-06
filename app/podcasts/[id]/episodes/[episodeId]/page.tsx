@@ -17,7 +17,7 @@ export default async function EpisodePage({ params }: { params: { id: string, ep
   }
 
   return (
-    <div style={{ padding: '1rem', backgroundColor: '#fafafa' }}>
+    <div style={{ padding: '1rem' }}>
       <TitleSection podcastName={podcast?.podcastName || ""} podcastId={params.id}  episodeTitle={episode.title} />
       <AudioPlayer src={episode.url} />
       <PosterView

@@ -1,16 +1,19 @@
-.container {
-    height: 75vh;
+.container,
+.episodeImageContainer {
     max-height: 1000px;
     width: 100%;
-    /*border: 1px solid lightgray;*/
-    /*padding: 1rem;*/
-    margin-bottom: 2rem;
-    /*background-color: #363636;*/
+    margin-bottom: 4rem;
     display: flex;
-    /*flex-wrap: wrap;*/
     justify-content: center;
     gap: 1rem;
-    /*background-color: red;*/
+}
+
+.container {
+    height: 75vh;
+}
+
+.episodeImageContainer {
+    height: fit-content;
 }
 
 

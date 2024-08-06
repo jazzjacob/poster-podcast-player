@@ -1,6 +1,5 @@
 require('dotenv').config();
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
 import "./globals.css";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
@@ -8,21 +7,30 @@ import AdminToolsBanner from "./components/AdminToolsBanner";
 import { AuthProvider } from "@/context/AuthContext";
 import localFont from 'next/font/local'
 
-const inter = Inter({ subsets: ["latin"] });
-
 // Font files can be colocated inside of `app`
 const satoshi = localFont({
   src: [
     {
-      path: './Satoshi-Variable.woff2',
-      style: 'normal'
+      path: './fonts/Satoshi-Light.woff2',
+      weight: '300',
+      style: 'light',
     },
     {
-      path: './Satoshi-VariableItalic.woff2',
-      style: 'italic'
+      path: './fonts/Satoshi-Regular.woff2',
+      weight: '400',
+      style: 'normal',
+    },
+    {
+      path: './fonts/Satoshi-Medium.woff2',
+      weight: '500',
+      style: 'medium',
+    },
+    {
+      path: './fonts/Satoshi-Bold.woff2',
+      weight: '700',
+      style: 'bold',
     },
   ],
-  variable: '--font-satoshi',
 })
 
 export const metadata: Metadata = {
@@ -36,7 +44,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-      <html lang="en" className={satoshi.variable}>
+      <html lang="en" className={satoshi.className}>
         <body>
           <Navbar />
           <main>

@@ -1,0 +1,18 @@
+.container {
+    width: 100%;
+    height: fit-content;
+    padding: 1rem;
+    display: flex;
+    justify-content: space-between;
+}
+
+.text {
+    margin-top: 1rem;
+    color: #a4a5a6;
+    font-size: 0.8rem;
+}
+
+.link:hover {
+    cursor: pointer;
+    color: black;
+}
