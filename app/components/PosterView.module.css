@@ -1,0 +1,12 @@
+.container {
+    min-height: 300px;
+    width: 100%;
+    border: 1px solid lightgray;
+    padding: 1rem;
+    margin-bottom: 2rem;
+    background-color: #363636;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1rem;
+}

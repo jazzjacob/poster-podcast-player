@@ -1,9 +1,9 @@
 'use client'
 
-import { fetchEpisode } from "../firebase/firestoreOperations";
 import { EpisodeData, nullEpisode, Timestamp } from "../helpers/customTypes";
 import useStore from "../helpers/store";
 import { useEffect, useState, useCallback } from "react";
+import styles from './PosterView.module.css'
 
 const defaultTimestamp: Timestamp = {
   id: "",
@@ -14,18 +14,6 @@ const defaultTimestamp: Timestamp = {
   updatedAt: new Date()
 };
 
-const containerStyle = {
-  minHeight: "300px",
-  width: "100%",
-  border: '1px solid lightgray',
-  padding: '1rem',
-  marginBottom: '2rem',
-  backgroundColor: '#363636',
-  display: 'flex',
-  flexWrap: 'wrap',
-  justifyContent: 'center',
-  gap: '1rem'
-};
 
 function PosterView({ episode }: { episode: EpisodeData }) {
   const currentTime = useStore((store) => store.currentTime);
@@ -66,7 +54,7 @@ function PosterView({ episode }: { episode: EpisodeData }) {
   }, [currentTime, episode, currentTimestamp, handleTimestampsIteration]);
 
   return (
-    <div style={containerStyle}>
+    <div className={styles.container}>
       {currentTimestamp.images.length > 0 ? (
         currentTimestamp.images.map((image) => (
           <img
