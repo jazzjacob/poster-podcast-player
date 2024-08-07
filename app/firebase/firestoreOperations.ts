@@ -691,3 +691,23 @@ export async function removeTimestampIdFromUploadedImage(
     throw error; // Re-throw the error to handle it elsewhere if needed
   }
 };
+
+export async function fetchHeroImage(): Promise<string | null> {
+  try {
+    const websiteDocRef = doc(db, 'website', "0ArYuUbCr2hsTGH527sp");
+    const websiteDocSnap = await getDoc(websiteDocRef);
+
+    if (websiteDocSnap.exists()) {
+      // Retrieve podcast data
+      const websiteData = websiteDocSnap.data() as { hero: string };
+
+      return websiteData.hero;
+    } else {
+      console.log("No such document!");
+      return null;
+    }
+  } catch (e) {
+    console.error("Error reading document: ", e);
+    return null;
+  }
+}
