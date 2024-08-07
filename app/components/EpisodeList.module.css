@@ -17,3 +17,8 @@
     color: darkslategray;
     color: orange;
 }
+
+.link:focus,
+.link:active {
+    color: black;
+}
