@@ -16,6 +16,8 @@
 
 .image:hover {
     cursor: pointer;
+    opacity: 0.8;
+    outline: 2px solid orange;
 }
 
 .imageContainer {
