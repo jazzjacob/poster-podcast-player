@@ -6,6 +6,8 @@ import { useSearchParams, usePathname } from 'next/navigation'
 import Link from 'next/link';
 import { useCallback, Suspense } from 'react';
 
+import styles from './SelectPodcastButton.module.css';
+
 function SelectPodcastButton({ podcast }: { podcast: PodcastData }) {
 
   const searchParams = useSearchParams();
@@ -23,19 +25,12 @@ function SelectPodcastButton({ podcast }: { podcast: PodcastData }) {
     [searchParams]
   )
 
-  // Get the current podcast ID from the URL query parameters
-  //const currentPodcastId = searchParams.get('podcast');
-
-  const style = {
-    textDecoration: 'underline'
-  };
-
   return (
     <>
       <Link
-        style={style}
         href={`/podcasts/${podcast.id}`}
         scroll={false}
+        className={styles.link}
       >
         {podcast.podcastName}
       </Link  >
