@@ -2,6 +2,7 @@
     text-decoration: underline;
     font-size: 1.3rem;
     font-weight: 400;
+    width: fit-content;
 }
 
 .link:hover {

@@ -18,17 +18,19 @@ export default async function EpisodePage({ params }: { params: { id: string, ep
   }
 
   return (
-    <div style={{ padding: '1rem' }}>
+    <>
       <PosterView
         episode={JSON.parse(JSON.stringify(episode))}
       />
-      <Breadcrumbs list={[{ name: 'Podcasts', url: '/podcasts' }, { name: podcast?.podcastName || "", url: `/podcasts/${podcast?.id}` }, { name: episode.title, url: ''}] } />
-      <TitleSection podcastName={podcast?.podcastName || ""} podcastId={params.id}  episodeTitle={episode.title} />
-      <AudioPlayer src={episode.url} />
-      <PosterGallery
-        podcastId={params.id}
-        episodeId={params.episodeId}
-      />
-    </div >
+      <div style={{ padding: '1rem' }}>
+        <Breadcrumbs list={[{ name: 'Podcasts', url: '/' }, { name: podcast?.podcastName || "", url: `/podcasts/${podcast?.id}` }, { name: episode.title, url: ''}] } />
+        {/*<TitleSection podcastName={podcast?.podcastName || ""} podcastId={params.id}  episodeTitle={episode.title} />*/}
+        <AudioPlayer src={episode.url} />
+        <PosterGallery
+          podcastId={params.id}
+          episodeId={params.episodeId}
+        />
+      </div>
+    </>
   );
 }
