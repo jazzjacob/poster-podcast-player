@@ -1,11 +1,13 @@
 .container,
 .episodeImageContainer {
+    min-height: 400px;
     max-height: 1000px;
     width: 100%;
-    margin-bottom: 4rem;
     display: flex;
     justify-content: center;
     gap: 1rem;
+    background-color: whitesmoke;
+    padding: 0.5rem;
 }
 
 .container {
@@ -13,7 +15,8 @@
 }
 
 .episodeImageContainer {
-    height: fit-content;
+    display: flex;
+    align-items: center;
 }
 
 
