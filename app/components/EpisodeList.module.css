@@ -18,3 +18,10 @@
         color: orange;
     }
 }
+
+@media(hover: none) {
+    .link:active,
+    .link:focus {
+        color: orange;
+    }
+}
