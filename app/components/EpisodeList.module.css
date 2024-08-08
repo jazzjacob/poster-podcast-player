@@ -11,9 +11,17 @@
     width: fit-content;
 }
 
+@media(hover: hover) and (pointer: fine) {
+    .link:hover {
+        /*text-decoration: none;*/
+        /*color: darkslategray;*/
+        color: orange;
+    }
+}
 
-.link:hover {
-    /*text-decoration: none;*/
-    color: darkslategray;
-    color: orange;
+@media(hover: none) {
+    .link:active,
+    .link:focus {
+        color: orange;
+    }
 }

@@ -1,27 +1,37 @@
-.heading {
-    margin-bottom: 1rem;
-}
-
 .container {
     width: 100%;
     display: flex;
     justify-content: center;
     margin-bottom: 4rem;
+    margin-top: 2rem;
+}
+
+.heading {
+    margin-bottom: 1rem;
 }
 
 .imagesContainer {
     width: fit-content;
     display: flex;
     flex-wrap: wrap;
-    gap: 0rem;
-    row-gap: 3rem;
+    row-gap: 2rem;
+    column-gap: 2rem;
     justify-content: center;
     align-items: center;
     margin: 0 auto;
+    /*background-color: dodgerblue;*/
 }
 
 .posterGroup {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
+}
+
+
+@media screen and (max-width: 470px) {
+    .imagesContainer {
+        row-gap: 1rem;
+        column-gap: 1rem;
+    }
 }

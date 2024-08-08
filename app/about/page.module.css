@@ -1,0 +1,39 @@
+.aboutContainer {
+    padding: 1rem;
+    margin-bottom: 4rem;
+}
+
+.pageHeading {
+    font-size: 1.4rem;
+    margin-bottom: 0.6rem;
+}
+
+.h2 {
+    font-size: 1.2rem;
+    margin-top: 1.4rem;
+    margin-bottom: 0.6rem;
+}
+
+.updated {
+    color: darkgray;
+    font-weight: 500;
+    font-size: 0.6rem;
+    margin-top: 2rem;
+    text-transform: uppercase;
+    letter-spacing: 0.02rem;
+}
+
+.inlineLink {
+    text-decoration: underline;
+}
+
+.inlineLink:hover {
+    color: darkslategray;
+    text-decoration: none;
+}
+
+.creditsContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+}

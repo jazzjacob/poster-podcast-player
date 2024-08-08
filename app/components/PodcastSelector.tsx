@@ -8,7 +8,7 @@ async function PodcastSelector() {
   const podcasts = await fetchAllPodcasts();
 
   return (
-    <div style={{ padding: "1rem" }}>
+    <div style={{ padding: "1rem", width: "100%" }}>
       {/*<h2 className={styles.heading}>Podcasts</h2>*/}
       <Breadcrumbs list={[{name: 'Podcasts', url: '/podcasts'}] } />
       <div style={{ display: "flex", gap: "1rem", flexDirection: 'column' }}>

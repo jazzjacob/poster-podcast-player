@@ -1,21 +1,32 @@
-'use client'
-
 import Link from "next/link";
-import useStore from "../helpers/store";
+import AboutPageHero from "../components/AboutPageHero";
+import Breadcrumbs from "../components/Breadcrumbs";
+import styles from './page.module.css';
 
 export default function Page() {
-  const user = useStore((state) => state.user);
 
   return (
-    <div>
-      <h1>This is the about page</h1>
-      <Link href={"/"}>Go back</Link>
-      <button onClick={() => console.log(user)}>Print user</button >
-      {user ? (
-        <p>Logged in!</p>
-      ) : (
-        <p>not logged in... .(</p>
-      )}
-    </div>
+    <>
+      <AboutPageHero />
+      <div className={styles.aboutContainer}>
+        <Breadcrumbs list={[{ name: 'Home', url: '/' }, { name: 'About', url: '' } ]} />
+        <section>
+          <h1 className={styles.pageHeading}>Poster Podcast Player</h1>
+          <p>
+            Poster Podcast Player is an online podcast player that also displays images in sync with the audio.
+            This is the first version of the website.
+            Hopefully more functionality, more podcasts and episodes will be added in the future.
+          </p>
+          <h2 className={styles.h2}>Credits</h2>
+          <div className={styles.creditsContainer}>
+            <p>This is a project made by <Link className={styles.inlineLink} href='https://read.cv/jacoblindstrom'>Jacob Reinikainen Lindström</Link>.</p>
+            <p>Take a look at the <Link className={styles.inlineLink} href='https://github.com/jazzjacob/poster-podcast-player'>source code on Github</Link>.</p>
+            <p>Type set in <Link className={styles.inlineLink} href='https://www.fontshare.com/fonts/satoshi'>Satoshi</Link> by Indian Type Foundry.</p>
+            <p>Home page photo by <Link className={styles.inlineLink} href='https://unsplash.com/@diogo_ferrer'>Expanlog</Link> (from Unsplash).</p>
+          </div >
+          <p className={styles.updated}>Updated: 2024-08-08</p>
+        </section>
+      </div>
+    </>
   );
 };
