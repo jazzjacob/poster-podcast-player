@@ -21,7 +21,7 @@ export default function Page() {
           <div className={styles.creditsContainer}>
             <p>This is a project by <Link className={styles.inlineLink} href='https://read.cv/jacoblindstrom'>Jacob Reinikainen Lindström</Link>.</p>
             <p>Take a look at the source code on <Link className={styles.inlineLink} href='https://github.com/jazzjacob/poster-podcast-player'>Github</Link>.</p>
-            <p>This website is set in <Link className={styles.inlineLink} href='https://www.fontshare.com/fonts/satoshi'>Satoshi</Link> by Indian Type Foundry.</p>
+            <p>Typeface: <Link className={styles.inlineLink} href='https://www.fontshare.com/fonts/satoshi'>Satoshi</Link> by Indian Type Foundry.</p>
             <p>Home page photograph by <Link className={styles.inlineLink} href='https://unsplash.com/@diogo_ferrer'>Expanlog</Link>.</p>
             <p>About page photograph by <Link className={styles.inlineLink} href='https://unsplash.com/@marynanick'>Maryna Nikolaieva</Link>.</p>
             <p className={styles.madeInSwedenText}>Made in Stockholm, Sweden</p>
