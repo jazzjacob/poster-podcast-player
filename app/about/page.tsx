@@ -19,12 +19,14 @@ export default function Page() {
           </p>
           <h2 className={styles.h2}>Credits</h2>
           <div className={styles.creditsContainer}>
-            <p>This is a project made by <Link className={styles.inlineLink} href='https://read.cv/jacoblindstrom'>Jacob Reinikainen Lindström</Link>.</p>
-            <p>Take a look at the <Link className={styles.inlineLink} href='https://github.com/jazzjacob/poster-podcast-player'>source code on Github</Link>.</p>
-            <p>Type set in <Link className={styles.inlineLink} href='https://www.fontshare.com/fonts/satoshi'>Satoshi</Link> by Indian Type Foundry.</p>
-            <p>Home page photo by <Link className={styles.inlineLink} href='https://unsplash.com/@diogo_ferrer'>Expanlog</Link> (from Unsplash).</p>
+            <p>This is a project by <Link className={styles.inlineLink} href='https://read.cv/jacoblindstrom'>Jacob Reinikainen Lindström</Link>.</p>
+            <p>Take a look at the source code on <Link className={styles.inlineLink} href='https://github.com/jazzjacob/poster-podcast-player'>Github</Link>.</p>
+            <p>This website is set in <Link className={styles.inlineLink} href='https://www.fontshare.com/fonts/satoshi'>Satoshi</Link> by Indian Type Foundry.</p>
+            <p>Home page photograph by <Link className={styles.inlineLink} href='https://unsplash.com/@diogo_ferrer'>Expanlog</Link>.</p>
+            <p>About page photograph by <Link className={styles.inlineLink} href='https://unsplash.com/@marynanick'>Maryna Nikolaieva</Link>.</p>
+            <p className={styles.madeInSwedenText}>Made in Stockholm, Sweden</p>
           </div >
-          <p className={styles.updated}>Updated: 2024-08-08</p>
+          <p className={styles.updated}>Updated: 2024-08-11</p>
         </section>
       </div>
     </>
