@@ -37,3 +37,17 @@
     flex-direction: column;
     gap: 0.6rem;
 }
+
+.madeInSwedenText {
+    margin-top: 1rem;
+    background-color: midnightblue;
+    font-weight: 600;
+    color: gold;
+    width: fit-content;
+    padding: 0.1rem 0.4rem;
+    font-size: 0.8rem;
+}
+
+.madeInSwedenText:hover {
+    cursor: default;
+}

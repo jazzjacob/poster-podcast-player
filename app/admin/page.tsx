@@ -3,7 +3,7 @@ import LocalEpisodeUploader from '../components/LocalEpisodeUploader';
 import AdminPage from '../components/AdminPage'
 import AuthComponent from '../components/AuthComponent';
 
-function OldSolutionPage() {
+function Page() {
   return (
     <>
       {
@@ -20,4 +20,4 @@ function OldSolutionPage() {
   );
 }
 
-export default OldSolutionPage;
+export default Page;

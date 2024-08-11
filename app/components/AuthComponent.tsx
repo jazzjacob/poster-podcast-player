@@ -4,6 +4,7 @@ import React, { useState, ChangeEvent, useEffect } from 'react';
 import { signInUser, signUpUser, signOutUser } from '../firebase/authOperations';
 import { setAuthPersistence, auth } from '../firebase/firebaseConfig';
 import useStore from '../helpers/store';
+import styles from './AuthComponent.module.css';
 
 const AuthComponent: React.FC = () => {
   const [email, setEmail] = useState<string>('');
@@ -27,7 +28,8 @@ const AuthComponent: React.FC = () => {
       console.log("Please enter email and password!");
     } else {
       try {
-        await setAuthPersistence(persistence);
+        //await setAuthPersistence(persistence);
+        await setAuthPersistence('LOCAL');
         await signInUser(email, password);
       } catch (error) {
         console.error('Error signing in:', error);
@@ -47,7 +49,7 @@ const AuthComponent: React.FC = () => {
 
 
   return (
-    <div style={{ margin: "2rem 0" }}>
+    <div className={styles.container}>
       {user ? (
         <button
           style={{ margin: "0 1rem" }}
@@ -56,35 +58,42 @@ const AuthComponent: React.FC = () => {
         </button>
       ) : (
         <>
-          <input
-            type="email"
-            placeholder="Email"
-            value={email}
-            onChange={handleChange(setEmail)}
-          />
-          <input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={handleChange(setPassword)}
-          />
-          <select value={persistence} onChange={handlePersistenceChange}>
-            <option value="LOCAL">Local Persistence</option>
-            <option value="SESSION">Session Persistence</option>
-            <option value="NONE">No Persistence</option>
-          </select>
-          <button
-            style={{ margin: "0 1rem" }}
-            onClick={() =>  user ? handleSignOut() : handleSignIn() }>
-          {user ? 'Sign Out' : 'Sign In'}
-          </button>
+          <div className={styles.inputs}>
+            <input
+              className={styles.input}
+              type="email"
+              placeholder="Email"
+              value={email}
+              onChange={handleChange(setEmail)}
+            />
+            <input
+              className={styles.input}
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={handleChange(setPassword)}
+            />
+            <button
+              className={styles.button}
+              onClick={() =>  user ? handleSignOut() : handleSignIn() }>
+              {user ? 'Sign Out' : 'Sign In'}
+            </button>
+          </div>
+
+          {/*
+            <select value={persistence} onChange={handlePersistenceChange}>
+              <option value="LOCAL">Local Persistence</option>
+              <option value="SESSION">Session Persistence</option>
+              <option value="NONE">No Persistence</option>
+            </select>
+          */}
         </>
       )}
 
         {/*<button onClick={handleCheckAuth}>Check Auth State</button>*/}
-        {user ? <p>✅ Logged in! Welcome, {user.email}</p> : <p>😢 Not logged in...</p>}
+        {/*user ? <p>✅ Logged in! Welcome, {user.email}</p> : <p>😢 Not logged in...</p>*/}
 
-    </div >
+    </div>
   );
 };
 
