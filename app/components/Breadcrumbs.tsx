@@ -16,7 +16,7 @@ function Breadcrumbs({ list }: { list: {name: string, url: string}[] }) {
               </>
             ) : (
               <li
-                className={styles.listItem}
+                className={[styles.listItem, styles.currentPage].join(' ')}
                 key={`${listItem}-${index}`}
                 style={{ color: list.length > 1 ? 'black' : undefined }}
               >{listItem.name}</li>
