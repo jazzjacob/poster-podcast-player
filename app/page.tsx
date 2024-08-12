@@ -3,8 +3,8 @@ import PodcastSelector from './components/PodcastSelector';
 import Hero from './components/Hero';
 
 export const metadata = {
-  title: 'Main Page',
-  description: 'Your main page description',
+  title: 'Poster Podcast Player',
+  description: 'Podcasts with images - simple as that.',
 };
 
 export default async function Page({
