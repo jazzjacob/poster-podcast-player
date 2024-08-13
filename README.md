@@ -1,4 +1,4 @@
-# Poster Podcast Player (working title)
+# Poster Podcast Player
 
 ## About the project
 
