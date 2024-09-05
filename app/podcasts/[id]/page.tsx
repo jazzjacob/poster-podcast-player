@@ -20,7 +20,7 @@ export default async function PodcastPage({ params }: { params: { id: string } }
 
   return (
     <>
-      <PodcastHero podcast={podcast} />
+      <PodcastHero podcast={podcast} color={podcast.color || 'orange'} />
       <div className={styles.podcastContainer}>
         <Breadcrumbs list={[{ name: 'Podcasts', url: '/' }, {name: podcast.podcastName, url: ""}] } />
         {/*<h1 className={styles.podcastName}>{podcast.podcastName}</h1>*/}

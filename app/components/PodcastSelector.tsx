@@ -3,6 +3,7 @@ import { fetchAllPodcasts } from '../firebase/firestoreOperations';
 import SelectPodcastButton from './SelectPodcastButton';
 import styles from './PodcastSelector.module.css';
 import Breadcrumbs from './Breadcrumbs';
+import SelectLink from './SelectLink';
 
 async function PodcastSelector() {
   const podcasts = await fetchAllPodcasts();
@@ -14,7 +15,7 @@ async function PodcastSelector() {
       <div style={{ display: "flex", gap: "1rem", flexDirection: 'column' }}>
         {podcasts && podcasts.map((podcast, index) => (
           <Suspense key={podcast.id}>
-            {!podcast.draft && (<SelectPodcastButton color={podcast.color || "orange"} podcast={ JSON.parse(JSON.stringify(podcast))} />)}
+            {!podcast.draft && (<SelectLink type="podcast" podcast={JSON.parse(JSON.stringify(podcast))}  />)}
           </Suspense>
         ))}
         <p className={styles.infoText}>More podcasts coming soon.</p >
