@@ -31,6 +31,8 @@ export interface PodcastData {
   episodes: EpisodeData[];
   createdAt: Date;
   updatedAt: Date;
+  draft: boolean;
+  color?: string;
   description?: string;
   image?: string;
   year?: number;
@@ -50,6 +52,8 @@ export interface EpisodeData {
   duration: number; // in seconds
   createdAt: Date;
   updatedAt: Date;
+  draft: boolean;
+  owner: string;
   localPath?: string;
   episodeImage?: string;
   releaseDate?: Date;
@@ -136,6 +140,8 @@ export const nullEpisode: EpisodeData = {
   localPath: "",
   title: "",
   duration: -1,
+  draft: true,
+  owner: "",
   episodeImage: "",
   timestamps: [],
   uploadedImages: [],
@@ -145,9 +151,10 @@ export const nullEpisode: EpisodeData = {
 
 export const examplePodcastData: PodcastData = {
   id: "0",
-  podcastName: "The Poster Boys",
+  podcastName: "The Poster Gals",
   description: "A podcast about movie posters and shit",
   image: "",
+  draft: true,
   year: 2024,
   category: "Talking",
   host: "",
@@ -155,7 +162,8 @@ export const examplePodcastData: PodcastData = {
   website: "http://example.com",
   episodes: [],
   createdAt: new Date(),
-  updatedAt: new Date()
+  updatedAt: new Date(),
+  color: "dodgerblue"
 };
 
 export const exampleEpisodeData: EpisodeData = {
@@ -174,6 +182,8 @@ export const exampleEpisodeData: EpisodeData = {
   description: "In this introductory episode, we discuss the basics of podcasting and what to expect in future episodes.",
   showNotes: "Detailed show notes including key topics discussed, links to resources mentioned, and timestamps for important moments.",
   tags: ["Podcasting", "Introduction", "Tips"], // Optional tags or categories
+  draft: true,
+  owner: "jlindstr2@gmail.com"
 };
 
 /*
