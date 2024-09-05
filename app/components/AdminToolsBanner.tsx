@@ -26,7 +26,13 @@ function AdminToolsBanner() {
     position: 'fixed' as 'fixed',
     bottom: "0",
     left: '0',
-    zIndex: '1000'
+    zIndex: '1000',
+    fontSize: '8px',
+    display: 'flex',
+    justifyContent: 'center',
+    textTransform: 'uppercase' as 'uppercase',
+    fontWeight: '500',
+    letterSpacing: '1px'
   };
 
   if (!user) {

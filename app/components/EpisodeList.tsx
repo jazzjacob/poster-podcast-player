@@ -1,7 +1,6 @@
 import { EpisodeData, PodcastData } from "../helpers/customTypes";
-import Link from "next/link";
 import styles from './EpisodeList.module.css';
-import useStore from "../helpers/store";
+import SelectLink from "./SelectLink";
 
 function EpisodeList({ podcast, episodes }: { podcast: PodcastData, episodes: EpisodeData[] }) {
 
@@ -10,7 +9,9 @@ function EpisodeList({ podcast, episodes }: { podcast: PodcastData, episodes: Ep
       {episodes?.map(episode => (
         <>
           {!episode.draft && (
-            <Link className={styles.link} key={episode.id} href={`/podcasts/${podcast.id}/episodes/${episode.id}`}>{episode.title}</Link  >
+            <>
+              <SelectLink type={"episode"} podcast={podcast} episode={episode} />
+            </>
           )}
         </>
       ))}
