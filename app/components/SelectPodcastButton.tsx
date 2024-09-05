@@ -8,7 +8,7 @@ import { useCallback, Suspense } from 'react';
 
 import styles from './SelectPodcastButton.module.css';
 
-function SelectPodcastButton({ podcast, draft }: { podcast: PodcastData, draft: boolean }) {
+function SelectPodcastButton({ podcast }: { podcast: PodcastData }) {
 
   const searchParams = useSearchParams();
   const pathname = usePathname()
@@ -32,7 +32,6 @@ function SelectPodcastButton({ podcast, draft }: { podcast: PodcastData, draft: 
         scroll={false}
         className={styles.link}
       >
-        {draft && <b>Draft:</b>}
         {podcast.podcastName}
       </Link>
     </>
