@@ -13,7 +13,7 @@ function SelectLink({ type, podcast, episode }: { type: "podcast" | "episode", p
     url = `/podcasts/${podcast.id}`;
   } else {
     if (episode) {
-       url = `/podcasts/${podcast.id}/episode/${episode.id}`;
+       url = `/podcasts/${podcast.id}/episodes/${episode.id}`;
     }
   }
 
