@@ -14,7 +14,7 @@ async function PodcastSelector() {
       <div style={{ display: "flex", gap: "1rem", flexDirection: 'column' }}>
         {podcasts && podcasts.map((podcast, index) => (
           <Suspense key={podcast.id}>
-            {!podcast.draft && (<SelectPodcastButton podcast={ JSON.parse(JSON.stringify(podcast))} />)}
+            {!podcast.draft && (<SelectPodcastButton color={podcast.color || "orange"} podcast={ JSON.parse(JSON.stringify(podcast))} />)}
           </Suspense>
         ))}
         <p className={styles.infoText}>More podcasts coming soon.</p >
