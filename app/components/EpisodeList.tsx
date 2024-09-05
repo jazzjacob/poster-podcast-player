@@ -1,7 +1,5 @@
 import { EpisodeData, PodcastData } from "../helpers/customTypes";
-import Link from "next/link";
 import styles from './EpisodeList.module.css';
-import useStore from "../helpers/store";
 import SelectLink from "./SelectLink";
 
 function EpisodeList({ podcast, episodes }: { podcast: PodcastData, episodes: EpisodeData[] }) {

@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { EpisodeData, PodcastData } from '../helpers/customTypes';
 import Link from 'next/link';
 
-import styles from './SelectPodcastButton.module.css';
+import styles from './SelectLink.module.css';
 
 function SelectLink({ type, podcast, episode }: { type: "podcast" | "episode", podcast: PodcastData, episode?: EpisodeData }) {
   const [isHovered, setIsHovered] = useState(false);
