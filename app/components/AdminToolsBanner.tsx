@@ -30,7 +30,7 @@ function AdminToolsBanner() {
     fontSize: '8px',
     display: 'flex',
     justifyContent: 'center',
-    textTransform: 'uppercase',
+    textTransform: 'uppercase' as 'uppercase',
     fontWeight: '500',
     letterSpacing: '1px'
   };

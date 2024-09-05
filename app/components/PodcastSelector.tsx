@@ -1,6 +1,5 @@
 import React, { Suspense } from 'react';
 import { fetchAllPodcasts } from '../firebase/firestoreOperations';
-import SelectPodcastButton from './SelectPodcastButton';
 import styles from './PodcastSelector.module.css';
 import Breadcrumbs from './Breadcrumbs';
 import SelectLink from './SelectLink';
