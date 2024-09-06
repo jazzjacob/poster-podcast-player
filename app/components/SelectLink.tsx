@@ -18,7 +18,6 @@ function SelectLink({ type, podcast, episode }: { type: "podcast" | "episode", p
   }
 
   const handleMouseEnter = () => {
-    console.log(podcast);
     setIsHovered(true);
   };
 
