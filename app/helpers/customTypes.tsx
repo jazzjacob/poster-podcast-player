@@ -149,6 +149,23 @@ export const nullEpisode: EpisodeData = {
   updatedAt: new Date('2024-07-10T12:34:56Z')
 };
 
+export const nullPodcast: PodcastData = {
+  id: "",
+  podcastName: "",
+  description: "",
+  image: "",
+  draft: true,
+  year: 0,
+  category: "",
+  host: "",
+  totalEpisodes: 0,
+  website: "",
+  episodes: [],
+  createdAt: new Date(),
+  updatedAt: new Date(),
+  color: ""
+};
+
 export const examplePodcastData: PodcastData = {
   id: "0",
   podcastName: "The Poster Gals",
