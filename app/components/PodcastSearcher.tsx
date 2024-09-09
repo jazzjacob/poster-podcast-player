@@ -1,4 +1,5 @@
 import { useState } from "react";
+import styles from './PodcastSearcher.module.css';
 
 function formatForItunesSearch(input: string): string {
     let formatted = input;
@@ -44,7 +45,7 @@ function PodcastSearcher() {
     let textInput = event.target[0].value;
     if (textInput !== '') {
       console.log(textInput);
-      event.target[0].value = '';
+      // event.target[0].value = '';
       search(textInput);
     } else {
       console.log('Empty field!');
@@ -52,23 +53,30 @@ function PodcastSearcher() {
     }
   }
 
+  function handlePodcastClick(podcast: any) {
+    console.log(podcast);
+    console.log(podcast.collectionName);
+    console.log(podcast.collectionId);
+  }
+
   return (
-    <>
+    <div className={styles.container}>
       <p>This is podcast searcher</p>
       <form onSubmit={handleSubmit}>
         <input type='text'></input>
         <button type='submit'>Search</button>
       </form>
       {searchResults.length > 0 && (
-        <ul>
+        <ul className={styles.searchResultsList}>
           {searchResults.map((item: any) => (
-            <li key={item.collectionId}>
-              <p>{item.collectionName}</p>
+            <li key={item.collectionId} className={styles.searchResultItem} onClick={() => handlePodcastClick(item)}>
+              <img alt={item.collectionName} src={item.artworkUrl60} height={40} />
+              <p className={styles.podcastName}>{item.collectionName}</p>
             </li>
           ))}
         </ul>
       )}
-    </>
+    </div>
   );
 }
 

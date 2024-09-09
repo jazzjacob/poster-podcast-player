@@ -1,0 +1,25 @@
+.container {
+    color: black;
+}
+
+.searchResultsList {
+    display: flex;
+    flex-direction: column;
+}
+
+.searchResultItem {
+    display: flex;
+    align-items: center;
+    list-style: none;
+    padding: 1rem 0;
+    border-bottom: 1px solid gray;
+}
+
+.searchResultItem:hover {
+    cursor: pointer;
+    background-color: whitesmoke;
+}
+
+.podcastName {
+    margin-left: 0.5rem;
+}
