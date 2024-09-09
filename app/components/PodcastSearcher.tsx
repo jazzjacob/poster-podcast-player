@@ -1,11 +1,4 @@
-function formatSearchTerm(term: string) {
-  let formattedTerm = term.toLowerCase();
-  formattedTerm = formattedTerm.split(' ').join('+');
-
-
-  console.log(formattedTerm);
-  return formattedTerm;
-}
+import { useState } from "react";
 
 function formatForItunesSearch(input: string): string {
     let formatted = input;
@@ -25,6 +18,9 @@ function PodcastSearcher() {
   const url = `https://itunes.apple.com/search?term=${formattedTerm}&country=us&media=podcast&entity=podcast`;
   console.log(url);
 
+  const [searchResults, setSearchResults] = useState([]);
+
+
   function delay(delayInMilliseconds: number) {
     return new Promise(resolve => setTimeout(resolve, delayInMilliseconds));
   }
@@ -32,6 +28,7 @@ function PodcastSearcher() {
   async function fetchData(url: string) {
     const response = await fetch(url);
     const data = await response.json();
+    setSearchResults(data.results);
     console.log(data.results);
   }
 
@@ -51,6 +48,7 @@ function PodcastSearcher() {
       search(textInput);
     } else {
       console.log('Empty field!');
+      setSearchResults([]);
     }
   }
 
@@ -61,7 +59,15 @@ function PodcastSearcher() {
         <input type='text'></input>
         <button type='submit'>Search</button>
       </form>
-      <button onClick={() => fetchData()}>fetch data</button>
+      {searchResults.length > 0 && (
+        <ul>
+          {searchResults.map((item: any) => (
+            <li key={item.collectionId}>
+              <p>{item.collectionName}</p>
+            </li>
+          ))}
+        </ul>
+      )}
     </>
   );
 }
