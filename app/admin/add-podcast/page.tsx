@@ -6,6 +6,7 @@ import styles from './page.module.css';
 import { PodcastData } from '@/app/helpers/customTypes';
 import { nullPodcast } from '@/app/helpers/customTypes';
 import AddPodcastForm from '@/app/components/AddPodcastForm';
+import PodcastSearcher from '@/app/components/PodcastSearcher';
 
 function AddPodcastPage() {
   const [podcastData, setPodcastData] = useState<PodcastData>(nullPodcast);
@@ -14,8 +15,10 @@ function AddPodcastPage() {
     <div className={styles.container}>
       <p>This is the Add podcast-page</p>
       <AddPodcastForm />
+      <PodcastSearcher />
       {podcastData.podcastName !== "" && (
         <CreatePodcastComponent podcastData={podcastData} />
+
       )}
     </div>
   );
