@@ -9,15 +9,46 @@
 
 .searchResultItem {
     display: flex;
-    align-items: center;
+    flex-direction: column;
     list-style: none;
-    padding: 1rem 0;
     border-bottom: 1px solid gray;
 }
 
-.searchResultItem:hover {
+.titleSection:hover {
     cursor: pointer;
     background-color: whitesmoke;
+}
+
+.titleSection {
+    padding: 1rem 0;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.episodes {
+    margin: 1rem 0;
+    font-size: 0.8rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}
+
+.episode {
+    list-style: none;
+    cursor: default;
+    width: fit-content;
+}
+
+.episode button {
+    border: none;
+    background-color: white;
+    font-family: inherit;
+}
+
+.episode button:hover {
+    text-decoration: underline;
+    cursor: pointer;
 }
 
 .podcastName {

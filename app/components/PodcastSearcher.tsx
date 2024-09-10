@@ -13,18 +13,9 @@ function formatForItunesSearch(input: string): string {
 }
 
 function PodcastSearcher() {
-
-  const searchTerm = 'the poster boys';
-  const formattedTerm = formatForItunesSearch(searchTerm);
-  const url = `https://itunes.apple.com/search?term=${formattedTerm}&country=us&media=podcast&entity=podcast`;
-  console.log(url);
-
   const [searchResults, setSearchResults] = useState([]);
-
-
-  function delay(delayInMilliseconds: number) {
-    return new Promise(resolve => setTimeout(resolve, delayInMilliseconds));
-  }
+  const [selectedPodcast, setSelectedPodcast] = useState<{ index: number, podcast: any }>({index: - 1, podcast: {}});
+  const [episodes, setEpisodes] = useState<any[]>([]);
 
   async function fetchData(url: string) {
     const response = await fetch(url);
@@ -53,10 +44,55 @@ function PodcastSearcher() {
     }
   }
 
-  function handlePodcastClick(podcast: any) {
+  async function fetchRSSFeed(url: string): Promise<any[]> {
+    try {
+      const response = await fetch(url);
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch RSS feed');
+      }
+
+      const textData = await response.text();
+
+      // Parse the XML using DOMParser
+      const parser = new DOMParser();
+      const xmlDoc = parser.parseFromString(textData, "application/xml");
+
+      // Extract the items from the RSS feed
+      const items = Array.from(xmlDoc.querySelectorAll("item"));
+
+      // Convert XML data to JS objects
+      const parsedItems = items.map((item) => ({
+        title: item.querySelector("title")?.textContent || "",
+        link: item.querySelector("link")?.textContent || "",
+        description: item.querySelector("description")?.textContent || "",
+        pubDate: item.querySelector("pubDate")?.textContent || "",
+      }));
+
+      return parsedItems;
+    } catch (error) {
+      console.error("Error fetching RSS feed:", error);
+      return [];
+    }
+  }
+
+
+  async function handlePodcastClick(podcast: any, index: number) {
     console.log(podcast);
     console.log(podcast.collectionName);
     console.log(podcast.collectionId);
+
+    if (selectedPodcast.podcast == podcast || podcast == null) {
+      setSelectedPodcast({ index: -1, podcast: {} });
+    } else {
+      setSelectedPodcast({index: index, podcast: podcast});
+    }
+
+    const rssEpisodes = await fetchRSSFeed(podcast.feedUrl);
+    if (rssEpisodes.length > 0) {
+      setEpisodes(rssEpisodes);
+    }
+    console.log(rssEpisodes);
   }
 
   return (
@@ -68,10 +104,23 @@ function PodcastSearcher() {
       </form>
       {searchResults.length > 0 && (
         <ul className={styles.searchResultsList}>
-          {searchResults.map((item: any) => (
-            <li key={item.collectionId} className={styles.searchResultItem} onClick={() => handlePodcastClick(item)}>
-              <img alt={item.collectionName} src={item.artworkUrl60} height={40} />
-              <p className={styles.podcastName}>{item.collectionName}</p>
+          {searchResults.map((item: any, index: number) => (
+            <li key={item.collectionId} className={styles.searchResultItem}>
+              <div className={styles.titleSection} onClick={() => handlePodcastClick(item, index)}>
+                <img alt={item.collectionName} src={item.artworkUrl60} height={40} />
+                <p className={styles.podcastName}>{item.collectionName}</p>
+              </div>
+              {selectedPodcast.index == index && (
+                <ul className={styles.episodes}>
+                  {episodes.map((episode) => (
+                    <li key={episode.title} className={styles.episode}>
+                      <button onClick={() => {console.log(episode)}}>{episode.title}</button>
+                    </li>
+                  ))}
+                  <p>{selectedPodcast.podcast.collectionName}</p>
+                  <p>{selectedPodcast.podcast.feedUrl}</p>
+                </ul>
+              )}
             </li>
           ))}
         </ul>
