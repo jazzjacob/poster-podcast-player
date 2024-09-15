@@ -6,6 +6,8 @@ function AddPodcastForm() {
         <div className="form-example">
           <label htmlFor="podcastName">Podcast name: </label>
           <input type="text" name="podcastName" id="podcastName" required />
+          <label htmlFor="podcastName">Podcast name: </label>
+          <input type="text" name="podcastName" id="podcastName" required />
         </div>
       </form>
     </>
