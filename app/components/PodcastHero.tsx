@@ -1,7 +1,7 @@
 import { PodcastData } from '../helpers/customTypes';
 import styles from './PodcastHero.module.css';
 
-function PodcastHero({ podcast, color }: {podcast: PodcastData, color: string}) {
+function PodcastHero({ podcast, color }: {podcast: any, color: string}) {
   return (
     <section
       className={styles.container}
@@ -9,7 +9,7 @@ function PodcastHero({ podcast, color }: {podcast: PodcastData, color: string}) 
         backgroundColor: color
       }}
     >
-      <img className={styles.podcastImage} alt={podcast.podcastName} src={podcast?.image} />
+      <img className={styles.podcastImage} alt={podcast.podcastName} src={podcast?.artworkUrl600} />
     </section >
   );
 }

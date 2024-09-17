@@ -1,6 +1,7 @@
 import { useState } from "react";
 import styles from './PodcastSearcher.module.css';
 import { parseStringPromise } from 'xml2js';
+import Link from "next/link";
 
 function formatForItunesSearch(input: string): string {
     let formatted = input;
@@ -169,15 +170,18 @@ function PodcastSearcher() {
         <ul className={styles.searchResultsList}>
           {searchResults.map((item: any, index: number) => (
             <li key={item.collectionId} className={styles.searchResultItem}>
-              <div className={styles.titleSection} onClick={() => handlePodcastClick(item, index)}>
+              <Link href={`/podcasts/${item.collectionId}`} className={styles.titleSection} onClick={() => handlePodcastClick(item, index)}>
                 <img alt={item.collectionName} src={item.artworkUrl60} height={40} />
                 <p className={styles.podcastName}>{item.collectionName}</p>
-              </div>
+              </Link>
               {selectedPodcast.index == index && (
                 <ul className={styles.episodes}>
                   {episodes.map((episode, index) => (
                     <li key={`${episode.title}-${index}`} className={styles.episode}>
-                      <button onClick={() => {console.log(episode)}}>{episode.title}</button>
+                      <button onClick={() => {
+                        console.log(episode);
+                        console.log('Podcast id: ', item.collectionId);
+                      }}>{episode.title}</button>
                     </li>
                   ))}
                   <p>{selectedPodcast.podcast.collectionName}</p>

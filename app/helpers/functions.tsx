@@ -7,6 +7,97 @@ export const generateId = (): string => {
   return uuidv4();
 };
 
+export async function fetchData(url: string): Promise<any> {
+  try {
+    // Setting up a timeout for the fetch request
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+
+    const response = await fetch(url, { signal: controller.signal });
+
+    // Clear the timeout once the request completes successfully
+    clearTimeout(timeoutId);
+
+    // Check if the response is successful
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+
+    // Ensure the expected data structure is present
+    if (!data || !Array.isArray(data.results)) {
+      throw new Error('Invalid data structure: results not found');
+    }
+
+    return data.results;
+  } catch (error: any) {
+    // Handle specific fetch errors or default to a generic error
+    if (error.name === 'AbortError') {
+      console.error('Request timed out');
+    } else {
+      console.error('Error fetching data:', error.message || error);
+    }
+
+    // Return an empty array or handle the failure gracefully
+    return [];
+  }
+}
+
+
+export async function fetchRSSFeed(url: string): Promise<any[]> {
+  try {
+    // Call the API route in the App Router
+    const response = await fetch(`/api/rss-proxy?url=${encodeURIComponent(url)}`);
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch RSS feed');
+    }
+
+    const textData = await response.text();
+
+    // Parse the XML using DOMParser
+    const parser = new DOMParser();
+    const xmlDoc = parser.parseFromString(textData, 'application/xml');
+
+    // Check for parsing errors
+    if (xmlDoc.querySelector('parsererror')) {
+      throw new Error('Error parsing RSS feed');
+    }
+
+    // Extract the items from the RSS feed
+    const items = Array.from(xmlDoc.querySelectorAll('item'));
+
+    // Convert XML data to JS objects
+    const parsedItems = items.map((item) => {
+      const image = item.querySelector('itunes\\:image') || item.querySelector('image');
+
+      return {
+        title: item.querySelector('title')?.textContent || '',
+        link: item.querySelector('link')?.textContent || '',
+        description: item.querySelector('description')?.textContent?.trim() || '',
+        pubDate: item.querySelector('pubDate')?.textContent || '',
+        guid: item.querySelector('guid')?.textContent || '',
+        image: image?.getAttribute('href') || '',
+        enclosureUrl: item.querySelector('enclosure')?.getAttribute('url') || '',
+        enclosureLength: item.querySelector('enclosure')?.getAttribute('length') || '',
+        enclosureType: item.querySelector('enclosure')?.getAttribute('type') || '',
+        duration: item.getElementsByTagName('itunes:duration')?.[0]?.textContent || '',  // Updated this line
+        explicit: item.querySelector('itunes\\:explicit')?.textContent === 'true',
+        subtitle: item.getElementsByTagName('itunes:subtitle')?.[0]?.textContent || '',
+        episodeType: item.getElementsByTagName('itunes:episodeType')?.[0]?.textContent || ''
+      }
+    });
+
+
+
+    return parsedItems;
+  } catch (error) {
+    console.error('Error fetching RSS feed:', error);
+    return [];
+  }
+}
+
 
 export function convertEditModeTimeToSeconds(time: {
     hours: number;
