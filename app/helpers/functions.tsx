@@ -8,6 +8,29 @@ export const generateId = (): string => {
   return uuidv4();
 };
 
+export async function fetchEpisodeByGUID(rssFeedUrl: string, episodeGuid: string): Promise<any | null> {
+  try {
+    // Fetch the RSS feed data
+    const episodes = await fetchRSSFeed(rssFeedUrl);
+    console.log('Yes');
+
+    // Find the episode with the matching GUID
+    const matchingEpisode = episodes.find((episode: any) => episode.guid['#text'] === episodeGuid);
+
+    // If no matching episode is found, return null
+    if (!matchingEpisode) {
+      throw new Error(`Episode with GUID: ${episodeGuid} not found`);
+    }
+
+    // Return the found episode
+    return matchingEpisode;
+
+  } catch (error) {
+    console.error('Error fetching episode by GUID:', error);
+    return null;
+  }
+}
+
 export async function fetchData(url: string): Promise<any> {
   try {
     // Setting up a timeout for the fetch request

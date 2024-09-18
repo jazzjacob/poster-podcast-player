@@ -9,14 +9,14 @@ import styles from './SelectLink.module.css';
 function SelectLink({ type, podcast, episode }: { type: "podcast" | "episode", podcast: any, episode?: any }) {
   const [isHovered, setIsHovered] = useState(false);
 
-  const guid = episode.guid[`#text`];
 
   let url = "";
   if (type == "podcast") {
-    url = `/podcasts/${podcast.collectionId}`;
+    url = `/podcasts/${podcast.itunesId}`;
   } else {
     if (episode) {
-       url = `/podcasts/${podcast.collectionId}/episodes/${guid}`;
+      const guid = episode.guid[`#text`];
+      url = `/podcasts/${podcast.collectionId}/episodes/${guid}`;
     }
   }
 
@@ -29,7 +29,6 @@ function SelectLink({ type, podcast, episode }: { type: "podcast" | "episode", p
   };
 
   function handleClick() {
-    console.log(guid);
     console.log(podcast);
   }
 

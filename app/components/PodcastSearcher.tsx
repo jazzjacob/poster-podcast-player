@@ -1,3 +1,5 @@
+'use client';
+
 import { useState } from "react";
 import styles from './PodcastSearcher.module.css';
 import { parseStringPromise } from 'xml2js';
@@ -174,7 +176,7 @@ function PodcastSearcher() {
                 <img alt={item.collectionName} src={item.artworkUrl60} height={40} />
                 <p className={styles.podcastName}>{item.collectionName}</p>
               </Link>
-              {selectedPodcast.index == index && (
+              {/*selectedPodcast.index == index && (
                 <ul className={styles.episodes}>
                   {episodes.map((episode, index) => (
                     <li key={`${episode.title}-${index}`} className={styles.episode}>
@@ -183,11 +185,11 @@ function PodcastSearcher() {
                         console.log('Podcast id: ', item.collectionId);
                       }}>{episode.title}</button>
                     </li>
-                  ))}
+                    ))}
                   <p>{selectedPodcast.podcast.collectionName}</p>
                   <p>{selectedPodcast.podcast.feedUrl}</p>
                 </ul>
-              )}
+              )*/}
             </li>
           ))}
         </ul>

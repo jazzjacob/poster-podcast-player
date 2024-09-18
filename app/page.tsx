@@ -1,6 +1,7 @@
 import React from 'react';
 import PodcastSelector from './components/PodcastSelector';
 import Hero from './components/Hero';
+import PodcastSearcher from './components/PodcastSearcher';
 
 export const metadata = {
   title: 'Poster Podcast Player',
@@ -20,6 +21,9 @@ export default async function Page({
     <>
       <Hero />
       <PodcastSelector />
+        <div style={{ padding: '1rem' }}>
+        <PodcastSearcher />
+      </div>
     </>
   );
 }
