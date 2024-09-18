@@ -2,6 +2,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { Timestamp, OverlapDetails, UploadedImage, TimestampImage, EditModeData } from './customTypes';
 import { fetchAllPodcasts, fetchEpisode, fetchPodcast } from '../firebase/firestoreOperations';
 import useStore from './store';
+import FastXMLParser from 'fast-xml-parser';  // Import the default export
 
 export const generateId = (): string => {
   return uuidv4();
@@ -48,7 +49,7 @@ export async function fetchData(url: string): Promise<any> {
 export async function fetchRSSFeed(url: string): Promise<any[]> {
   try {
     // Call the API route in the App Router
-    const response = await fetch(`/api/rss-proxy?url=${encodeURIComponent(url)}`);
+    const response = await fetch(url);
 
     if (!response.ok) {
       throw new Error('Failed to fetch RSS feed');
@@ -56,40 +57,37 @@ export async function fetchRSSFeed(url: string): Promise<any[]> {
 
     const textData = await response.text();
 
-    // Parse the XML using DOMParser
-    const parser = new DOMParser();
-    const xmlDoc = parser.parseFromString(textData, 'application/xml');
-
-    // Check for parsing errors
-    if (xmlDoc.querySelector('parsererror')) {
-      throw new Error('Error parsing RSS feed');
-    }
-
-    // Extract the items from the RSS feed
-    const items = Array.from(xmlDoc.querySelectorAll('item'));
-
-    // Convert XML data to JS objects
-    const parsedItems = items.map((item) => {
-      const image = item.querySelector('itunes\\:image') || item.querySelector('image');
-
-      return {
-        title: item.querySelector('title')?.textContent || '',
-        link: item.querySelector('link')?.textContent || '',
-        description: item.querySelector('description')?.textContent?.trim() || '',
-        pubDate: item.querySelector('pubDate')?.textContent || '',
-        guid: item.querySelector('guid')?.textContent || '',
-        image: image?.getAttribute('href') || '',
-        enclosureUrl: item.querySelector('enclosure')?.getAttribute('url') || '',
-        enclosureLength: item.querySelector('enclosure')?.getAttribute('length') || '',
-        enclosureType: item.querySelector('enclosure')?.getAttribute('type') || '',
-        duration: item.getElementsByTagName('itunes:duration')?.[0]?.textContent || '',  // Updated this line
-        explicit: item.querySelector('itunes\\:explicit')?.textContent === 'true',
-        subtitle: item.getElementsByTagName('itunes:subtitle')?.[0]?.textContent || '',
-        episodeType: item.getElementsByTagName('itunes:episodeType')?.[0]?.textContent || ''
-      }
+    // Parse the XML using fast-xml-parser
+    const parser = new FastXMLParser.XMLParser({
+      ignoreAttributes: false,  // Ensure attributes (like image href) are parsed
+      attributeNamePrefix: '',  // Remove the default @ prefix for attributes
     });
 
+    const parsedData = parser.parse(textData);
 
+    // Navigate to the correct part of the RSS data
+    const items = parsedData.rss?.channel?.item || [];
+
+    // Convert XML data to JS objects
+    const parsedItems = items.map((item: any) => {
+      const image = item['itunes:image'] || item.image;
+
+      return {
+        title: item.title || '',
+        link: item.link || '',
+        description: item.description?.trim() || '',
+        pubDate: item.pubDate || '',
+        guid: item.guid || '',
+        image: image?.href || '',
+        enclosureUrl: item.enclosure?.url || '',
+        enclosureLength: item.enclosure?.length || '',
+        enclosureType: item.enclosure?.type || '',
+        duration: item['itunes:duration'] || '',
+        explicit: item['itunes:explicit'] === 'true',
+        subtitle: item['itunes:subtitle'] || '',
+        episodeType: item['itunes:episodeType'] || ''
+      };
+    });
 
     return parsedItems;
   } catch (error) {
@@ -97,6 +95,7 @@ export async function fetchRSSFeed(url: string): Promise<any[]> {
     return [];
   }
 }
+
 
 
 export function convertEditModeTimeToSeconds(time: {

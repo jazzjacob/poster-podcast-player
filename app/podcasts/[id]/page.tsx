@@ -6,13 +6,17 @@ import EpisodeList from '@/app/components/EpisodeList';
 import PodcastHero from '@/app/components/PodcastHero';
 import styles from './page.module.css';
 import Breadcrumbs from '@/app/components/Breadcrumbs';
-import { fetchData } from '@/app/helpers/functions';
+import { fetchData, fetchRSSFeed } from '@/app/helpers/functions';
 
 export default async function PodcastPage({ params }: { params: { id: string } }) {
-  console.log('Look here mate:');
-  console.log(params.id);
   let podcast = await fetchData(`https://itunes.apple.com/lookup?id=${params.id}`);
   podcast = podcast[0];
+  //let rssFeed = await fetchRSSFeed(podcast.feedUrl);
+  let rssFeed = await fetchRSSFeed(podcast.feedUrl);
+  console.log('Look here mate:');
+  console.log(rssFeed);
+  console.log('Rss feed above');
+
   //const podcast = await fetchSavedPodcast(params.id);
   //const episodes = await fetchSavedEpisodes(params.id);
 
@@ -28,7 +32,7 @@ export default async function PodcastPage({ params }: { params: { id: string } }
       <PodcastHero podcast={podcast} color={podcast.color || 'orange'} />
       <div className={styles.podcastContainer}>
         <Breadcrumbs list={[{ name: 'Podcasts', url: '/' }, {name: podcast.collectionName, url: ""}] } />
-        {/*<EpisodeList podcast={convertedPodcast} episodes={convertedEpisodes} />*/}
+        <EpisodeList podcast={convertedPodcast} episodes={rssFeed} />
       </div>
         <p>Hejsan</p>
         <p>Id: {params.id}</p>
