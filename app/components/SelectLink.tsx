@@ -15,7 +15,7 @@ function SelectLink({ type, podcast, episode }: { type: "podcast" | "episode", p
     url = `/podcasts/${podcast.itunesId}`;
   } else {
     if (episode) {
-      const guid = episode.guid[`#text`];
+      const guid = episode.guid[`#text`] || episode.guid;
       url = `/podcasts/${podcast.collectionId}/episodes/${guid}`;
     }
   }

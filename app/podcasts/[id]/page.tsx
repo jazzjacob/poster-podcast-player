@@ -1,26 +1,35 @@
 // /app/podcasts/[id]/page.tsx
 
 import { notFound } from 'next/navigation';
-import { fetchPodcast as fetchSavedPodcast, fetchEpisodes as fetchSavedEpisodes } from '@/app/firebase/firestoreOperations';
+import { fetchPodcast as fetchSavedPodcast, fetchEpisodes as fetchSavedEpisodes, fetchAllPodcasts } from '@/app/firebase/firestoreOperations';
 import EpisodeList from '@/app/components/EpisodeList';
 import PodcastHero from '@/app/components/PodcastHero';
 import styles from './page.module.css';
 import Breadcrumbs from '@/app/components/Breadcrumbs';
 import { fetchData, fetchRSSFeed } from '@/app/helpers/functions';
 
+async function findSavedPodcast(id: string) {
+  const allPodcasts = await fetchAllPodcasts();
+  console.log('allPods');
+  console.log(allPodcasts);
+  const podcast = allPodcasts.find((episode) => episode.itunesId == id);
+  console.log('episode')
+  console.log(podcast)
+  return podcast;
+}
+
 export default async function PodcastPage({ params }: { params: { id: string } }) {
   let podcast = await fetchData(`https://itunes.apple.com/lookup?id=${params.id}`);
   podcast = podcast[0];
   //let rssFeed = await fetchRSSFeed(podcast.feedUrl);
   let rssFeed = await fetchRSSFeed(podcast.feedUrl);
-  console.log('Look here mate:');
-  console.log(rssFeed);
-  console.log('Rss feed above');
 
-  //const podcast = await fetchSavedPodcast(params.id);
+  const savedPodcast = await findSavedPodcast(params.id);
+
   //const episodes = await fetchSavedEpisodes(params.id);
 
   const convertedPodcast = JSON.parse(JSON.stringify(podcast));
+  const convertedSavedPodcast = JSON.parse(JSON.stringify(savedPodcast));
   //const convertedEpisodes = JSON.parse(JSON.stringify(episodes));
 
   if (!podcast) {
@@ -32,6 +41,11 @@ export default async function PodcastPage({ params }: { params: { id: string } }
       <PodcastHero podcast={podcast} color={podcast.color || 'orange'} />
       <div className={styles.podcastContainer}>
         <Breadcrumbs list={[{ name: 'Podcasts', url: '/' }, {name: podcast.collectionName, url: ""}] } />
+        <div style={{ marginBottom: '1rem' }}>
+          <h2>Saved episodes;</h2>
+          <EpisodeList podcast={convertedSavedPodcast} episodes={convertedSavedPodcast.episodes} />
+        </div>
+        <h2>All episodes:</h2>
         <EpisodeList podcast={convertedPodcast} episodes={rssFeed} />
       </div>
         <p>Hejsan</p>
