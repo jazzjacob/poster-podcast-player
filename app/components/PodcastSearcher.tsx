@@ -21,6 +21,8 @@ function PodcastSearcher() {
   const [selectedPodcast, setSelectedPodcast] = useState<{ index: number, podcast: any }>({index: - 1, podcast: {}});
   const [episodes, setEpisodes] = useState<any[]>([]);
 
+  const searchPlaceholderText = 'Search podcasts';
+
   async function fetchData(url: string) {
     const response = await fetch(url);
     const data = await response.json();
@@ -163,10 +165,9 @@ function PodcastSearcher() {
 
   return (
     <div className={styles.container}>
-      <p>This is podcast searcher</p>
-      <form onSubmit={handleSubmit}>
-        <input type='text'></input>
-        <button type='submit'>Search</button>
+      <form className={styles.searchForm} onSubmit={handleSubmit}>
+        <input placeholder={searchPlaceholderText} className={styles.textInput} type='text'></input>
+        <button className={styles.searchButton} type='submit'>Search</button>
       </form>
       {searchResults.length > 0 && (
         <ul className={styles.searchResultsList}>

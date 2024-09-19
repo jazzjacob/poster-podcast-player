@@ -54,3 +54,39 @@
 .podcastName {
     margin-left: 0.5rem;
 }
+
+.searchTitle {
+    margin-bottom: 1rem;
+}
+
+.searchForm {
+    display: flex;
+    gap: 0.3rem;
+}
+
+.textInput {
+    border-radius: 0;
+    border: 1px solid black;
+    height: 2rem;
+    padding: 0.5rem;
+    font-family: inherit;
+    width: 15rem;
+}
+
+.textInput:focus {
+    outline: 0.5px solid black;
+}
+
+.searchButton {
+    height: 2rem;
+    background-color: black;
+    border: none;
+    color: white;
+    font-family: inherit;
+    padding: 0 1rem;
+}
+
+.searchButton:hover {
+    cursor: pointer;
+    background-color: orange;
+}
