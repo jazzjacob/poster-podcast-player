@@ -16,7 +16,7 @@ function SelectLink({ type, podcast, episode }: { type: "podcast" | "episode", p
   } else {
     if (episode) {
       const guid = episode.guid[`#text`] || episode.guid;
-      url = `/podcasts/${podcast.collectionId}/episodes/${guid}`;
+      url = `/podcasts/${podcast.collectionId || podcast.itunesId}/episodes/${guid}`;
     }
   }
 
@@ -38,7 +38,7 @@ function SelectLink({ type, podcast, episode }: { type: "podcast" | "episode", p
         onClick={handleClick}
         href={url}
         className={styles.link}
-        style={{ color: isHovered ? podcast.color : 'inherit' }} // Apply hover color dynamically
+        style={{ color: isHovered ? podcast.color || 'orange' : 'inherit' }} // Apply hover color dynamically
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
       >
