@@ -169,7 +169,7 @@ function PodcastSearcher() {
         <input placeholder={searchPlaceholderText} className={styles.textInput} type='text'></input>
         <button className={styles.searchButton} type='submit'>Search</button>
       </form>
-      {searchResults.length > 0 && (
+      {searchResults.length > 0 ? (
         <ul className={styles.searchResultsList}>
           {searchResults.map((item: any, index: number) => (
             <li key={item.collectionId} className={styles.searchResultItem}>
@@ -177,23 +177,11 @@ function PodcastSearcher() {
                 <img alt={item.collectionName} src={item.artworkUrl60} height={40} />
                 <p className={styles.podcastName}>{item.collectionName}</p>
               </Link>
-              {/*selectedPodcast.index == index && (
-                <ul className={styles.episodes}>
-                  {episodes.map((episode, index) => (
-                    <li key={`${episode.title}-${index}`} className={styles.episode}>
-                      <button onClick={() => {
-                        console.log(episode);
-                        console.log('Podcast id: ', item.collectionId);
-                      }}>{episode.title}</button>
-                    </li>
-                    ))}
-                  <p>{selectedPodcast.podcast.collectionName}</p>
-                  <p>{selectedPodcast.podcast.feedUrl}</p>
-                </ul>
-              )*/}
             </li>
           ))}
         </ul>
+      ): (
+        <p className={styles.noFoundMessage}>No podcasts found.</p>
       )}
     </div>
   );

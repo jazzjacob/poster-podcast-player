@@ -90,3 +90,8 @@
     cursor: pointer;
     background-color: orange;
 }
+
+.noFoundMessage {
+    margin-top: 1rem;
+    color: gray;
+}
