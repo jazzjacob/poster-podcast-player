@@ -32,7 +32,7 @@ function PodcastSearcher() {
 
   function search(term: string) {
     const formattedTerm = formatForItunesSearch(term);
-    const url = `https://itunes.apple.com/search?term=${formattedTerm}&country=us&media=podcast&entity=podcast`;
+    const url = `https://itunes.apple.com/search?term=${formattedTerm}&country=se&media=podcast&entity=podcast`;
     console.log(url);
     fetchData(url);
   }

@@ -9,6 +9,7 @@ export const generateId = (): string => {
 };
 
 export async function fetchEpisodeByGUID(rssFeedUrl: string, episodeGuid: string): Promise<any | null> {
+  console.log('Fetching episode by guid');
   try {
     // Fetch the RSS feed data
     const episodes = await fetchRSSFeed(rssFeedUrl);

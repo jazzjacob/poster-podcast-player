@@ -18,19 +18,21 @@ function findSavedEpisode(podcast: any, episodeId: string) {
 
 export default async function EpisodePage({ params }: { params: { id: string, episodeId: string } }) {
   //const podcast = await fetchPodcast(params.id);
-  let podcast = await fetchData(`https://itunes.apple.com/lookup?id=${params.id}`);
+  const COUNTRY = 'se';
+  let podcast = await fetchData(`https://itunes.apple.com/lookup?id=${params.id}&country=${COUNTRY}`);
   podcast = podcast[0];
-  const savedPodcast = await findSavedPodcast(params.id);
+  const savedPodcast = await findSavedPodcast(decodeURIComponent(params.id));
 
   let savedEpisode;
   if (savedPodcast) {
-    savedEpisode = findSavedEpisode(savedPodcast, params.episodeId);
+    savedEpisode = findSavedEpisode(savedPodcast, decodeURIComponent(params.episodeId));
   }
 
   console.log('saved episode');
   console.log(savedEpisode);
   console.log(podcast);
-  let episode = await fetchEpisodeByGUID(podcast.feedUrl, params.episodeId);
+  console.log(params.episodeId);
+  let episode = await fetchEpisodeByGUID(podcast.feedUrl, decodeURIComponent(params.episodeId));
   console.log('Episode:');
   console.log(episode);
   //const episode = await fetchEpisode(params.id, params.episodeId);

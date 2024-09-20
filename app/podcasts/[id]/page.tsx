@@ -10,10 +10,14 @@ import { fetchData, fetchRSSFeed } from '@/app/helpers/functions';
 import { findSavedPodcast } from '@/app/firebase/firestoreOperations';
 
 export default async function PodcastPage({ params }: { params: { id: string } }) {
-  let podcast = await fetchData(`https://itunes.apple.com/lookup?id=${params.id}`);
+  const COUNTRY = 'se';
+  let podcast = await fetchData(`https://itunes.apple.com/lookup?id=${params.id}&country=${COUNTRY}`);
   podcast = podcast[0];
   //let rssFeed = await fetchRSSFeed(podcast.feedUrl);
+
   let rssFeed = await fetchRSSFeed(podcast.feedUrl);
+  console.log('rssfeed here');
+  console.log(rssFeed);
 
   const savedPodcast = await findSavedPodcast(params.id);
 
