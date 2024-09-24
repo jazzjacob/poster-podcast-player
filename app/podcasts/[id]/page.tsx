@@ -49,8 +49,6 @@ export default async function PodcastPage({ params }: { params: { id: string } }
         <h2>All episodes:</h2>
         <EpisodeList podcast={convertedPodcast} episodes={rssFeed} />
       </div>
-        <p>Hejsan</p>
-        <p>Id: {params.id}</p>
     </>
   );
 }
