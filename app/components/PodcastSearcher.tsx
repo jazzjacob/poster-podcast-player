@@ -57,7 +57,7 @@ function PodcastSearcher() {
           {searchResults.map((item: any) => (
             <li key={item.collectionId} className={styles.searchResultItem}>
               <Link href={`/podcasts/${item.collectionId}`} className={styles.titleSection}>
-                <img alt={item.collectionName} src={item.artworkUrl60} height={40} />
+                <img alt={item.collectionName} src={item.artworkUrl100} className={styles.podcastImage} />
                 <p className={styles.podcastName}>{item.collectionName}</p>
               </Link>
             </li>
