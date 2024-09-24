@@ -1,25 +1,14 @@
 'use client';
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import styles from './PodcastSearcher.module.css';
-import { parseStringPromise } from 'xml2js';
 import Link from "next/link";
-
-function formatForItunesSearch(input: string): string {
-    let formatted = input;
-    formatted = formatted.toLowerCase();
-    formatted = formatted.replace(/\s+/g, ' ');
-    formatted = formatted.replace(/[^\p{L}\d\s]/gu, '');
-    formatted = formatted.trim();
-    formatted = formatted.replace(/\s/g, '%20');
-
-    return formatted;
-}
+import { formatStringForItunesSearch } from "../helpers/functions";
 
 function PodcastSearcher() {
   const [searchResults, setSearchResults] = useState([]);
-  const [selectedPodcast, setSelectedPodcast] = useState<{ index: number, podcast: any }>({index: - 1, podcast: {}});
-  const [episodes, setEpisodes] = useState<any[]>([]);
+  const [searchTerm, setSearchTerm] = useState<string>(''); // Add a state to track the input value
+  const [searched, setSearched] = useState(false);
 
   const searchPlaceholderText = 'Search podcasts';
 
@@ -27,11 +16,12 @@ function PodcastSearcher() {
     const response = await fetch(url);
     const data = await response.json();
     setSearchResults(data.results);
+    setSearched(true);
     console.log(data.results);
   }
 
   function search(term: string) {
-    const formattedTerm = formatForItunesSearch(term);
+    const formattedTerm = formatStringForItunesSearch(term);
     const url = `https://itunes.apple.com/search?term=${formattedTerm}&country=se&media=podcast&entity=podcast`;
     console.log(url);
     fetchData(url);
@@ -41,147 +31,44 @@ function PodcastSearcher() {
     event.preventDefault();
     let textInput = event.target[0].value;
     if (textInput !== '') {
-      console.log(textInput);
-      // event.target[0].value = '';
       search(textInput);
     } else {
-      console.log('Empty field!');
       setSearchResults([]);
     }
   }
 
-  /*async function fetchRSSFeed(url: string): Promise<any[]> {
-    try {
-      const response = await fetch(url);
-      //const response = await fetch('/api/rss-proxy'); // Fetch from the API route
-      if (!response.ok) {
-        throw new Error('Failed to fetch RSS feed');
-      }
-
-      console.log(response);
-
-      const textData = await response.text();
-
-      // Parse the XML using DOMParser
-      const parser = new DOMParser();
-      const xmlDoc = parser.parseFromString(textData, "application/xml");
-
-      // Check for parsing errors
-      if (xmlDoc.querySelector('parsererror')) {
-        throw new Error('Error parsing RSS feed');
-      }
-
-      // Extract the items from the RSS feed
-      const items = Array.from(xmlDoc.querySelectorAll("item"));
-
-      // Convert XML data to JS objects
-      const parsedItems = items.map((item) => ({
-        title: item.querySelector("title")?.textContent || "",
-        link: item.querySelector("link")?.textContent || "",
-        description: item.querySelector("description")?.textContent || "",
-        pubDate: item.querySelector("pubDate")?.textContent || "",
-      }));
-
-      return parsedItems;
-
-    } catch (error) {
-      console.error("Error fetching RSS feed:", error);
-      return [];
-    }
-  }*/
-
-  async function fetchRSSFeed(url: string): Promise<any[]> {
-    try {
-      // Call the API route in the App Router
-      const response = await fetch(`/api/rss-proxy?url=${encodeURIComponent(url)}`);
-
-      if (!response.ok) {
-        throw new Error('Failed to fetch RSS feed');
-      }
-
-      const textData = await response.text();
-
-      // Parse the XML using DOMParser
-      const parser = new DOMParser();
-      const xmlDoc = parser.parseFromString(textData, 'application/xml');
-
-      // Check for parsing errors
-      if (xmlDoc.querySelector('parsererror')) {
-        throw new Error('Error parsing RSS feed');
-      }
-
-      // Extract the items from the RSS feed
-      const items = Array.from(xmlDoc.querySelectorAll('item'));
-
-      // Convert XML data to JS objects
-      const parsedItems = items.map((item) => {
-        const image = item.querySelector('itunes\\:image') || item.querySelector('image');
-
-        return {
-          title: item.querySelector('title')?.textContent || '',
-          link: item.querySelector('link')?.textContent || '',
-          description: item.querySelector('description')?.textContent?.trim() || '',
-          pubDate: item.querySelector('pubDate')?.textContent || '',
-          guid: item.querySelector('guid')?.textContent || '',
-          image: image?.getAttribute('href') || '',
-          enclosureUrl: item.querySelector('enclosure')?.getAttribute('url') || '',
-          enclosureLength: item.querySelector('enclosure')?.getAttribute('length') || '',
-          enclosureType: item.querySelector('enclosure')?.getAttribute('type') || '',
-          duration: item.getElementsByTagName('itunes:duration')?.[0]?.textContent || '',  // Updated this line
-          explicit: item.querySelector('itunes\\:explicit')?.textContent === 'true',
-          subtitle: item.getElementsByTagName('itunes:subtitle')?.[0]?.textContent || '',
-          episodeType: item.getElementsByTagName('itunes:episodeType')?.[0]?.textContent || ''
-        }
-      });
-
-
-
-      return parsedItems;
-    } catch (error) {
-      console.error('Error fetching RSS feed:', error);
-      return [];
+  function handleInputChange(event: any) {
+    setSearchTerm(event.target.value); // Update the state as the input changes
+    if (searched) {
+      setSearched(false);
     }
   }
 
 
-
-  async function handlePodcastClick(podcast: any, index: number) {
-    console.log(podcast);
-    console.log(podcast.collectionName);
-    console.log(podcast.collectionId);
-
-    if (selectedPodcast.podcast == podcast || podcast == null) {
-      setSelectedPodcast({ index: -1, podcast: {} });
-    } else {
-      setSelectedPodcast({index: index, podcast: podcast});
-    }
-
-    const rssEpisodes = await fetchRSSFeed(podcast.feedUrl);
-    if (rssEpisodes.length > 0) {
-      setEpisodes(rssEpisodes);
-    }
-    console.log(rssEpisodes);
-  }
 
   return (
     <div className={styles.container}>
       <form className={styles.searchForm} onSubmit={handleSubmit}>
-        <input placeholder={searchPlaceholderText} className={styles.textInput} type='text'></input>
+        <input onChange={handleInputChange} value={searchTerm} placeholder={searchPlaceholderText} className={styles.textInput} type='text'></input>
         <button className={styles.searchButton} type='submit'>Search</button>
       </form>
       {searchResults.length > 0 ? (
         <ul className={styles.searchResultsList}>
-          {searchResults.map((item: any, index: number) => (
+          {searchResults.map((item: any) => (
             <li key={item.collectionId} className={styles.searchResultItem}>
-              <Link href={`/podcasts/${item.collectionId}`} className={styles.titleSection} onClick={() => handlePodcastClick(item, index)}>
+              <Link href={`/podcasts/${item.collectionId}`} className={styles.titleSection}>
                 <img alt={item.collectionName} src={item.artworkUrl60} height={40} />
                 <p className={styles.podcastName}>{item.collectionName}</p>
               </Link>
             </li>
           ))}
         </ul>
-      ): (
-        <p className={styles.noFoundMessage}>No podcasts found.</p>
+      ) : (
+         searched && (
+          <>
+            <p className={styles.noFoundMessage}>No podcasts found.</p>
+          </>
+        )
       )}
     </div>
   );

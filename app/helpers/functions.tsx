@@ -8,6 +8,17 @@ export const generateId = (): string => {
   return uuidv4();
 };
 
+export function formatStringForItunesSearch(input: string): string {
+    let formatted = input;
+    formatted = formatted.toLowerCase();
+    formatted = formatted.replace(/\s+/g, ' ');
+    formatted = formatted.replace(/[^\p{L}\d\s]/gu, '');
+    formatted = formatted.trim();
+    formatted = formatted.replace(/\s/g, '%20');
+
+    return formatted;
+}
+
 export async function fetchEpisodeByGUID(rssFeedUrl: string, episodeGuid: string): Promise<any | null> {
   console.log('Fetching episode by guid');
   try {
@@ -119,6 +130,62 @@ export async function fetchRSSFeed(url: string): Promise<any[]> {
     return [];
   }
 }
+
+/*
+// Don't seem to need this anymore, and don't know why I even needed
+// it in the first place.
+export async function fetchRSSFeedForSearch(url: string): Promise<any[]> {
+  try {
+    // Call the API route in the App Router
+    const response = await fetch(`/api/rss-proxy?url=${encodeURIComponent(url)}`);
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch RSS feed');
+    }
+
+    const textData = await response.text();
+
+    // Parse the XML using DOMParser
+    const parser = new DOMParser();
+    const xmlDoc = parser.parseFromString(textData, 'application/xml');
+
+    // Check for parsing errors
+    if (xmlDoc.querySelector('parsererror')) {
+      throw new Error('Error parsing RSS feed');
+    }
+
+    // Extract the items from the RSS feed
+    const items = Array.from(xmlDoc.querySelectorAll('item'));
+
+    // Convert XML data to JS objects
+    const parsedItems = items.map((item) => {
+      const image = item.querySelector('itunes\\:image') || item.querySelector('image');
+
+      return {
+        title: item.querySelector('title')?.textContent || '',
+        link: item.querySelector('link')?.textContent || '',
+        description: item.querySelector('description')?.textContent?.trim() || '',
+        pubDate: item.querySelector('pubDate')?.textContent || '',
+        guid: item.querySelector('guid')?.textContent || '',
+        image: image?.getAttribute('href') || '',
+        enclosureUrl: item.querySelector('enclosure')?.getAttribute('url') || '',
+        enclosureLength: item.querySelector('enclosure')?.getAttribute('length') || '',
+        enclosureType: item.querySelector('enclosure')?.getAttribute('type') || '',
+        duration: item.getElementsByTagName('itunes:duration')?.[0]?.textContent || '',  // Updated this line
+        explicit: item.querySelector('itunes\\:explicit')?.textContent === 'true',
+        subtitle: item.getElementsByTagName('itunes:subtitle')?.[0]?.textContent || '',
+        episodeType: item.getElementsByTagName('itunes:episodeType')?.[0]?.textContent || ''
+      }
+    });
+
+
+
+    return parsedItems;
+  } catch (error) {
+    console.error('Error fetching RSS feed:', error);
+    return [];
+  }
+}*/
 
 
 
