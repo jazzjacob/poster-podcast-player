@@ -8,12 +8,10 @@ function Breadcrumbs({ list }: { list: {name: string, url: string}[] }) {
         {list.map((listItem, index) => (
           <>
             {index !== list.length - 1 ? (
-              <>
-                <li className={styles.listItem} key={`${listItem}-${index}`}>
-                  <Link className={styles.link} href={listItem.url}>{listItem.name}</Link >
-                </li>
-                <li className={styles.listItem} key={`${listItem}-${index}`}>/</li>
-              </>
+              <li key={`${listItem}-${index}`} className={styles.listItem}>
+                <Link className={styles.link} href={listItem.url}>{listItem.name}</Link>
+                <span className={styles.listSeparator}>/</span>
+              </li>
             ) : (
               <li
                 className={[styles.listItem, styles.currentPage].join(' ')}

@@ -17,7 +17,7 @@ async function PodcastSelector() {
             {!podcast.draft && (<SelectLink type="podcast" podcast={JSON.parse(JSON.stringify(podcast))}  />)}
           </Suspense>
         ))}
-        <p className={styles.infoText}>More podcasts coming soon.</p >
+        {/*<p className={styles.infoText}>More podcasts coming soon.</p>*/}
       </div >
     </div >
   );

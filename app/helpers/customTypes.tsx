@@ -33,6 +33,7 @@ export interface PodcastData {
   updatedAt: Date;
   draft: boolean;
   color?: string;
+  itunesId: string;
   description?: string;
   image?: string;
   year?: number;
@@ -149,7 +150,26 @@ export const nullEpisode: EpisodeData = {
   updatedAt: new Date('2024-07-10T12:34:56Z')
 };
 
+export const nullPodcast: PodcastData = {
+  id: "",
+  podcastName: "",
+  description: "",
+  image: "",
+  draft: true,
+  year: 0,
+  itunesId: "",
+  category: "",
+  host: "",
+  totalEpisodes: 0,
+  website: "",
+  episodes: [],
+  createdAt: new Date(),
+  updatedAt: new Date(),
+  color: ""
+};
+
 export const examplePodcastData: PodcastData = {
+  itunesId: "",
   id: "0",
   podcastName: "The Poster Gals",
   description: "A podcast about movie posters and shit",

@@ -1,29 +1,23 @@
 "use client"; // This is a client component 👈🏽
 
 import styles from "./page.module.css";
-// import usePreload from "./hooks/usePreload";
 import { useEffect, useState, useRef, useCallback } from "react";
-//import xml2js from "xml2js";
-//import Image from "next/image";
+
 
 import PosterGallery from "@/app/components/PosterGallery";
 import EditModePosterGallery from "./edit-mode/EditModePosterGallery";
 import EditModePosterView from "./edit-mode/EditModePosterView";
-import EditModeTimeForm from "./edit-mode/EditModeTimeForm";
 import EditModeTimestamps from "./edit-mode/EditModeTimestamps";
-import ReadDocumentComponent from "./ReadDocumentComponent";
 import ImageUploadComponent from "./edit-mode/ImageUploadComponent";
+import TitleSection from "./TitleSection";
 
 import {
   Timestamp,
   TimestampImage,
-  EpisodeData,
   EditModeData,
   EditModeTime,
-  OverlapDetails,
   defaultEditModeTime,
   defaultEditModeData,
-  nullEpisode,
   defaultExampleTimestamps,
   examplePodcastData,
   exampleEpisodeData,
@@ -33,45 +27,34 @@ import {
   generateId,
   checkOverlapWithExisitingTimestamp,
   checkOverlapWithNewTimestamp,
-  removeObjectFromArrayByKey,
   setGlobalStateFromFirebase,
   fetchAndSetPodcasts,
   updateCurrentEdit,
 } from "@/app/helpers/functions";
-import CreateDocumentComponent from "./CreateDocumentComponent";
 import CreatePodcastComponent from "./CreatePodcastComponent";
 import AddEpisodeComponent from "./AddEpisodeComponent";
-import AddTimestampComponent from "./AddTimestampComponent";
 import useStore from "../helpers/store";
 import {
-  addTimestampToEpisode,
   deleteTimestamp,
-  addTimestampIdToUploadedImage,
   addTimestamp,
   updateTimestamp,
 } from "@/app/firebase/firestoreOperations";
 import SelectPodcastComponent from "./SelectPodcastComponent";
 import SelectEpisodeComponent from "./SelectEpisodeComponent";
-import TitleSection from "./TitleSection";
+import Link from "next/link";
 
 export default function Home() {
-  // const [rssFeed, setRssFeed] = useState(null); Save for possible future use
   const [currentTime, setCurrentTime] = useState(-1);
   const [currentStartTime, setCurrentStartTime] = useState(-1);
   const [currentEndTime, setCurrentEndTime] = useState(-1);
   const [currentImages, setCurrentImages] = useState<TimestampImage[]>([]);
-  // const [episodeData, setEpisodeData] = useState<EpisodeData>(nullEpisode);
   const [editMode, setEditMode] = useState(false);
-  const [currentEditModeData, setCurrentEditModeData] =
-    useState<EditModeData>(defaultEditModeData);
+  const [currentEditModeData, setCurrentEditModeData] = useState<EditModeData>(defaultEditModeData);
   const [userIsEditing, setUserIsEditing] = useState(false);
   const [editModeTime, setEditModeTime] = useState(defaultEditModeTime);
 
-  const [exampleTimestamps, setExampleTimestamps] = useState(
-    defaultExampleTimestamps,
-  );
+  const [exampleTimestamps, setExampleTimestamps] = useState(defaultExampleTimestamps);
 
-  const [loading, setLoading] = useState(false);
   const [podcastId, setPodcastId] = useState<string>("");
   const [episodeId, setEpisodeId] = useState<string>("");
 
@@ -86,25 +69,9 @@ export default function Home() {
 
   const audioRef = useRef<HTMLAudioElement | null>(null); // Ensure audioRef is initialized with null
 
-  const updatePodcastState = useStore((state) => state.setPodcasts);
-  const setCurrentEpisode = useStore((state) => state.setCurrentEpisode);
-  const clearCurrentEpisode = useStore((state) => state.clearCurrentEpisode);
   const clearCurrentEdit = useStore((state) => state.clearCurrentEdit);
 
   const user = useStore((state) => state.user);
-
-  /*
-  useEffect(() => {
-    console.log("currentEditModeData: ", currentEditModeData);
-    if (currentEditModeData && currentEditModeData.startTime !== -1 && initialEdit && initialEdit.startTime === -1) {
-      console.log("SOMETHING HAS STARTED EDITING");
-      setInitialEdit(currentEdit);
-    } else if (currentEditModeData && currentEditModeData.startTime === -1 && initialEdit && initialEdit.startTime !== -1) {
-      console.log("Nothing is editing anymore...");
-      clearInitialEdit();
-    }
-  }, [currentEdit]);
-*/
 
   useEffect(() => {
     console.log("initialEdit in useEffect", initialEdit);
@@ -112,14 +79,12 @@ export default function Home() {
 
   useEffect(() => {
     const fetchData = async () => {
-      setLoading(true);
       try {
         // podcastId, episodeId
         setGlobalStateFromFirebase(podcastId, episodeId);
       } catch (error) {
         console.error("Error setting global :", error);
       } finally {
-        setLoading(false);
       }
     };
 
@@ -145,34 +110,6 @@ export default function Home() {
   useEffect(() => {
     console.log("current images: ", currentImages);
   }, [currentImages]);
-
-  // FETCH DATA FROM POSTER BOYS RSS FEED
-  // Save for possible future use
-  /*
-  useEffect(() => {
-    async function fetchData() {
-      const url = "https://feeds.libsyn.com/61238/rss";
-      const response = await fetch(url);
-      const xml = await response.text();
-
-      const parsedData: any = await new Promise((resolve, reject) => {
-        xml2js.parseString(xml, { trim: true }, (err, result) => {
-          if (err) {
-            reject(err);
-          } else {
-            resolve(result);
-          }
-        });
-      });
-
-      const items = parsedData.rss.channel[0].item;
-      //setRssFeed(items);
-      //console.log(items);
-    }
-
-    fetchData();
-  }, []);
-  */
 
   const updateEditModeTime = useCallback(
     (field: keyof EditModeTime, timeInSeconds: number) => {
@@ -303,60 +240,6 @@ export default function Home() {
     handleEditModeTimes,
     handleTimestampsIteration,
   ]);
-
-  /*
-  useEffect(() => {
-    const audioElement = audioRef.current;
-
-    const handleTimeUpdate = () => {
-      console.log("Updating time");
-      if (audioElement) {
-        const audioElementTime = Math.floor(audioElement.currentTime);
-        if (currentTime !== audioElementTime) {
-          setCurrentTime(audioElementTime);
-        }
-      }
-    };
-
-    if (audioElement) {
-      audioElement.addEventListener("timeupdate", handleTimeUpdate);
-    } else {
-      console.log("No audio element found");
-    }
-
-    return () => {
-      if (audioElement) {
-        audioElement.removeEventListener("timeupdate", handleTimeUpdate);
-      }
-    };
-  }, [currentTime]);*/
-
-  useEffect(() => {
-    async function fetchEpisodeData() {
-      try {
-        //const response = await fetch("/episodes.json");
-        //const data = await response.json();
-        //console.log("Data from the new fetch:");
-        //console.log(data);
-        //setEpisodeData(data.episodes[0]);
-        // Set timestamps from edit mode to episodeData
-      } catch (error) {
-        console.error("Failed to fetch episode data:", error);
-      }
-    }
-
-    fetchEpisodeData();
-  }, []);
-
-  /*useEffect(() => {
-    if (episodeData && episodeData.timestamps.length > 0 && episodeData.timestamps !== exampleTimestamps) {
-      console.log("EPISODE DATA: LOOK HERE");
-      setEpisodeData((prevEpisodeData) => ({
-        ...prevEpisodeData,
-        timestamps: exampleTimestamps
-      }));
-    }
-  }, [exampleTimestamps, episodeData.timestamps]);*/
 
   // USE EFFECTS FOR HELP IN DEVELOPMENT
 
@@ -524,14 +407,11 @@ export default function Home() {
               console.log("Yeah bitch I'm gonna update a timestamp here mate");
               console.log("initialEdit: ", initialEdit);
               handleUpdateTimestamp(updatedTimestamp);
-              //await updateTimestamp(currentPodcast.id, currentEpisode.id, currentEditModeData.timestampId, updatedTimestamp)
-              //await setGlobalStateFromFirebase(currentPodcast.id, currentEpisode.id);
             }
           }
           const updatedExampleTimestamps = exampleTimestamps.filter(
             (item) => item.id !== updatedTimestamp.id,
           );
-          // updatedExampleTimestamps.push(updatedTimestamp);
           setExampleTimestamps(updatedExampleTimestamps);
         } else {
           // Creating a new timestamp
@@ -552,7 +432,6 @@ export default function Home() {
           // Real save (CREATE TIMESTAMP) should happen here... only logging for now...
           if (currentPodcast && currentEpisode) {
             console.log("currentEpisode.id: ", currentEpisode.id);
-            //const timestampId = await addTimestampToEpisode(currentPodcast.id, currentEpisode.id, newTimestamp);
             await addTimestamp(
               currentPodcast.id,
               currentEpisode.id,
@@ -562,24 +441,11 @@ export default function Home() {
             // SET TIMESTAMPID TO UPLOADEDIMAGE.TIMESTAMPIDS[]
             // Get timestampId
             // Set timestampId to current uploadedImage.timestampId[]
-            //if (timestampId) {
-            //console.log("currentEditModeData.images", currentEditModeData.images);
-            /*
-              await addTimestampIdToUploadedImage(
-                currentPodcast.id,
-                currentEpisode.id,
-                timestampId,
-                uploadedImageId
-              )*/
-            //}
-            // await addTimestampIdToUploadedImage(currentPodcast.id, currentEpisode.id, timestampId, uploadedImage.id: string);
           } else {
             console.error(
               "Can't add timestamp to episode: currentPodcast or currentEpisode not saved",
             );
           }
-
-          //console.log(convertEditModeTimeToSeconds(editModeTime.startTime));
         }
 
         pauseAudio();
@@ -686,20 +552,7 @@ export default function Home() {
       );
       setGlobalStateFromFirebase(currentPodcast.id, currentEpisode.id);
       handleCancel();
-      //const deleted = await deleteTimestamp(podcastId, episodeId, timestampId);
-      /*if (deleted) {
-        setGlobalStateFromFirebase(podcastId, episodeId);
-        handleCancel();
-      }*/
     }
-
-    /*
-    console.log(currentEditModeData);
-    const arrayWithoutItem = removeObjectFromArrayByKey([...exampleTimestamps], "id", timestampId);
-    setExampleTimestamps(arrayWithoutItem);
-    console.log(arrayWithoutItem);
-    handleCancel();
-    */
   }
   if (!user) {
     return;
@@ -708,6 +561,19 @@ export default function Home() {
   return (
     <main className={styles.main}>
       {/* Admin component below*/}
+      {/*PODCASTS ARE DISPLAYED - START*/}
+      {podcasts && podcasts.length > 0 && (
+        <>
+          <SelectPodcastComponent
+            setPodcastId={setPodcastId}
+            setEpisodeId={setEpisodeId}
+          />
+        </>
+      )}
+      {/*PODCASTS ARE DISPLAYED - END*/}
+      {currentPodcast && <SelectEpisodeComponent />}
+      {/*<CreatePodcastComponent podcastData={examplePodcastData} />*/}
+      <Link style={{margin: '1rem 0', width: 'fit-content', textDecoration: 'underline'}} href='/admin/add-podcast'>Add podcast</Link>
       {user && currentPodcast && (
         <AddEpisodeComponent
           podcastId={currentPodcast.id}
@@ -727,7 +593,6 @@ export default function Home() {
           <button onClick={() => setEditMode(!editMode)}>
             {editMode ? "Turn off edit mode" : "Turn on edit mode"}
           </button>
-          <CreatePodcastComponent podcastData={examplePodcastData} />
           {podcastId && (
             <AddEpisodeComponent
               podcastId={podcastId}
@@ -737,23 +602,6 @@ export default function Home() {
         </div>
       )}
       {/* Admin component above*/}
-
-      <p className={styles.greetingText}>
-        Hello, this is <b>Poster Podcast Player</b>.
-      </p>
-
-      {/*PODCASTS ARE DISPLAYED - START*/}
-      {podcasts && podcasts.length > 0 && (
-        <>
-          <SelectPodcastComponent
-            setPodcastId={setPodcastId}
-            setEpisodeId={setEpisodeId}
-          />
-        </>
-      )}
-      {/*PODCASTS ARE DISPLAYED - END*/}
-
-      {currentPodcast && <SelectEpisodeComponent />}
 
       {/* Audio component below */}
       <audio
@@ -850,8 +698,6 @@ export default function Home() {
                   setUserIsEditing={setUserIsEditing}
                 />
                 <div>
-                  {/*<EditModeTimeForm timeType="startTime" currentEditModeData={currentEditModeData} editModeTime={editModeTime} currentTime={currentTime} setEditModeTime={setEditModeTime} setUserIsEditing={setUserIsEditing} /> */}
-                  {/*<EditModeTimeForm timeType="endTime" currentEditModeData={currentEditModeData} editModeTime={editModeTime} currentTime={currentTime} setEditModeTime={setEditModeTime} setUserIsEditing={setUserIsEditing} />*/}
                 </div>
                 <div className={styles.editModeButtonContainer}>
                   <button
@@ -932,10 +778,6 @@ export default function Home() {
           {/* EVERYTHING SHOULD BE ABOVE HERE*/}
         </div>
       )}
-      {/*<ReadDocumentComponent idToFetch="KqiCQr3O4hucEQvbupKL" />*/}
-      {/*<AddTimestampComponent podcastId="KqiCQr3O4hucEQvbupKL" episodeId="LynfNei4oTT5RC9tBiou" />*/}
-      {/*<CreatePodcastComponent podcastData={examplePodcastData} />*/}
-      {/*<AddEpisodeComponent podcastId="KqiCQr3O4hucEQvbupKL" episodeData={exampleEpisodeData} />*/}
     </main>
   );
 }

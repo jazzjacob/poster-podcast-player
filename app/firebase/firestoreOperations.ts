@@ -3,6 +3,17 @@ import { collection, addDoc, updateDoc, deleteDoc, doc, getDoc, getDocs, query, 
 import { PodcastData, EpisodeData, Timestamp, UploadedImage, EditModeData, TimestampImage } from '../helpers/customTypes';
 import { createPodcastDirectoryInStorage, createEpisodeDirectoryInStorage } from './storageOperations';
 
+
+export async function findSavedPodcast(id: string) {
+  const allPodcasts = await fetchAllPodcasts();
+  console.log('allPods');
+  console.log(allPodcasts);
+  const podcast = allPodcasts.find((episode) => episode.itunesId == id);
+  console.log('episode')
+  console.log(podcast)
+  return podcast;
+}
+
 // Create
 export async function createDocument(data: any): Promise<void> {
   try {

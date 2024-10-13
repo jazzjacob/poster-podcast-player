@@ -6,14 +6,17 @@ import Link from 'next/link';
 
 import styles from './SelectLink.module.css';
 
-function SelectLink({ type, podcast, episode }: { type: "podcast" | "episode", podcast: PodcastData, episode?: EpisodeData }) {
+function SelectLink({ type, podcast, episode }: { type: "podcast" | "episode", podcast: any, episode?: any }) {
   const [isHovered, setIsHovered] = useState(false);
+
+
   let url = "";
   if (type == "podcast") {
-    url = `/podcasts/${podcast.id}`;
+    url = `/podcasts/${podcast.itunesId}`;
   } else {
     if (episode) {
-       url = `/podcasts/${podcast.id}/episodes/${episode.id}`;
+      const guid = episode.guid[`#text`] || episode.guid;
+      url = `/podcasts/${podcast.collectionId || podcast.itunesId}/episodes/${encodeURIComponent(guid)}`;
     }
   }
 
@@ -25,13 +28,17 @@ function SelectLink({ type, podcast, episode }: { type: "podcast" | "episode", p
     setIsHovered(false);
   };
 
+  function handleClick() {
+    console.log(podcast);
+  }
+
   return (
     <>
       <Link
+        onClick={handleClick}
         href={url}
-        scroll={false}
         className={styles.link}
-        style={{ color: isHovered ? podcast.color : 'inherit' }} // Apply hover color dynamically
+        style={{ color: isHovered ? podcast.color || 'orange' : 'inherit' }} // Apply hover color dynamically
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
       >

@@ -19,6 +19,10 @@
     line-height: 1;
 }
 
+.listSeparator {
+    margin-left: 0.5rem;
+}
+
 .link:hover {
     color: orange;
 }

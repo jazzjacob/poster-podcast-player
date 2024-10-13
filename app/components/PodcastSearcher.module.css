@@ -1,0 +1,103 @@
+.container {
+    color: black;
+}
+
+.searchResultsList {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.searchResultItem {
+    display: flex;
+    flex-direction: column;
+    list-style: none;
+    border: 1px solid lightgray;
+}
+
+.podcastImage {
+    height: 70px;
+}
+
+.titleSection:hover {
+    cursor: pointer;
+    background-color: whitesmoke;
+}
+
+.titleSection {
+    padding: 0rem 0;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.episodes {
+    margin: 1rem 0;
+    font-size: 0.8rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}
+
+.episode {
+    list-style: none;
+    cursor: default;
+    width: fit-content;
+}
+
+.episode button {
+    border: none;
+    background-color: white;
+    font-family: inherit;
+}
+
+.episode button:hover {
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.podcastName {
+    margin-left: 0.5rem;
+}
+
+.searchTitle {
+    margin-bottom: 1rem;
+}
+
+.searchForm {
+    display: flex;
+    gap: 0.3rem;
+}
+
+.textInput {
+    border-radius: 0;
+    border: 1px solid black;
+    height: 2rem;
+    padding: 0.5rem;
+    font-family: inherit;
+    width: 15rem;
+}
+
+.textInput:focus {
+    outline: 0.5px solid black;
+}
+
+.searchButton {
+    height: 2rem;
+    background-color: black;
+    border: none;
+    color: white;
+    font-family: inherit;
+    padding: 0 1rem;
+}
+
+.searchButton:hover {
+    cursor: pointer;
+    background-color: orange;
+}
+
+.noFoundMessage {
+    margin-top: 1rem;
+    color: gray;
+}
