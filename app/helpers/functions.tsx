@@ -117,6 +117,7 @@ export async function fetchRSSFeed(url: string): Promise<any[]> {
         enclosureUrl: item.enclosure?.url || '',
         enclosureLength: item.enclosure?.length || '',
         enclosureType: item.enclosure?.type || '',
+        contentEncoded: item['content:encoded'] || '',
         duration: item['itunes:duration'] || '',
         explicit: item['itunes:explicit'] === 'true',
         subtitle: item['itunes:subtitle'] || '',

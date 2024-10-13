@@ -1,0 +1,25 @@
+.podcastName {
+    font-size: 1.2rem;
+    color: gray;
+}
+
+.hr {
+    margin-top: 1rem;
+    border: 0.5px solid lightgray;
+}
+
+.description {
+    margin-top: 1rem;
+}
+
+.description p {
+    margin-bottom: 0.8rem;
+}
+
+.description a {
+    text-decoration: underline;
+}
+
+.description a:hover {
+    color: orange;
+}

@@ -21,7 +21,7 @@ export default async function Page({
     <>
       <Hero />
       <PodcastSelector />
-        <div style={{ padding: '1rem' }}>
+      <div style={{ padding: '1rem' }}>
         <PodcastSearcher />
       </div>
     </>

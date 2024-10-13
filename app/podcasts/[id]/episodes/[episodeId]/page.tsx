@@ -9,6 +9,8 @@ import PosterView from '@/app/components/PosterView';
 import TitleSection from '@/app/components/TitleSection';
 import Breadcrumbs from '@/app/components/Breadcrumbs';
 import { fetchData, fetchEpisodeByGUID } from '@/app/helpers/functions';
+import PodcastImageSection from '@/app/components/PodcastImageSection';
+import EpisodeInformation from '@/app/components/EpisodeInformation';
 
 function findSavedEpisode(podcast: any, episodeId: string) {
   const episode = podcast.episodes.find((episode: any) => episode.guid == episodeId);
@@ -27,21 +29,8 @@ export default async function EpisodePage({ params }: { params: { id: string, ep
   if (savedPodcast) {
     savedEpisode = findSavedEpisode(savedPodcast, decodeURIComponent(params.episodeId));
   }
-
-  console.log('saved episode');
-  console.log(savedEpisode);
-  console.log(podcast);
-  console.log(params.episodeId);
   let episode = await fetchEpisodeByGUID(podcast.feedUrl, decodeURIComponent(params.episodeId));
-  console.log('Episode:');
-  console.log(episode);
-  //const episode = await fetchEpisode(params.id, params.episodeId);
-
-  /*
-  let episode = '';
-  if (!episode) {
-    notFound(); // Handle 404 if the episode is not found
-  }*/
+  //console.log(episode);
 
   return (
     <>
@@ -60,26 +49,15 @@ export default async function EpisodePage({ params }: { params: { id: string, ep
           </div>
         </>
       ) : (
-        <div style={{ padding: '1rem' }}>
-          <Breadcrumbs list={[{ name: 'Podcasts', url: '/' }, { name: podcast?.collectionName || "", url: `/podcasts/${podcast?.collectionId}` }, { name: episode.title, url: ''}] } />
-          <p>{episode.title}</p>
-          <AudioPlayer src={episode.enclosureUrl} />
+        <>
+          <PodcastImageSection podcast={podcast} episode={episode} />
+          <div style={{ padding: '1rem' }}>
+            <Breadcrumbs list={[{ name: 'Podcasts', url: '/' }, { name: podcast?.collectionName || "", url: `/podcasts/${podcast?.collectionId}` }, { name: episode.title, url: ''}] } />
+            <AudioPlayer src={episode.enclosureUrl} />
+            <EpisodeInformation podcast={podcast} episode={episode} />
         </div>
+        </>
       )}
-    {/*
-    <>
-      <PosterView
-        episode={JSON.parse(JSON.stringify(episode))}
-      />
-      <div style={{ padding: '1rem' }}>
-        <AudioPlayer src={episode.url} />
-        <PosterGallery
-          podcastId={params.id}
-          episodeId={params.episodeId}
-        />
-      </div>
-    </>
-    */}
     </>
   );
 }
