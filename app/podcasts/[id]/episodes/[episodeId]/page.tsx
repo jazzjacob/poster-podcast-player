@@ -46,6 +46,7 @@ export default async function EpisodePage({ params }: { params: { id: string, ep
               podcastId={savedPodcast?.id || ''}
               episodeId={savedEpisode.id}
             />
+            <EpisodeInformation podcast={podcast} episode={episode} />
           </div>
         </>
       ) : (

@@ -41,8 +41,8 @@ export default async function PodcastPage({ params }: { params: { id: string } }
       <div className={styles.podcastContainer}>
         <Breadcrumbs list={[{ name: 'Podcasts', url: '/' }, {name: podcast.collectionName, url: ""}] } />
         {savedPodcast && (
-          <div style={{ marginBottom: '1rem' }}>
-            <h2>Saved episodes:</h2>
+          <div style={{ marginBottom: '3rem' }}>
+            <h2>Episodes with images:</h2>
             <EpisodeList podcast={convertedSavedPodcast} episodes={convertedSavedPodcast.episodes} />
           </div>
         )}
