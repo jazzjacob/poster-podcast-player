@@ -27,8 +27,8 @@ const AddEpisodeComponent: React.FC<CreatePodcastComponentProps> = ({ podcastId,
   };
 
   return (
-    <div style={{ margin: "2rem 0" }}>
-      <h2>Add episode</h2>
+    <div>
+      {/*<h2>Add episode</h2>*/}
       <button onClick={handleAddEpisode} disabled={loading}>
         {loading ? 'Creating...' : 'Add episode'}
       </button>

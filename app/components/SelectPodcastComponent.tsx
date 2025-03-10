@@ -28,7 +28,7 @@ const SelectPodcastComponent: React.FC<CreatePodcastComponentProps> = ({ setPodc
   }
 
   return (
-    <div style={{ margin: "2rem 0" }}>
+    <div style={{ marginBottom: "1rem" }}>
       <h2>Select podcast</h2>
       <div style={{ display: "flex", gap: "1rem" }}>
         {podcasts && podcasts.map((podcast, index) => (

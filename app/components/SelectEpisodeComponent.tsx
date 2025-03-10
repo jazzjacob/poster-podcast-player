@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { EpisodeData, PodcastData } from '../helpers/customTypes';
+import { EpisodeData, PodcastData, exampleEpisodeData } from '../helpers/customTypes';
 import useStore from '../helpers/store';
 import { fetchEpisode } from '../firebase/firestoreOperations';
+import AddEpisodeComponent from './AddEpisodeComponent';
 
 interface CreatePodcastComponentProps {
   podcastId: string;
@@ -42,6 +43,12 @@ const SelectEpisodeComponent = () => {
               {episode.title}
             </button>
           ))}
+          </div>
+          <div style={{ marginTop: "1rem" }}>
+            <AddEpisodeComponent
+              podcastId={currentPodcast.id}
+              episodeData={exampleEpisodeData}
+            />
           </div>
         </>
       )}

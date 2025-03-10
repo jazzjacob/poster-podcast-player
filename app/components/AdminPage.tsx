@@ -3,7 +3,6 @@
 import styles from "./page.module.css";
 import { useEffect, useState, useRef, useCallback } from "react";
 
-
 import PosterGallery from "@/app/components/PosterGallery";
 import EditModePosterGallery from "./edit-mode/EditModePosterGallery";
 import EditModePosterView from "./edit-mode/EditModePosterView";
@@ -32,7 +31,6 @@ import {
   updateCurrentEdit,
 } from "@/app/helpers/functions";
 import CreatePodcastComponent from "./CreatePodcastComponent";
-import AddEpisodeComponent from "./AddEpisodeComponent";
 import useStore from "../helpers/store";
 import {
   deleteTimestamp,
@@ -559,7 +557,8 @@ export default function Home() {
   }
 
   return (
-    <main className={styles.main}>
+    <section className={styles.main}>
+      <Link style={{margin: '1rem 0', width: 'fit-content', textDecoration: 'underline'}} href='/admin/add-podcast'>Add podcast</Link>
       {/* Admin component below*/}
       {/*PODCASTS ARE DISPLAYED - START*/}
       {podcasts && podcasts.length > 0 && (
@@ -571,15 +570,10 @@ export default function Home() {
         </>
       )}
       {/*PODCASTS ARE DISPLAYED - END*/}
+
       {currentPodcast && <SelectEpisodeComponent />}
       {/*<CreatePodcastComponent podcastData={examplePodcastData} />*/}
-      <Link style={{margin: '1rem 0', width: 'fit-content', textDecoration: 'underline'}} href='/admin/add-podcast'>Add podcast</Link>
-      {user && currentPodcast && (
-        <AddEpisodeComponent
-          podcastId={currentPodcast.id}
-          episodeData={exampleEpisodeData}
-        />
-      )}
+
       {podcasts && podcasts.length > 0 && user && currentEpisode && (
         <div style={{ backgroundColor: "lightgray", padding: "2rem" }}>
           <h2>Admin stuff</h2>
@@ -593,39 +587,37 @@ export default function Home() {
           <button onClick={() => setEditMode(!editMode)}>
             {editMode ? "Turn off edit mode" : "Turn on edit mode"}
           </button>
-          {podcastId && (
-            <AddEpisodeComponent
-              podcastId={podcastId}
-              episodeData={exampleEpisodeData}
-            />
-          )}
         </div>
       )}
       {/* Admin component above*/}
 
       {/* Audio component below */}
-      <audio
-        ref={audioRef}
-        controls
-        src={currentEpisode ? currentEpisode.url : ""}
-        preload="auto"
-      ></audio>
-      <div className={styles.audioButtonContainer}>
-        <button
-          disabled={currentEpisode ? false : true}
-          className={styles.skipButton}
-          onClick={() => timelineJump(-5)}
-        >
-          Back 5 seconds
-        </button>
-        <button
-          disabled={currentEpisode ? false : true}
-          className={styles.skipButton}
-          onClick={() => timelineJump(5)}
-        >
-          Skip 5 seconds
-        </button>
-      </div>
+      {currentEpisode && (
+        <>
+          <audio
+            ref={audioRef}
+            controls
+            src={currentEpisode ? currentEpisode.url : ""}
+            preload="auto"
+          ></audio>
+          <div className={styles.audioButtonContainer}>
+            <button
+              disabled={currentEpisode ? false : true}
+              className={styles.skipButton}
+              onClick={() => timelineJump(-5)}
+            >
+              Back 5 seconds
+            </button>
+            <button
+              disabled={currentEpisode ? false : true}
+              className={styles.skipButton}
+              onClick={() => timelineJump(5)}
+            >
+              Skip 5 seconds
+            </button>
+          </div>
+        </>
+      )}
       {/* Audio component above */}
 
       {currentEpisode && (
@@ -778,6 +770,6 @@ export default function Home() {
           {/* EVERYTHING SHOULD BE ABOVE HERE*/}
         </div>
       )}
-    </main>
+    </section>
   );
 }

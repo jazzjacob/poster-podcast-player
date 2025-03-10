@@ -1,5 +1,7 @@
+/*
 import DataDownloader from '../components/DataDownloader';
 import LocalEpisodeUploader from '../components/LocalEpisodeUploader';
+*/
 import AdminPage from '../components/AdminPage'
 import AuthComponent from '../components/AuthComponent';
 
@@ -14,6 +16,7 @@ function Page() {
         <DataDownloader />
         */
       }
+      <h1 style={{ margin: "1rem" }}>Admin</h1>
       <AuthComponent />
       <AdminPage />
     </>
