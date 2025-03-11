@@ -16,7 +16,6 @@ function Page() {
         <DataDownloader />
         */
       }
-      <h1 style={{ margin: "1rem" }}>Admin</h1>
       <AuthComponent />
       <AdminPage />
     </>

@@ -558,7 +558,6 @@ export default function Home() {
 
   return (
     <section className={styles.main}>
-      <Link style={{margin: '1rem 0', width: 'fit-content', textDecoration: 'underline'}} href='/admin/add-podcast'>Add podcast</Link>
       {/* Admin component below*/}
       {/*PODCASTS ARE DISPLAYED - START*/}
       {podcasts && podcasts.length > 0 && (
@@ -575,16 +574,19 @@ export default function Home() {
       {/*<CreatePodcastComponent podcastData={examplePodcastData} />*/}
 
       {podcasts && podcasts.length > 0 && user && currentEpisode && (
-        <div style={{ backgroundColor: "lightgray", padding: "2rem" }}>
-          <h2>Admin stuff</h2>
-          {podcastId && episodeId && (
-            <button
-              onClick={() => setGlobalStateFromFirebase(podcastId, episodeId)}
-            >
-              Set Global State
-            </button>
-          )}
-          <button onClick={() => setEditMode(!editMode)}>
+        <div style={{ padding: "1rem 0" }}>
+          <button
+            onClick={() => setEditMode(!editMode)}
+            style={{
+              border: "none",
+              fontFamily: "inherit",
+              padding: "0.5rem 1rem",
+              fontWeight: "bold",
+              fontSize: "0.9rem",
+              backgroundColor: editMode ? "pink" : "greenyellow",
+              color: editMode ? "red" : "darkgreen"
+            }}
+          >
             {editMode ? "Turn off edit mode" : "Turn on edit mode"}
           </button>
         </div>

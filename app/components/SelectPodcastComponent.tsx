@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { addEpisode } from '../firebase/firestoreOperations';
 import { EpisodeData, PodcastData } from '../helpers/customTypes';
 import useStore from '../helpers/store';
+import Link from 'next/link';
 
 interface CreatePodcastComponentProps {
   setPodcastId: React.Dispatch<React.SetStateAction<string>>;
@@ -16,8 +17,11 @@ const SelectPodcastComponent: React.FC<CreatePodcastComponentProps> = ({ setPodc
   const podcasts = useStore((state) => state.podcasts);
   const setPodcast = useStore((state) => state.setPodcast);
   const [selectedIndex, setSelectedIndex] = useState(-1);
+  const currentPodcast = useStore((state) => state.podcast);
 
   function handlePodcastClick(podcast: PodcastData, index: number) {
+    console.log(`Current episode: ${currentEpisode}`);
+    console.log(`Podcast ID: ${podcast.id}`);
     if (currentEpisode) {
       clearCurrentEpisode();
     }
@@ -28,20 +32,29 @@ const SelectPodcastComponent: React.FC<CreatePodcastComponentProps> = ({ setPodc
   }
 
   return (
-    <div style={{ marginBottom: "1rem" }}>
-      <h2>Select podcast</h2>
-      <div style={{ display: "flex", gap: "1rem" }}>
-        {podcasts && podcasts.map((podcast, index) => (
-          <button
-            key={`${podcast.id}-${index}`}
-            onClick={() => handlePodcastClick(podcast, index)}
-            disabled={selectedIndex == index}
-          >
-            {podcast.podcastName}
-          </button>
-        ))}
+    !currentPodcast && (
+      <div style={{ marginBottom: "1rem" }}>
+        <h2 style={{ marginBottom: "0.3rem" }}>Podcasts</h2>
+        <div style={{ display: "flex", gap: "1rem", marginBottom: "1rem" }}>
+          {podcasts && podcasts.map((podcast, index) => (
+            <button
+              style={{
+                border: "none",
+                padding: "0.5rem 0.8rem",
+                backgroundColor: "dodgerblue",
+                color: "white",
+                fontFamily: "inherit"
+              }}
+              key={`${podcast.id}-${index}`}
+              onClick={() => handlePodcastClick(podcast, index)}
+            >
+              {podcast.podcastName}
+            </button>
+          ))}
+        </div>
+        <Link style={{ width: 'fit-content', textDecoration: 'underline' }} href='/admin/add-podcast'>Add podcast</Link>
       </div >
-    </div >
+    )
   );
 };
 

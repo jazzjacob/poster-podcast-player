@@ -13,7 +13,9 @@ const SelectEpisodeComponent = () => {
   const currentPodcast = useStore((state) => state.podcast);
   const currentEpisode = useStore((state) => state.currentEpisode);
   const setCurrentEpisode = useStore((state) => state.setCurrentEpisode);
+  const clearPodcast = useStore((state) => state.clearPodcast);
   const [selectedIndex, setSelectedIndex] = useState(-1);
+  const clearCurrentEpisode = useStore((state) => state.clearCurrentEpisode);
 
   async function handleEpisodeClick(episode: EpisodeData, index: number) {
 
@@ -28,17 +30,29 @@ const SelectEpisodeComponent = () => {
     }
   }
 
+  function handleBackButton() {
+    console.log("YOYO");
+    clearPodcast();
+  };
+
   return (
-    <div style={{ margin: "2rem 0" }}>
-      {currentPodcast && currentPodcast.episodes && (
+    <div>
+      {currentPodcast && currentPodcast.episodes && !currentEpisode && (
       <>
-        <h2>Select episode</h2>
+        <h2 style={{ marginBottom: "0.3rem" }}><span style={{ color: "darkgray" }}><a href="#" onClick={handleBackButton}>Podcasts</a> /</span> {currentPodcast.podcastName}</h2>
         <div style={{ display: "flex", gap: "1rem" }}>
           {currentPodcast.episodes.map((episode, index) => (
             <button
               key={`${episode.id}-${index}`}
               onClick={() => handleEpisodeClick(episode, index)}
               disabled={currentEpisode !== null && (selectedIndex == index)}
+              style={{
+                border: "none",
+                backgroundColor: "orange",
+                color: "white",
+                padding: "0.5rem 0.8rem",
+                fontFamily: "inherit"
+              }}
             >
               {episode.title}
             </button>
@@ -51,6 +65,10 @@ const SelectEpisodeComponent = () => {
             />
           </div>
         </>
+      )}
+      {currentEpisode && (
+        <h2 style={{ marginBottom: "0.3rem" }}>
+          <span style={{ color: "darkgray" }}><a href="#" onClick={handleBackButton}>Podcasts</a> / <a onClick={clearCurrentEpisode} href="#">{currentPodcast?.podcastName}</a> / </span>{currentEpisode.title}</h2>
       )}
     </div>
   );

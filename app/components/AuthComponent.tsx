@@ -51,11 +51,14 @@ const AuthComponent: React.FC = () => {
   return (
     <div className={styles.container}>
       {user ? (
-        <button
-          style={{ margin: "0 1rem" }}
-          onClick={() =>  user ? handleSignOut() : handleSignIn() }>
-        {user ? 'Sign Out' : 'Sign In'}
-        </button>
+        <div style={{ width: "100%", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <h1>Admin</h1>
+          <button
+            style={{ fontFamily: "inherit", height: "fit-content", padding: "0.3rem 0.5rem", backgroundColor: "orange", color: "white", border: "none" }}
+            onClick={() =>  user ? handleSignOut() : handleSignIn() }>
+          {user ? 'Sign Out' : 'Sign In'}
+          </button>
+        </div>
       ) : (
         <>
           <div className={styles.inputs}>
