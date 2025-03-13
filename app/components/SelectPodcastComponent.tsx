@@ -3,6 +3,7 @@ import { addEpisode } from '../firebase/firestoreOperations';
 import { EpisodeData, PodcastData } from '../helpers/customTypes';
 import useStore from '../helpers/store';
 import Link from 'next/link';
+import Button from './Button';
 
 interface CreatePodcastComponentProps {
   setPodcastId: React.Dispatch<React.SetStateAction<string>>;
@@ -51,6 +52,7 @@ const SelectPodcastComponent: React.FC<CreatePodcastComponentProps> = ({ setPodc
               {podcast.podcastName}
             </button>
           ))}
+          <Button type={"main"} title="Hello there" />
         </div>
         <Link style={{ width: 'fit-content', textDecoration: 'underline' }} href='/admin/add-podcast'>Add podcast</Link>
       </div >

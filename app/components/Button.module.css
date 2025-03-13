@@ -1,0 +1,10 @@
+.button {
+    border: none;
+    padding: 0.5rem 0.8rem;
+    font-family: inherit;
+}
+
+
+.button:hover {
+    cursor: pointer;
+}
