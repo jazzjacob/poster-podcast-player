@@ -8,3 +8,21 @@
 .button:hover {
     cursor: pointer;
 }
+
+.default {
+    background-color: lightgray;
+    color: black;
+}
+
+.default:hover {
+    background-color: darkgray;
+}
+
+.main {
+    background-color: dodgerblue;
+    color: white;
+}
+
+.main:hover {
+    background-color: blue;
+}

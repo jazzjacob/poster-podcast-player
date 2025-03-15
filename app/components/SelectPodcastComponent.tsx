@@ -38,21 +38,13 @@ const SelectPodcastComponent: React.FC<CreatePodcastComponentProps> = ({ setPodc
         <h2 style={{ marginBottom: "0.3rem" }}>Podcasts</h2>
         <div style={{ display: "flex", gap: "1rem", marginBottom: "1rem" }}>
           {podcasts && podcasts.map((podcast, index) => (
-            <button
-              style={{
-                border: "none",
-                padding: "0.5rem 0.8rem",
-                backgroundColor: "dodgerblue",
-                color: "white",
-                fontFamily: "inherit"
-              }}
+            <Button
               key={`${podcast.id}-${index}`}
               onClick={() => handlePodcastClick(podcast, index)}
             >
               {podcast.podcastName}
-            </button>
+            </Button>
           ))}
-          <Button type={"main"} title="Hello there" />
         </div>
         <Link style={{ width: 'fit-content', textDecoration: 'underline' }} href='/admin/add-podcast'>Add podcast</Link>
       </div >

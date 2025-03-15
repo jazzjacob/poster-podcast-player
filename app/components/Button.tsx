@@ -1,26 +1,13 @@
 import styles from './Button.module.css';
 
-function Button({ title, type }: { title: string, type: string }) {
-
-  let style;
-  if (type == "main") {
-    style = {
-      backgroundColor: "dodgerblue",
-      color: "white",
-    }
-  } else {
-    style = {
-      backgroundColor: "lightgray",
-      color: "black"
-    }
-  }
+function Button({ children, variant = "default", onClick }: { children: React.ReactNode, variant?: string, onClick: () => void }) {
 
   return (
     <button
-      className={styles.button}
-      style={style}
+      className={`${styles.button} ${styles[variant]}`}
+      onClick={onClick}
     >
-      {title}
+      {children}
     </button>
   );
 }
