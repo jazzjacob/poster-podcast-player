@@ -562,10 +562,7 @@ export default function Home() {
       {/*PODCASTS ARE DISPLAYED - START*/}
       {podcasts && podcasts.length > 0 && (
         <>
-          <SelectPodcastComponent
-            setPodcastId={setPodcastId}
-            setEpisodeId={setEpisodeId}
-          />
+          <SelectPodcastComponent />
         </>
       )}
       {/*PODCASTS ARE DISPLAYED - END*/}

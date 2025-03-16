@@ -12,7 +12,7 @@ const SelectEpisodeComponent = () => {
   const setCurrentEpisode = useStore((state) => state.setCurrentEpisode);
   const clearPodcast = useStore((state) => state.clearPodcast);
   const clearCurrentEpisode = useStore((state) => state.clearCurrentEpisode);
-  const { removeQueryParam } = useQueryParams();
+  const { removeQueryParam, setQueryParam, removeQueryParams } = useQueryParams();
 
   async function handleEpisodeClick(episode: EpisodeData, index: number) {
     console.log(episode.title);
@@ -20,22 +20,29 @@ const SelectEpisodeComponent = () => {
       const episodeData = await fetchEpisode(currentPodcast.id, episode.id);
       if (episodeData) {
         setCurrentEpisode(episodeData);
-        console.log("Setting current episode with data: ", episodeData);
+        setQueryParam("episode", episode.id);
       }
     }
   }
 
-  function handleBackButton() {
+  function backToPodcasts() {
+    clearCurrentEpisode();
     clearPodcast();
-    removeQueryParam("podcast");
+    removeQueryParams(["episode", "podcast"]);
+    console.log("This should be first");
   };
+
+  function backToEpisodes() {
+    removeQueryParam("episode");
+    clearCurrentEpisode();
+  }
 
 
   return (
     <div>
       {currentPodcast && currentPodcast.episodes && !currentEpisode && (
       <>
-        <h2 style={{ marginBottom: "0.3rem" }}><span style={{ color: "darkgray" }}><a href="#" onClick={handleBackButton}>Podcasts</a> /</span> {currentPodcast.podcastName}</h2>
+        <h2 style={{ marginBottom: "0.3rem" }}><span style={{ color: "darkgray" }}><a href="#" onClick={backToPodcasts}>Podcasts</a> /</span> {currentPodcast.podcastName}</h2>
         <div style={{ display: "flex", gap: "1rem" }}>
           {currentPodcast.episodes.map((episode, index) => (
             <Button
@@ -56,7 +63,7 @@ const SelectEpisodeComponent = () => {
       )}
       {currentEpisode && (
         <h2 style={{ marginBottom: "0.3rem" }}>
-          <span style={{ color: "darkgray" }}><a href="#" onClick={handleBackButton}>Podcasts</a> / <a onClick={clearCurrentEpisode} href="#">{currentPodcast?.podcastName}</a> / </span>{currentEpisode.title}</h2>
+          <span style={{ color: "darkgray" }}><a href="#" onClick={backToPodcasts}>Podcasts</a> / <a onClick={backToEpisodes} href="#">{currentPodcast?.podcastName}</a> / </span>{currentEpisode.title}</h2>
       )}
     </div>
   );

@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { PodcastData } from '../helpers/customTypes';
 import useStore from '../helpers/store';
 import Button from './Button';
-import { useQueryParams, usePodcastFromUrl } from "../helpers/urlHelpers";
+import { useQueryParams, usePodcastFromUrl, usePodcastAndEpisodeFromUrl } from "../helpers/urlHelpers";
 
 const SelectPodcastComponent = () => {
   const currentEpisode = useStore((state) => state.currentEpisode);
@@ -14,7 +14,8 @@ const SelectPodcastComponent = () => {
   const currentPodcast = useStore((state) => state.podcast);
 
   const { setQueryParam } = useQueryParams();
-  usePodcastFromUrl();
+  /*usePodcastFromUrl();*/
+  usePodcastAndEpisodeFromUrl();
 
   function handlePodcastClick(podcast: PodcastData) {
     if (currentEpisode) {

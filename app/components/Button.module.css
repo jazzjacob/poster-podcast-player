@@ -10,12 +10,12 @@
 }
 
 .default {
-    background-color: lightgray;
-    color: black;
+    background-color: orange;
+    color: white;
 }
 
 .default:hover {
-    background-color: darkgray;
+    background-color: darkorange;
 }
 
 .main {

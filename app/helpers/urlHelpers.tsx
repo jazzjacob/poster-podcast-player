@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { notFound, usePathname, useRouter, useSearchParams } from "next/navigation";
 import useStore from "./store";
 
 /**
@@ -32,7 +32,18 @@ export const useQueryParams = () => {
     router.push(params.toString() ? `${pathname}?${params.toString()}` : pathname);
   };
 
-  return { setQueryParam, removeQueryParam };
+  const removeQueryParams = (keys: string[]) => {
+    const params = new URLSearchParams(searchParams.toString());
+
+    // Remove each specified key from the search params
+    keys.forEach((key) => params.delete(key));
+
+    // Update the URL: If no params remain, remove "?"
+    router.push(params.toString() ? `${pathname}?${params.toString()}` : pathname);
+  };
+
+
+  return { setQueryParam, removeQueryParam, removeQueryParams };
 };
 
 /**
@@ -53,4 +64,38 @@ export const usePodcastFromUrl = () => {
       }
     }
   }, [searchParams, podcasts, setPodcast]);
+};
+
+/**
+ * Hook that syncs the selected podcast and episode from the URL to Zustand state
+ */
+export const usePodcastAndEpisodeFromUrl = () => {
+  const searchParams = useSearchParams();
+  const setPodcast = useStore((state) => state.setPodcast);
+  const podcasts = useStore((state) => state.podcasts);
+  const setEpisode = useStore((state) => state.setCurrentEpisode);
+  const episodes = useStore((state) => state.podcast?.episodes);
+  const clearPodcast = useStore((state) => state.clearPodcast);
+  const clearEpisode = useStore((state) => state.clearCurrentEpisode);
+
+  useEffect(() => {
+    const podcastIdFromUrl = searchParams.get("podcast");
+    const episodeIdFromUrl = searchParams.get("episode");
+
+    if (podcastIdFromUrl) {
+      const foundPodcast = podcasts.find((p) => p.id === podcastIdFromUrl);
+      if (foundPodcast) {
+        setPodcast(foundPodcast);
+      }
+    } else {
+      clearPodcast(); // Clear Zustand state if no podcast param
+    }
+
+    if (episodeIdFromUrl) {
+      const foundEpisode = episodes?.find((e) => e.id === episodeIdFromUrl);
+      if (foundEpisode) setEpisode(foundEpisode);
+    } else {
+      clearEpisode(); // Clear Zustand state if no episode param
+    }
+  }, [searchParams, podcasts, episodes, setPodcast, setEpisode, clearPodcast, clearEpisode]);
 };
