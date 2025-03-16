@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { addEpisode } from '../firebase/firestoreOperations';
 import { EpisodeData, PodcastData } from '../helpers/customTypes';
 import useStore from '../helpers/store';
 import Link from 'next/link';
 import Button from './Button';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
 interface CreatePodcastComponentProps {
   setPodcastId: React.Dispatch<React.SetStateAction<string>>;
@@ -20,7 +21,34 @@ const SelectPodcastComponent: React.FC<CreatePodcastComponentProps> = ({ setPodc
   const [selectedIndex, setSelectedIndex] = useState(-1);
   const currentPodcast = useStore((state) => state.podcast);
 
-  function handlePodcastClick(podcast: PodcastData, index: number) {
+  const pathname = usePathname();
+  const router = useRouter();
+  const searchParams = useSearchParams()
+
+  useEffect(() => {
+    const podcastIdFromUrl = searchParams.get("podcast"); // Retrieve podcast ID from URL
+
+    if (podcastIdFromUrl) {
+      const foundPodcast = podcasts.find((p) => p.id === podcastIdFromUrl);
+      if (foundPodcast) {
+        setPodcast(foundPodcast); // Update Zustand store
+      }
+    }
+  }, [searchParams, podcasts, setPodcast]);
+
+  // Get a new searchParams string by merging the current
+  // searchParams with a provided key/value pair
+  const createQueryString = useCallback(
+    (name: string, value: string) => {
+      const params = new URLSearchParams(searchParams.toString())
+      params.set(name, value)
+
+      return params.toString()
+    },
+    [searchParams]
+  )
+
+  function handlePodcastClick(podcast: PodcastData) {
     console.log(`Current episode: ${currentEpisode}`);
     console.log(`Podcast ID: ${podcast.id}`);
     if (currentEpisode) {
@@ -29,7 +57,6 @@ const SelectPodcastComponent: React.FC<CreatePodcastComponentProps> = ({ setPodc
     console.log(podcast.podcastName);
     console.log(podcast.id);
     setPodcast(podcast);
-    setSelectedIndex(index);
   }
 
   return (
@@ -38,12 +65,15 @@ const SelectPodcastComponent: React.FC<CreatePodcastComponentProps> = ({ setPodc
         <h2 style={{ marginBottom: "0.3rem" }}>Podcasts</h2>
         <div style={{ display: "flex", gap: "1rem", marginBottom: "1rem" }}>
           {podcasts && podcasts.map((podcast, index) => (
-            <Button
-              key={`${podcast.id}-${index}`}
-              onClick={() => handlePodcastClick(podcast, index)}
-            >
-              {podcast.podcastName}
-            </Button>
+              <Button
+                key={`${podcast.id}-${index}`}
+              onClick={() => {
+                handlePodcastClick(podcast)
+                router.push(pathname + '?' + createQueryString('podcast', podcast.id));
+              }}
+              >
+                {podcast.podcastName}
+              </Button>
           ))}
         </div>
         <Link style={{ width: 'fit-content', textDecoration: 'underline' }} href='/admin/add-podcast'>Add podcast</Link>
