@@ -1,15 +1,10 @@
-import React, { useState } from 'react';
-import { EpisodeData, PodcastData, exampleEpisodeData } from '../helpers/customTypes';
+import React from 'react';
+import { EpisodeData, exampleEpisodeData } from '../helpers/customTypes';
 import useStore from '../helpers/store';
 import { fetchEpisode } from '../firebase/firestoreOperations';
 import AddEpisodeComponent from './AddEpisodeComponent';
 import Button from './Button';
-import { useSearchParams, useRouter, usePathname } from 'next/navigation';
-
-interface CreatePodcastComponentProps {
-  podcastId: string;
-  setEpisodeId: React.Dispatch<React.SetStateAction<string>>;
-}
+import { useQueryParams } from '../helpers/urlHelpers';
 
 const SelectEpisodeComponent = () => {
   const currentPodcast = useStore((state) => state.podcast);
@@ -17,10 +12,7 @@ const SelectEpisodeComponent = () => {
   const setCurrentEpisode = useStore((state) => state.setCurrentEpisode);
   const clearPodcast = useStore((state) => state.clearPodcast);
   const clearCurrentEpisode = useStore((state) => state.clearCurrentEpisode);
-
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const pathname = usePathname();
+  const { removeQueryParam } = useQueryParams();
 
   async function handleEpisodeClick(episode: EpisodeData, index: number) {
     console.log(episode.title);
@@ -33,15 +25,7 @@ const SelectEpisodeComponent = () => {
     }
   }
 
-  const removeQueryParam = (param: string) => {
-    const params = new URLSearchParams(searchParams.toString()); // Copy current search params
-    params.delete(param); // Remove the specified parameter
-
-    router.push(pathname + (params.toString() ? `?${params.toString()}` : ""));
-  };
-
   function handleBackButton() {
-    console.log("YOYO");
     clearPodcast();
     removeQueryParam("podcast");
   };
