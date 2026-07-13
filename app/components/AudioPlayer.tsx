@@ -4,7 +4,8 @@ import { useRef, useEffect, useState } from 'react';
 import useStore from '../helpers/store';
 import styles from './AudioPlayer.module.css';
 
-const DOT_OFFSET = 13;
+const PLAYHEAD_DIAMETER = 20;
+const SLIDER_PADDING = 7;
 
 const AudioPlayer = ({ src }: { src: string }) => {
   const currentTime = useStore((state) => state.currentTime);
@@ -81,12 +82,10 @@ const AudioPlayer = ({ src }: { src: string }) => {
   }
 
   function handleSliderMouseEnter() {
-    console.log("hovering!");
     setSliderHover(true);
   }
 
   function handleSliderMouseLeave() {
-    console.log("mouse left slider!");
     setSliderHover(false);
   }
 
@@ -99,44 +98,49 @@ const AudioPlayer = ({ src }: { src: string }) => {
   }
 
   function calculateSquarePosition() {
-    if (pointerPosition.x < 14) {
-      return 0;
-    } else if (sliderWidth - 7 < pointerPosition.x) {
-      return sliderWidth - (20);
+    if (pointerPosition.x < 17) {
+      return 7;
+    } else if (sliderWidth - 17 < pointerPosition.x) {
+      return sliderWidth - (27);
     } else {
-      return pointerPosition.x - DOT_OFFSET;
+      return pointerPosition.x - (PLAYHEAD_DIAMETER / 2);
     }
   }
 
   function calculatePlayheadPosition() {
-    const fraction = currentTime / duration;
-    const timeX = fraction * sliderWidth;
 
-    let placeInSlider;
-    if (timeX < 14) {
-      placeInSlider = 0;
-    } else if (sliderWidth - 7 < timeX) {
-      placeInSlider = sliderWidth - 20;
+
+    const audioStartPosition = SLIDER_PADDING + (PLAYHEAD_DIAMETER / 2);
+    const audioEndPosition = sliderWidth - SLIDER_PADDING - (PLAYHEAD_DIAMETER / 2);
+    const audioAreaWidth = audioEndPosition - audioStartPosition;
+    
+    const audioTrackProgress = currentTime / duration;
+    const audioAreaPosition = audioTrackProgress * audioAreaWidth;
+    const pointerPosition = audioAreaPosition + (PLAYHEAD_DIAMETER / 2) + SLIDER_PADDING;
+
+    let newPlayheadPosition;
+    if (pointerPosition < audioStartPosition) {
+      newPlayheadPosition = SLIDER_PADDING;
+    } else if (audioEndPosition < pointerPosition) {
+      newPlayheadPosition = audioEndPosition - 10;
     } else {
-      placeInSlider = timeX - DOT_OFFSET;
+      newPlayheadPosition = pointerPosition - (PLAYHEAD_DIAMETER / 2);
     }
-    setPlayheadPosition(placeInSlider);
+    setPlayheadPosition(newPlayheadPosition);
   }
 
   function positionToTimeConverter() {
     if (!duration || sliderWidth <= 0) return;
 
-    let fraction;
-    if (pointerPosition.x < 14) {
-      fraction = 0;
-    } else if (sliderWidth - 7 < pointerPosition.x) {
-      fraction = 1;
-    } else {
-      fraction = pointerPosition.x / sliderWidth;
-    }
+    const audioStartPosition = SLIDER_PADDING + (PLAYHEAD_DIAMETER / 2);
+    const audioEndPosition = sliderWidth - SLIDER_PADDING - (PLAYHEAD_DIAMETER / 2);
+    const audioAreaWidth = audioEndPosition - audioStartPosition;
 
-    const time = duration * fraction;
-    playFromSpecificTime(time);
+    const pointerPositionInAudioArea = pointerPosition.x - PLAYHEAD_DIAMETER - SLIDER_PADDING;
+
+    const audioFraction = (pointerPositionInAudioArea + (PLAYHEAD_DIAMETER / 2)) / audioAreaWidth;
+    playFromSpecificTime(duration * audioFraction);
+
   }
 
   return (
@@ -175,9 +179,9 @@ const AudioPlayer = ({ src }: { src: string }) => {
         <div
           hidden={!sliderHover}
           style={{
-            width: '20px',
-            height: '20px',
-            borderRadius: '10px',
+            width: `${PLAYHEAD_DIAMETER}px`,
+            height: `${PLAYHEAD_DIAMETER}px`,
+            borderRadius: `${PLAYHEAD_DIAMETER / 2}px`,
             backgroundColor: 'gold',
             position: 'absolute',
             top: '5px',
@@ -186,9 +190,9 @@ const AudioPlayer = ({ src }: { src: string }) => {
         </div>
         <div
           style={{
-            width: '20px',
-            height: '20px',
-            borderRadius: '10px',
+            width: `${PLAYHEAD_DIAMETER}px`,
+            height: `${PLAYHEAD_DIAMETER}px`,
+            borderRadius: `${PLAYHEAD_DIAMETER / 2}px`,
             backgroundColor: 'red',
             position: 'absolute',
             top: '5px',
