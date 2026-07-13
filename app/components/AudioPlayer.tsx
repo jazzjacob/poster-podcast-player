@@ -164,9 +164,6 @@ const AudioPlayer = ({ src }: { src: string }) => {
           <button onClick={() => timelineJump(5)}>
             Skip 5 seconds
           </button>
-          <button onClick={() => calculatePlayheadPosition()}>
-            Calculate
-          </button>
       </div>
       <div
         ref={sliderRef}
@@ -177,7 +174,30 @@ const AudioPlayer = ({ src }: { src: string }) => {
         onClick={() => positionToTimeConverter()}
       >
         <div
-          hidden={!sliderHover}
+          style={{
+            width: `${playheadPosition}px`,
+            height: '7px',
+            backgroundColor: 'black',
+            position: 'absolute',
+            left: '14px',
+            borderRadius: '30px 0 0 30px',
+            zIndex: 99
+          }}
+        >
+        </div>
+        <div
+          style={{
+            width: `${sliderWidth - 30}px`,
+            height: '7px',
+            backgroundColor: 'darkgray',
+            position: 'absolute',
+            left: '14px',
+            borderRadius: '30px'
+          }}
+        >
+        </div>
+        <div
+          hidden={true}
           style={{
             width: `${PLAYHEAD_DIAMETER}px`,
             height: `${PLAYHEAD_DIAMETER}px`,
@@ -193,10 +213,11 @@ const AudioPlayer = ({ src }: { src: string }) => {
             width: `${PLAYHEAD_DIAMETER}px`,
             height: `${PLAYHEAD_DIAMETER}px`,
             borderRadius: `${PLAYHEAD_DIAMETER / 2}px`,
-            backgroundColor: 'red',
+            backgroundColor: 'black',
             position: 'absolute',
             top: '5px',
             transform: `translate(${playheadPosition}px, 0px)`,
+            zIndex: 100
           }}>
         </div>
       </div>
