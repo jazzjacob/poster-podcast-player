@@ -3,6 +3,7 @@
 import { useRef, useEffect, useState } from 'react';
 import useStore from '../helpers/store';
 import styles from './AudioPlayer.module.css';
+import { TimeParts } from '../helpers/customTypes';
 
 const PLAYHEAD_DIAMETER = 20;
 const SLIDER_PADDING = 7;
@@ -123,7 +124,6 @@ const AudioPlayer = ({ src }: { src: string }) => {
 
   function calculatePlayheadPosition() {
 
-
     const audioStartPosition = SLIDER_PADDING + (PLAYHEAD_DIAMETER / 2);
     const audioEndPosition = sliderWidth - SLIDER_PADDING - (PLAYHEAD_DIAMETER / 2);
     const audioAreaWidth = audioEndPosition - audioStartPosition;
@@ -174,40 +174,40 @@ const AudioPlayer = ({ src }: { src: string }) => {
     };
   }
 
-  function formatTime() {
-    let hours = null;
-    let minutes = null;
-    let seconds = null;
+function formatTime({ hours, minutes, seconds }: TimeParts) {
+    let formattedHours = null;
+    let formattedMinutes = null;
+    let formattedSeconds = null;
 
     // Format hours
-    if (0 < trackPointerPosition.hours && trackPointerPosition.hours < 10) {
-      hours = `${trackPointerPosition.hours}`;
-    } else if (10 <= trackPointerPosition.hours) {
-      hours = `${trackPointerPosition.hours}`;
+    if (0 < hours && hours < 10) {
+      formattedHours = `${hours}`;
+    } else if (10 <= hours) {
+      formattedHours = `${hours}`;
     }
 
     // Format minutes
-    if (trackPointerPosition.minutes < 10 && 0 < trackPointerPosition.hours) {
-      minutes = `0${trackPointerPosition.minutes}`
+    if (minutes < 10 && 0 < hours) {
+      formattedMinutes = `0${minutes}`
     } else {
-      minutes = `${trackPointerPosition.minutes}`
+      formattedMinutes = `${minutes}`
     }
 
 
     // Format seconds
-    if (trackPointerPosition.seconds < 10) {
-      seconds = `0${trackPointerPosition.seconds}`;
+    if (seconds < 10) {
+      formattedSeconds = `0${seconds}`;
     } else {
-      seconds = `${trackPointerPosition.seconds}`;
+      formattedSeconds = `${seconds}`;
     }
 
-    if (trackPointerPosition.seconds < 0) return `00:00`;
-    if (hours == null) return `${minutes}:${seconds}`;
-    return `${hours}:${minutes}:${seconds}`
+    if (seconds < 0) return `00:00`;
+    if (formattedHours == null) return `${formattedMinutes}:${formattedSeconds}`;
+    return `${formattedHours}:${formattedMinutes}:${formattedSeconds}`
   }
 
   return (
-    <div>
+    <>
       <audio
         style={{ width: '100%' }}
         ref={audioRef}
@@ -217,6 +217,16 @@ const AudioPlayer = ({ src }: { src: string }) => {
         onSeeking={handleTimeUpdate}
         onLoadedMetadata={handleLoadedMetadata}
       />
+    <div style={{
+      backgroundColor: 'lightblue',
+      padding: '1rem',
+      paddingTop: '0.2rem',
+      width: '100vw',
+      position: 'fixed',
+      bottom: '0',
+      left: '0',
+      zIndex: 999
+    }}>
       <div style={{ margin: '1rem 0', width: '100%', display: 'flex', justifyContent: 'center', gap: '1rem' }}>
           <button onClick={() => handlePlayPause()}>
           	play/pause
@@ -284,18 +294,27 @@ const AudioPlayer = ({ src }: { src: string }) => {
           }}>
         </div>
       </div>
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        width: '100%',
+        justifyContent: 'space-between'
+      }}>
+        <p style={{
+        }}>{formatTime(convertSecondsToFormattedTime(currentTime))}</p>
+        <p>{formatTime(convertSecondsToFormattedTime(duration))}</p>
+      </div>
       <span
         hidden={!sliderHover}
         style={{
           position: 'absolute',
-          transform: `translate(${pointerPosition.x}px, ${pointerPosition.y}px)`,
+          transform: `translate(${pointerPosition.x - 25}px, ${-73}px)`,
           color: 'white',
           backgroundColor: 'black',
           padding: '0 4px'
-      }}>{formatTime()}</span>
-      <p>Current time: {currentTime}</p>
-      <p>Length: {duration}</p>
+      }}>{formatTime({hours: trackPointerPosition.hours, minutes: trackPointerPosition.minutes, seconds: trackPointerPosition.seconds})}</span>
     </div>
+    </>
   );
 };
 

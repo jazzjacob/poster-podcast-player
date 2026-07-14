@@ -1,3 +1,9 @@
+export interface TimeParts {
+  hours: number;
+  minutes: number;
+  seconds: number;
+}
+
 export interface Timestamp {
   id: string;
   start: number;
