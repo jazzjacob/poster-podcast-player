@@ -8,6 +8,34 @@ import { TimeParts } from '../helpers/customTypes';
 const PLAYHEAD_DIAMETER = 20;
 const SLIDER_PADDING = 7;
 
+const PlayIcon = () => (
+  <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor" aria-hidden="true">
+    <path d="M8 5v14l11-7z" />
+  </svg>
+);
+
+const PauseIcon = () => (
+  <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor" aria-hidden="true">
+    <path d="M6 5h4v14H6zM14 5h4v14h-4z" />
+  </svg>
+);
+
+const Back5Icon = () => (
+  <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <polyline points="1 4 1 10 7 10" />
+    <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10" />
+    <text x="12" y="12" fontSize="10" fontFamily="sans-serif" fontWeight="medium" stroke="none" fill="currentColor" textAnchor="middle" dominantBaseline="central">5</text>
+  </svg>
+);
+
+const Forward5Icon = () => (
+  <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <polyline points="23 4 23 10 17 10" />
+    <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" />
+    <text x="12" y="12" fontSize="10" fontFamily="sans-serif" fontWeight="medium" stroke="none" fill="currentColor" textAnchor="middle" dominantBaseline="central">5</text>
+  </svg>
+);
+
 const AudioPlayer = ({ src }: { src: string }) => {
   const currentTime = useStore((state) => state.currentTime);
   const setCurrentTime = useStore((state) => state.setCurrentTime);
@@ -19,6 +47,7 @@ const AudioPlayer = ({ src }: { src: string }) => {
   const [sliderHover, setSliderHover] = useState(false);
   const [sliderWidth, setSliderWidth] = useState(0);
   const [duration, setDuration] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(false);
   const [playheadPosition, setPlayheadPosition] = useState(0);
   const [trackPointerPosition, setTrackPointerPosition] = useState({ hours: 0, minutes: 0, seconds: 0 });
 
@@ -201,7 +230,7 @@ function formatTime({ hours, minutes, seconds }: TimeParts) {
       formattedSeconds = `${seconds}`;
     }
 
-    if (seconds < 0) return `00:00`;
+    if (seconds < 0) return `0:00`;
     if (formattedHours == null) return `${formattedMinutes}:${formattedSeconds}`;
     return `${formattedHours}:${formattedMinutes}:${formattedSeconds}`
   }
@@ -216,6 +245,8 @@ function formatTime({ hours, minutes, seconds }: TimeParts) {
         onTimeUpdate={handleTimeUpdate}
         onSeeking={handleTimeUpdate}
         onLoadedMetadata={handleLoadedMetadata}
+        onPlay={() => setIsPlaying(true)}
+        onPause={() => setIsPlaying(false)}
       />
     <div style={{
       backgroundColor: 'lightblue',
@@ -227,15 +258,33 @@ function formatTime({ hours, minutes, seconds }: TimeParts) {
       left: '0',
       zIndex: 999
     }}>
-      <div style={{ margin: '1rem 0', width: '100%', display: 'flex', justifyContent: 'center', gap: '1rem' }}>
-          <button onClick={() => handlePlayPause()}>
-          	play/pause
+      <div style={{ margin: '1rem 0', width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '1rem' }}>
+          <button
+            type="button"
+            className={styles.controlButton}
+            onClick={() => timelineJump(-5)}
+            aria-label="Back 5 seconds"
+            title="Back 5 seconds"
+          >
+            <Back5Icon />
           </button>
-          <button onClick={() => timelineJump(-5)}>
-            Back 5 seconds
+          <button
+            type="button"
+            className={`${styles.controlButton} ${styles.playButton}`}
+            onClick={() => handlePlayPause()}
+            aria-label={isPlaying ? 'Pause' : 'Play'}
+            title={isPlaying ? 'Pause' : 'Play'}
+          >
+            {isPlaying ? <PauseIcon /> : <PlayIcon />}
           </button>
-          <button onClick={() => timelineJump(5)}>
-            Skip 5 seconds
+          <button
+            type="button"
+            className={styles.controlButton}
+            onClick={() => timelineJump(5)}
+            aria-label="Skip 5 seconds"
+            title="Skip 5 seconds"
+          >
+            <Forward5Icon />
           </button>
       </div>
       <div
