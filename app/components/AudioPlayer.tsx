@@ -19,6 +19,7 @@ const AudioPlayer = ({ src }: { src: string }) => {
   const [sliderWidth, setSliderWidth] = useState(0);
   const [duration, setDuration] = useState(0);
   const [playheadPosition, setPlayheadPosition] = useState(0);
+  const [trackPointerPosition, setTrackPointerPosition] = useState({ hours: 0, minutes: 0, seconds: 0 });
 
   const handleTimeUpdate = (event: React.SyntheticEvent<HTMLAudioElement>) => {
     const updatedTime = Math.floor(event.currentTarget.currentTime);
@@ -95,6 +96,19 @@ const AudioPlayer = ({ src }: { src: string }) => {
     if (sliderWidth !== bounds.width) {
       setSliderWidth(bounds.width);
     }
+
+    const audioStartPosition = SLIDER_PADDING + (PLAYHEAD_DIAMETER / 2);
+    const audioEndPosition = sliderWidth - SLIDER_PADDING - (PLAYHEAD_DIAMETER / 2);
+    const audioAreaWidth = audioEndPosition - audioStartPosition;
+
+    const xPosition = event.clientX - bounds.left - SLIDER_PADDING - (PLAYHEAD_DIAMETER / 2);
+    console.log("x position in timeline: ", xPosition);
+    const fraction = xPosition / audioAreaWidth;
+    const placeInAudio = fraction * duration;
+
+    const formattedTime = convertSecondsToFormattedTime(placeInAudio);
+    console.log("formatted Time: ", formattedTime);
+    setTrackPointerPosition(formattedTime);
   }
 
   function calculateSquarePosition() {
@@ -140,7 +154,56 @@ const AudioPlayer = ({ src }: { src: string }) => {
 
     const audioFraction = (pointerPositionInAudioArea + (PLAYHEAD_DIAMETER / 2)) / audioAreaWidth;
     playFromSpecificTime(duration * audioFraction);
+  }
 
+  function convertSecondsToFormattedTime(seconds: number) {
+    // 60 s = 1 m
+    // 3600 s = 1 h
+
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    const s = Math.floor((seconds % 3600) % 60);
+    console.log("hours: ", hours);
+    console.log("minutes: ", minutes);
+    console.log("seconds: ", s);
+
+    return {
+      hours: hours,
+      minutes: minutes,
+      seconds: s
+    };
+  }
+
+  function formatTime() {
+    let hours = null;
+    let minutes = null;
+    let seconds = null;
+
+    // Format hours
+    if (0 < trackPointerPosition.hours && trackPointerPosition.hours < 10) {
+      hours = `${trackPointerPosition.hours}`;
+    } else if (10 <= trackPointerPosition.hours) {
+      hours = `${trackPointerPosition.hours}`;
+    }
+
+    // Format minutes
+    if (trackPointerPosition.minutes < 10 && 0 < trackPointerPosition.hours) {
+      minutes = `0${trackPointerPosition.minutes}`
+    } else {
+      minutes = `${trackPointerPosition.minutes}`
+    }
+
+
+    // Format seconds
+    if (trackPointerPosition.seconds < 10) {
+      seconds = `0${trackPointerPosition.seconds}`;
+    } else {
+      seconds = `${trackPointerPosition.seconds}`;
+    }
+
+    if (trackPointerPosition.seconds < 0) return `00:00`;
+    if (hours == null) return `${minutes}:${seconds}`;
+    return `${hours}:${minutes}:${seconds}`
   }
 
   return (
@@ -229,7 +292,7 @@ const AudioPlayer = ({ src }: { src: string }) => {
           color: 'white',
           backgroundColor: 'black',
           padding: '0 4px'
-      }}>{pointerPosition.x}</span>
+      }}>{formatTime()}</span>
       <p>Current time: {currentTime}</p>
       <p>Length: {duration}</p>
     </div>
