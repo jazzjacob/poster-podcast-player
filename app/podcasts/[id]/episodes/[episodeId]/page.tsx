@@ -49,7 +49,7 @@ export default async function EpisodePage({ params }: { params: Promise<{ id: st
           <PosterView
             episode={JSON.parse(JSON.stringify(savedEpisode))}
           />
-          <div style={{ padding: '1rem' }}>
+          <div style={{ padding: '1rem', paddingBottom: '80px'}}>
             <Breadcrumbs list={[{ name: 'Podcasts', url: '/' }, { name: podcast?.collectionName || "", url: `/podcasts/${podcast?.collectionId}` }, { name: episode.title, url: ''}] } />
             <AudioPlayer src={savedEpisode.url} />
             <PosterGallery
@@ -62,7 +62,7 @@ export default async function EpisodePage({ params }: { params: Promise<{ id: st
       ) : (
         <>
           <PodcastImageSection podcast={podcast} episode={episode} />
-          <div style={{ padding: '1rem' }}>
+          <div style={{ padding: '1rem', paddingBottom: '80px' }}>
             <Breadcrumbs list={[{ name: 'Podcasts', url: '/' }, { name: podcast?.collectionName || "", url: `/podcasts/${podcast?.collectionId}` }, { name: episode.title, url: ''}] } />
             <AudioPlayer src={episode.enclosureUrl} />
             <EpisodeInformation podcast={podcast} episode={episode} />

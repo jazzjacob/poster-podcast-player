@@ -8,6 +8,12 @@ import { TimeParts } from '../helpers/customTypes';
 const PLAYHEAD_DIAMETER = 20;
 const SLIDER_PADDING = 7;
 
+const playerTimeStyle: React.CSSProperties = {
+  fontSize: '14px',
+  width: '75px',
+  textAlign: 'center'
+};
+
 const PlayIcon = () => (
   <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor" aria-hidden="true">
     <path d="M8 5v14l11-7z" />
@@ -238,6 +244,7 @@ function formatTime({ hours, minutes, seconds }: TimeParts) {
   return (
     <>
       <audio
+        hidden
         style={{ width: '100%' }}
         ref={audioRef}
         src={src}
@@ -287,71 +294,70 @@ function formatTime({ hours, minutes, seconds }: TimeParts) {
             <Forward5Icon />
           </button>
       </div>
-      <div
-        ref={sliderRef}
-        className={styles.slider}
-        onMouseEnter={handleSliderMouseEnter}
-        onMouseLeave={handleSliderMouseLeave}
-        onMouseMove={handleSliderMouseMove}
-        onClick={() => positionToTimeConverter()}
-      >
-        <div
-          style={{
-            width: `${playheadPosition}px`,
-            height: '7px',
-            backgroundColor: 'black',
-            position: 'absolute',
-            left: '14px',
-            borderRadius: '30px 0 0 30px',
-            zIndex: 99
-          }}
-        >
-        </div>
-        <div
-          style={{
-            width: `${sliderWidth - 30}px`,
-            height: '7px',
-            backgroundColor: 'darkgray',
-            position: 'absolute',
-            left: '14px',
-            borderRadius: '30px'
-          }}
-        >
-        </div>
-        <div
-          hidden={true}
-          style={{
-            width: `${PLAYHEAD_DIAMETER}px`,
-            height: `${PLAYHEAD_DIAMETER}px`,
-            borderRadius: `${PLAYHEAD_DIAMETER / 2}px`,
-            backgroundColor: 'gold',
-            position: 'absolute',
-            top: '5px',
-            transform: `translate(${calculateSquarePosition()}px, 0px)`,
-          }}>
-        </div>
-        <div
-          style={{
-            width: `${PLAYHEAD_DIAMETER}px`,
-            height: `${PLAYHEAD_DIAMETER}px`,
-            borderRadius: `${PLAYHEAD_DIAMETER / 2}px`,
-            backgroundColor: 'black',
-            position: 'absolute',
-            top: '5px',
-            transform: `translate(${playheadPosition}px, 0px)`,
-            zIndex: 100
-          }}>
-        </div>
-      </div>
       <div style={{
         display: 'flex',
         alignItems: 'center',
         width: '100%',
         justifyContent: 'space-between'
       }}>
-        <p style={{
-        }}>{formatTime(convertSecondsToFormattedTime(currentTime))}</p>
-        <p>{formatTime(convertSecondsToFormattedTime(duration))}</p>
+        <p style={playerTimeStyle}>{formatTime(convertSecondsToFormattedTime(currentTime))}</p>
+        <div
+          ref={sliderRef}
+          className={styles.slider}
+          onMouseEnter={handleSliderMouseEnter}
+          onMouseLeave={handleSliderMouseLeave}
+          onMouseMove={handleSliderMouseMove}
+          onClick={() => positionToTimeConverter()}
+        >
+          <div
+            style={{
+              width: `${playheadPosition}px`,
+              height: '7px',
+              backgroundColor: 'black',
+              position: 'absolute',
+              left: '14px',
+              borderRadius: '30px 0 0 30px',
+              zIndex: 99
+            }}
+          >
+          </div>
+          <div
+            style={{
+              width: `${sliderWidth - 30}px`,
+              height: '7px',
+              backgroundColor: 'darkgray',
+              position: 'absolute',
+              left: '14px',
+              borderRadius: '30px'
+            }}
+          >
+          </div>
+          <div
+            hidden={true}
+            style={{
+              width: `${PLAYHEAD_DIAMETER}px`,
+              height: `${PLAYHEAD_DIAMETER}px`,
+              borderRadius: `${PLAYHEAD_DIAMETER / 2}px`,
+              backgroundColor: 'gold',
+              position: 'absolute',
+              top: '5px',
+              transform: `translate(${calculateSquarePosition()}px, 0px)`,
+            }}>
+          </div>
+          <div
+            style={{
+              width: `${PLAYHEAD_DIAMETER}px`,
+              height: `${PLAYHEAD_DIAMETER}px`,
+              borderRadius: `${PLAYHEAD_DIAMETER / 2}px`,
+              backgroundColor: 'black',
+              position: 'absolute',
+              top: '5px',
+              transform: `translate(${playheadPosition}px, 0px)`,
+              zIndex: 100
+            }}>
+          </div>
+        </div>
+        <p style={playerTimeStyle}>{formatTime(convertSecondsToFormattedTime(duration))}</p>
       </div>
       <span
         hidden={!sliderHover}
