@@ -256,13 +256,16 @@ function formatTime({ hours, minutes, seconds }: TimeParts) {
         onPause={() => setIsPlaying(false)}
       />
     <div style={{
-      backgroundColor: 'lightblue',
+      backgroundColor: 'rgba(255, 255, 255, .8)',
+      backdropFilter: 'saturate(180%) blur(20px)',
       padding: '1rem',
       paddingTop: '0.2rem',
       width: '100vw',
       position: 'fixed',
       bottom: '0',
       left: '0',
+      borderTop: '1px solid rgba(201, 201, 201, 0.8)',
+      boxShadow: 'rgba(50, 50, 93, 0.1) 0px -6px 12px 4px, rgba(0, 0, 0, 0.1) 0px -3px 7px -3px',
       zIndex: 999
     }}>
       <div style={{ margin: '1rem 0', width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '1rem' }}>
@@ -363,7 +366,7 @@ function formatTime({ hours, minutes, seconds }: TimeParts) {
         hidden={!sliderHover}
         style={{
           position: 'absolute',
-          transform: `translate(${pointerPosition.x - 25}px, ${-73}px)`,
+          transform: `translate(${pointerPosition.x + 40}px, ${-50}px)`,
           color: 'white',
           backgroundColor: 'black',
           padding: '0 4px'
