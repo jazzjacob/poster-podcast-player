@@ -1,0 +1,47 @@
+.slider {
+	/*background-color: rgb(235, 235, 235);*/
+	width: 100%;
+	height: 30px;
+	border-radius: 30px;
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	position: relative;
+}
+
+.controlButton {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 40px;
+	height: 40px;
+	border: none;
+	border-radius: 50%;
+	background-color: transparent;
+	color: black;
+	cursor: pointer;
+	transition: background-color 0.15s ease;
+}
+
+.controlButton:hover {
+	background-color: rgba(0, 0, 0, 0.1);
+}
+
+.controlButton:active {
+	background-color: rgba(0, 0, 0, 0.2);
+}
+
+.playButton {
+	width: 48px;
+	height: 48px;
+	background-color: black;
+	color: white;
+}
+
+.playButton:hover {
+	background-color: rgb(40, 40, 40);
+}
+
+.playButton:active {
+	background-color: rgb(70, 70, 70);
+}

@@ -9,19 +9,23 @@ import Breadcrumbs from '@/app/components/Breadcrumbs';
 import { fetchData, fetchRSSFeed } from '@/app/helpers/functions';
 import { findSavedPodcast } from '@/app/firebase/firestoreOperations';
 
-export default async function PodcastPage({ params }: { params: { id: string } }) {
+export default async function PodcastPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
   const COUNTRY = 'se';
-  let podcast = await fetchData(`https://itunes.apple.com/lookup?id=${params.id}&country=${COUNTRY}`);
+  let podcast = await fetchData(`https://itunes.apple.com/lookup?id=${id}&country=${COUNTRY}`);
   podcast = podcast[0];
-  //let rssFeed = await fetchRSSFeed(podcast.feedUrl);
+
+  if (!podcast) {
+    notFound(); // Handle 404 if the podcast is not found
+  }
 
   let rssFeed = await fetchRSSFeed(podcast.feedUrl);
   console.log('rssfeed here');
   console.log(rssFeed);
 
-  const savedPodcast = await findSavedPodcast(params.id);
+  const savedPodcast = await findSavedPodcast(id);
 
-  //const episodes = await fetchSavedEpisodes(params.id);
+  //const episodes = await fetchSavedEpisodes(id);
 
   const convertedPodcast = JSON.parse(JSON.stringify(podcast));
 
@@ -30,10 +34,6 @@ export default async function PodcastPage({ params }: { params: { id: string } }
    convertedSavedPodcast = JSON.parse(JSON.stringify(savedPodcast));
   }
   //const convertedEpisodes = JSON.parse(JSON.stringify(episodes));
-
-  if (!podcast) {
-    notFound(); // Handle 404 if the podcast is not found
-  }
 
   return (
     <>
