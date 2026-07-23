@@ -133,9 +133,9 @@ const AudioPlayer = ({ src, episodeTitle, podcastName, artworkUrl }: AudioPlayer
   };
 
   function timelineJump(addedTime: number) {
-    if (audioRef.current) {
-      audioRef.current.currentTime = currentTime + addedTime;
-    }
+    const audio = audioRef.current;
+    if (!audio) return;
+    audio.currentTime = audio.currentTime + addedTime;
   }
   
   function handlePlayPause() {
