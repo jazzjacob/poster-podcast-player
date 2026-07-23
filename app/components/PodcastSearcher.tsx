@@ -9,15 +9,26 @@ function PodcastSearcher() {
   const [searchResults, setSearchResults] = useState([]);
   const [searchTerm, setSearchTerm] = useState<string>(''); // Add a state to track the input value
   const [searched, setSearched] = useState(false);
+  const [searchError, setSearchError] = useState<string | null>(null);
 
   const searchPlaceholderText = 'Search podcasts';
 
   async function fetchData(url: string) {
-    const response = await fetch(url);
-    const data = await response.json();
-    setSearchResults(data.results);
-    setSearched(true);
-    console.log(data.results);
+    try {
+      setSearchError(null);
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error(`Search request failed (${response.status})`);
+      }
+      const data = await response.json();
+      setSearchResults(data.results);
+      setSearched(true);
+    } catch (error) {
+      console.error('Podcast search failed:', error);
+      setSearchResults([]);
+      setSearched(false);
+      setSearchError('Something went wrong while searching. Check your internet connection and try again.');
+    }
   }
 
   function search(term: string) {
@@ -42,6 +53,9 @@ function PodcastSearcher() {
     if (searched) {
       setSearched(false);
     }
+    if (searchError) {
+      setSearchError(null);
+    }
   }
 
 
@@ -52,7 +66,9 @@ function PodcastSearcher() {
         <input onChange={handleInputChange} value={searchTerm} placeholder={searchPlaceholderText} className={styles.textInput} type='text'></input>
         <button className={styles.searchButton} type='submit'>Search</button>
       </form>
-      {searchResults.length > 0 ? (
+      {searchError ? (
+        <p className={styles.noFoundMessage}>{searchError}</p>
+      ) : searchResults.length > 0 ? (
         <ul className={styles.searchResultsList}>
           {searchResults.map((item: any) => (
             <li key={item.collectionId} className={styles.searchResultItem}>

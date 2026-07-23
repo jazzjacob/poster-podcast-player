@@ -51,6 +51,7 @@ const AudioPlayer = ({ src }: { src: string }) => {
   const sliderRef = useRef<HTMLDivElement | null>(null);
   const [pointerPosition, setPointerPosition] = useState({ x: 0, y: 0});
   const [sliderHover, setSliderHover] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
   const [sliderWidth, setSliderWidth] = useState(0);
   const [duration, setDuration] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -70,8 +71,9 @@ const AudioPlayer = ({ src }: { src: string }) => {
   };
 
   useEffect(() => {
+    if (isDragging) return;
     calculatePlayheadPosition();
-  }, [currentTime, duration, sliderWidth]);
+  }, [currentTime, duration, sliderWidth, isDragging]);
 
   useEffect(() => {
     const slider = sliderRef.current;
@@ -118,15 +120,17 @@ const AudioPlayer = ({ src }: { src: string }) => {
     }
   }
 
-  function handleSliderMouseEnter() {
+  function handleSliderPointerEnter(event: React.PointerEvent<HTMLDivElement>) {
+    if (event.pointerType !== 'mouse') return;
     setSliderHover(true);
   }
 
-  function handleSliderMouseLeave() {
+  function handleSliderPointerLeave(event: React.PointerEvent<HTMLDivElement>) {
+    if (event.pointerType !== 'mouse') return;
     setSliderHover(false);
   }
 
-  function handleSliderMouseMove(event: React.MouseEvent<HTMLDivElement>) {
+  function updateTrackPointerFromEvent(event: React.PointerEvent<HTMLDivElement>, updatePlayhead: boolean) {
     const bounds = event.currentTarget.getBoundingClientRect();
     setPointerPosition({ x: event.clientX - bounds.left, y: event.clientY - bounds.top });
     if (sliderWidth !== bounds.width) {
@@ -138,13 +142,36 @@ const AudioPlayer = ({ src }: { src: string }) => {
     const audioAreaWidth = audioEndPosition - audioStartPosition;
 
     const xPosition = event.clientX - bounds.left - SLIDER_PADDING - (PLAYHEAD_DIAMETER / 2);
-    console.log("x position in timeline: ", xPosition);
     const fraction = xPosition / audioAreaWidth;
     const placeInAudio = fraction * duration;
 
     const formattedTime = convertSecondsToFormattedTime(placeInAudio);
-    console.log("formatted Time: ", formattedTime);
     setTrackPointerPosition(formattedTime);
+
+    if (updatePlayhead) {
+      setPlayheadPosition(calculatePlayheadPositionFromFraction(fraction));
+    }
+  }
+
+  function handleSliderPointerDown(event: React.PointerEvent<HTMLDivElement>) {
+    event.currentTarget.setPointerCapture(event.pointerId);
+    setIsDragging(true);
+    setSliderHover(true);
+    updateTrackPointerFromEvent(event, true);
+  }
+
+  function handleSliderPointerUp(event: React.PointerEvent<HTMLDivElement>) {
+    event.currentTarget.releasePointerCapture(event.pointerId);
+    setIsDragging(false);
+    positionToTimeConverter(event);
+    if (event.pointerType !== 'mouse') {
+      setSliderHover(false);
+    }
+  }
+
+  function handleSliderPointerMove(event: React.PointerEvent<HTMLDivElement>) {
+    if (event.pointerType !== 'mouse' && !isDragging) return;
+    updateTrackPointerFromEvent(event, isDragging);
   }
 
   function calculateSquarePosition() {
@@ -157,35 +184,39 @@ const AudioPlayer = ({ src }: { src: string }) => {
     }
   }
 
-  function calculatePlayheadPosition() {
-
+  function calculatePlayheadPositionFromFraction(audioFraction: number) {
     const audioStartPosition = SLIDER_PADDING + (PLAYHEAD_DIAMETER / 2);
     const audioEndPosition = sliderWidth - SLIDER_PADDING - (PLAYHEAD_DIAMETER / 2);
     const audioAreaWidth = audioEndPosition - audioStartPosition;
-    
-    const audioTrackProgress = currentTime / duration;
-    const audioAreaPosition = audioTrackProgress * audioAreaWidth;
+
+    const audioAreaPosition = audioFraction * audioAreaWidth;
     const pointerPosition = audioAreaPosition + (PLAYHEAD_DIAMETER / 2) + SLIDER_PADDING;
 
-    let newPlayheadPosition;
     if (pointerPosition < audioStartPosition) {
-      newPlayheadPosition = SLIDER_PADDING;
+      return SLIDER_PADDING;
     } else if (audioEndPosition < pointerPosition) {
-      newPlayheadPosition = audioEndPosition - 10;
+      return audioEndPosition - 10;
     } else {
-      newPlayheadPosition = pointerPosition - (PLAYHEAD_DIAMETER / 2);
+      return pointerPosition - (PLAYHEAD_DIAMETER / 2);
     }
-    setPlayheadPosition(newPlayheadPosition);
   }
 
-  function positionToTimeConverter() {
+  function calculatePlayheadPosition() {
+    const audioTrackProgress = currentTime / duration;
+    setPlayheadPosition(calculatePlayheadPositionFromFraction(audioTrackProgress));
+  }
+
+  function positionToTimeConverter(event: React.MouseEvent<HTMLDivElement>) {
     if (!duration || sliderWidth <= 0) return;
+
+    const bounds = event.currentTarget.getBoundingClientRect();
+    const clickX = event.clientX - bounds.left;
 
     const audioStartPosition = SLIDER_PADDING + (PLAYHEAD_DIAMETER / 2);
     const audioEndPosition = sliderWidth - SLIDER_PADDING - (PLAYHEAD_DIAMETER / 2);
     const audioAreaWidth = audioEndPosition - audioStartPosition;
 
-    const pointerPositionInAudioArea = pointerPosition.x - PLAYHEAD_DIAMETER - SLIDER_PADDING;
+    const pointerPositionInAudioArea = clickX - PLAYHEAD_DIAMETER - SLIDER_PADDING;
 
     const audioFraction = (pointerPositionInAudioArea + (PLAYHEAD_DIAMETER / 2)) / audioAreaWidth;
     playFromSpecificTime(duration * audioFraction);
@@ -307,10 +338,12 @@ function formatTime({ hours, minutes, seconds }: TimeParts) {
         <div
           ref={sliderRef}
           className={styles.slider}
-          onMouseEnter={handleSliderMouseEnter}
-          onMouseLeave={handleSliderMouseLeave}
-          onMouseMove={handleSliderMouseMove}
-          onClick={() => positionToTimeConverter()}
+          onPointerEnter={handleSliderPointerEnter}
+          onPointerLeave={handleSliderPointerLeave}
+          onPointerMove={handleSliderPointerMove}
+          onClick={positionToTimeConverter}
+          onPointerDown={handleSliderPointerDown}
+          onPointerUp={handleSliderPointerUp}
         >
           <div
             style={{
@@ -359,18 +392,22 @@ function formatTime({ hours, minutes, seconds }: TimeParts) {
               zIndex: 100
             }}>
           </div>
+          <span
+            hidden={!sliderHover}
+            style={{
+              position: 'absolute',
+              left: `${pointerPosition.x}px`,
+              top: '-30px',
+              transform: 'translateX(-50%)',
+              whiteSpace: 'nowrap',
+              color: 'white',
+              backgroundColor: 'black',
+              padding: '0 4px',
+              zIndex: 101
+          }}>{formatTime({hours: trackPointerPosition.hours, minutes: trackPointerPosition.minutes, seconds: trackPointerPosition.seconds})}</span>
         </div>
         <p style={playerTimeStyle}>{formatTime(convertSecondsToFormattedTime(duration))}</p>
       </div>
-      <span
-        hidden={!sliderHover}
-        style={{
-          position: 'absolute',
-          transform: `translate(${pointerPosition.x + 40}px, ${-50}px)`,
-          color: 'white',
-          backgroundColor: 'black',
-          padding: '0 4px'
-      }}>{formatTime({hours: trackPointerPosition.hours, minutes: trackPointerPosition.minutes, seconds: trackPointerPosition.seconds})}</span>
     </div>
     </>
   );
