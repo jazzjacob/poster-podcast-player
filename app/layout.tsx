@@ -6,6 +6,7 @@ import Footer from "./components/Footer";
 import AdminToolsBanner from "./components/AdminToolsBanner";
 import { AuthProvider } from "@/context/AuthContext";
 import localFont from 'next/font/local'
+import { Analytics } from "@vercel/analytics/next";
 
 // Font files can be colocated inside of `app`
 const satoshi = localFont({
@@ -60,6 +61,7 @@ export default function RootLayout({
           <AuthProvider>
             <AdminToolsBanner />
           </AuthProvider>
+          <Analytics />
         </body>
       </html>
   );

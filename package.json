@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@types/jsdom": "^21.1.7",
+    "@vercel/analytics": "^2.0.1",
     "@vercel/kv": "^2.0.0",
     "dompurify": "^3.1.7",
     "dotenv": "^16.4.5",
