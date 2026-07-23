@@ -51,7 +51,12 @@ export default async function EpisodePage({ params }: { params: Promise<{ id: st
           />
           <div style={{ padding: '1rem', paddingBottom: '80px'}}>
             <Breadcrumbs list={[{ name: 'Podcasts', url: '/' }, { name: podcast?.collectionName || "", url: `/podcasts/${podcast?.collectionId}` }, { name: episode.title, url: ''}] } />
-            <AudioPlayer src={savedEpisode.url} />
+            <AudioPlayer
+              src={savedEpisode.url}
+              episodeTitle={savedEpisode.title}
+              podcastName={podcast?.collectionName || ''}
+              artworkUrl={savedEpisode.episodeImage || podcast?.artworkUrl600 || ''}
+            />
             <PosterGallery
               podcastId={savedPodcast?.id || ''}
               episodeId={savedEpisode.id}
@@ -64,7 +69,12 @@ export default async function EpisodePage({ params }: { params: Promise<{ id: st
           <PodcastImageSection podcast={podcast} episode={episode} />
           <div style={{ padding: '1rem', paddingBottom: '80px' }}>
             <Breadcrumbs list={[{ name: 'Podcasts', url: '/' }, { name: podcast?.collectionName || "", url: `/podcasts/${podcast?.collectionId}` }, { name: episode.title, url: ''}] } />
-            <AudioPlayer src={episode.enclosureUrl} />
+            <AudioPlayer
+              src={episode.enclosureUrl}
+              episodeTitle={episode.title}
+              podcastName={podcast?.collectionName || ''}
+              artworkUrl={episode.image || podcast?.artworkUrl600 || ''}
+            />
             <EpisodeInformation podcast={podcast} episode={episode} />
         </div>
         </>

@@ -42,7 +42,14 @@ const Forward5Icon = () => (
   </svg>
 );
 
-const AudioPlayer = ({ src }: { src: string }) => {
+type AudioPlayerProps = {
+  src: string;
+  episodeTitle?: string;
+  podcastName?: string;
+  artworkUrl?: string;
+};
+
+const AudioPlayer = ({ src, episodeTitle, podcastName, artworkUrl }: AudioPlayerProps) => {
   const currentTime = useStore((state) => state.currentTime);
   const setCurrentTime = useStore((state) => state.setCurrentTime);
   const playFromTime = useStore((state) => state.playFromTime);
@@ -95,6 +102,28 @@ const AudioPlayer = ({ src }: { src: string }) => {
       clearPlayFromTime();
     }
   }, [playFromTime, clearPlayFromTime]);
+
+  useEffect(() => {
+    if (!('mediaSession' in navigator)) return;
+
+    navigator.mediaSession.metadata = new MediaMetadata({
+      title: episodeTitle || '',
+      artist: podcastName || '',
+      artwork: artworkUrl ? [{ src: artworkUrl, sizes: '600x600', type: 'image/jpeg' }] : [],
+    });
+
+    navigator.mediaSession.setActionHandler('play', () => audioRef.current?.play());
+    navigator.mediaSession.setActionHandler('pause', () => audioRef.current?.pause());
+    navigator.mediaSession.setActionHandler('seekbackward', () => timelineJump(-5));
+    navigator.mediaSession.setActionHandler('seekforward', () => timelineJump(5));
+
+    return () => {
+      navigator.mediaSession.setActionHandler('play', null);
+      navigator.mediaSession.setActionHandler('pause', null);
+      navigator.mediaSession.setActionHandler('seekbackward', null);
+      navigator.mediaSession.setActionHandler('seekforward', null);
+    };
+  }, [episodeTitle, podcastName, artworkUrl]);
 
   const playFromSpecificTime = (time: number) => {
     if (audioRef.current) {
@@ -314,8 +343,14 @@ function formatTime({ hours, minutes, seconds }: TimeParts) {
         onTimeUpdate={handleTimeUpdate}
         onSeeking={handleTimeUpdate}
         onLoadedMetadata={handleLoadedMetadata}
-        onPlay={() => setIsPlaying(true)}
-        onPause={() => setIsPlaying(false)}
+        onPlay={() => {
+          setIsPlaying(true);
+          if ('mediaSession' in navigator) navigator.mediaSession.playbackState = 'playing';
+        }}
+        onPause={() => {
+          setIsPlaying(false);
+          if ('mediaSession' in navigator) navigator.mediaSession.playbackState = 'paused';
+        }}
       />
     <div style={{
       backgroundColor: 'rgba(255, 255, 255, .8)',
