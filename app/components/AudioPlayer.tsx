@@ -26,19 +26,19 @@ const PauseIcon = () => (
   </svg>
 );
 
-const Back5Icon = () => (
+const Back10Icon = () => (
   <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
     <polyline points="1 4 1 10 7 10" />
     <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10" />
-    <text x="12" y="12" fontSize="10" fontFamily="sans-serif" fontWeight="medium" stroke="none" fill="currentColor" textAnchor="middle" dominantBaseline="central">5</text>
+    <text x="12" y="12" fontSize="8.5" fontFamily="sans-serif" fontWeight="medium" stroke="none" fill="currentColor" textAnchor="middle" dominantBaseline="central">10</text>
   </svg>
 );
 
-const Forward5Icon = () => (
+const Forward10Icon = () => (
   <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
     <polyline points="23 4 23 10 17 10" />
     <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" />
-    <text x="12" y="12" fontSize="10" fontFamily="sans-serif" fontWeight="medium" stroke="none" fill="currentColor" textAnchor="middle" dominantBaseline="central">5</text>
+    <text x="12" y="12" fontSize="8.5" fontFamily="sans-serif" fontWeight="medium" stroke="none" fill="currentColor" textAnchor="middle" dominantBaseline="central">10</text>
   </svg>
 );
 
@@ -114,8 +114,8 @@ const AudioPlayer = ({ src, episodeTitle, podcastName, artworkUrl }: AudioPlayer
 
     navigator.mediaSession.setActionHandler('play', () => audioRef.current?.play());
     navigator.mediaSession.setActionHandler('pause', () => audioRef.current?.pause());
-    navigator.mediaSession.setActionHandler('seekbackward', () => timelineJump(-5));
-    navigator.mediaSession.setActionHandler('seekforward', () => timelineJump(5));
+    navigator.mediaSession.setActionHandler('seekbackward', (details) => timelineJump(-(details.seekOffset || 10)));
+    navigator.mediaSession.setActionHandler('seekforward', (details) => timelineJump(details.seekOffset || 10));
 
     return () => {
       navigator.mediaSession.setActionHandler('play', null);
@@ -369,11 +369,11 @@ function formatTime({ hours, minutes, seconds }: TimeParts) {
           <button
             type="button"
             className={styles.controlButton}
-            onClick={() => timelineJump(-5)}
-            aria-label="Back 5 seconds"
-            title="Back 5 seconds"
+            onClick={() => timelineJump(-10)}
+            aria-label="Back 10 seconds"
+            title="Back 10 seconds"
           >
-            <Back5Icon />
+            <Back10Icon />
           </button>
           <button
             type="button"
@@ -387,11 +387,11 @@ function formatTime({ hours, minutes, seconds }: TimeParts) {
           <button
             type="button"
             className={styles.controlButton}
-            onClick={() => timelineJump(5)}
-            aria-label="Skip 5 seconds"
-            title="Skip 5 seconds"
+            onClick={() => timelineJump(10)}
+            aria-label="Skip 10 seconds"
+            title="Skip 10 seconds"
           >
-            <Forward5Icon />
+            <Forward10Icon />
           </button>
       </div>
       <div style={{
