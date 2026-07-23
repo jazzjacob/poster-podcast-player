@@ -8,6 +8,9 @@
 	align-items: center;
 	position: relative;
 	touch-action: none;
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	user-select: none;
 }
 
 .controlButton {

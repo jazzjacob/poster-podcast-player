@@ -157,10 +157,11 @@ const AudioPlayer = ({ src }: { src: string }) => {
   }
 
   function handleSliderPointerDown(event: React.PointerEvent<HTMLDivElement>) {
-    event.preventDefault();
     setIsDragging(true);
     setSliderHover(true);
     updateTrackPointerFromPosition(event.clientX, true);
+    positionToTimeConverter(event.clientX);
+    ensurePlaybackStarted();
   }
 
   function handleSliderPointerMove(event: React.PointerEvent<HTMLDivElement>) {
@@ -240,7 +241,16 @@ const AudioPlayer = ({ src }: { src: string }) => {
     const pointerPositionInAudioArea = clickX - PLAYHEAD_DIAMETER - SLIDER_PADDING;
 
     const audioFraction = (pointerPositionInAudioArea + (PLAYHEAD_DIAMETER / 2)) / audioAreaWidth;
-    playFromSpecificTime(duration * audioFraction);
+    if (audioRef.current) {
+      audioRef.current.currentTime = duration * audioFraction;
+    }
+  }
+
+  function ensurePlaybackStarted() {
+    const audio = audioRef.current;
+    if (audio && audio.paused) {
+      audio.play();
+    }
   }
 
   function convertSecondsToFormattedTime(seconds: number) {
